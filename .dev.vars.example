@@ -1,0 +1,10 @@
+# Local-only example. Copy values into .dev.vars and keep that file untracked.
+LOCAL_EMAIL_PREVIEW=true
+SUBSCRIPTION_CODE_PEPPER=replace-with-a-long-random-value
+
+# Amazon SES
+AWS_SES_REGION=us-west-2
+AWS_SES_ACCESS_KEY_ID=
+AWS_SES_SECRET_ACCESS_KEY=
+SES_FROM_EMAIL=updates@gripsky.org
+SERVICE_INBOX_EMAIL=contact@gripsky.org
