@@ -15,7 +15,7 @@ const homeCopy = {
     titleB: "Skills into a body",
     titleC: "you control.",
     intro:
-      "GripSky publishes an evolving worldview and the skill systems derived from it. Read the source, run public skills in your own environment, or contribute to the research.",
+      "Maintained by Lin Guan, GripSky publishes an evolving worldview and the skill systems derived from it. Read the source, self-host public skills, or contribute to the research.",
     primary: "Browse the skill system",
     secondary: "Read the worldview",
     systemLabel: "CURRENT PUBLIC CHAIN",
@@ -76,7 +76,7 @@ const homeCopy = {
     titleB: "技能组成由你掌握的",
     titleC: "外置信息身躯。",
     intro:
-      "GripSky 公开一套持续演化的世界观，以及从中生长出来的技能体系。你可以阅读源文件、在自己的环境中运行公共技能，也可以参与研究。",
+      "GripSky 由临观维护，公开持续演化的世界观和由此生长的技能体系。你可以阅读源文件、自托管公共技能，或参与研究。",
     primary: "浏览技能体系",
     secondary: "阅读世界观",
     systemLabel: "当前公开推导链",

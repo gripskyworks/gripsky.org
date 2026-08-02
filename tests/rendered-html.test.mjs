@@ -44,7 +44,10 @@ test("server-renders the English system homepage", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>GripSky — Open worldview and skill systems(?: · GripSky)?<\/title>/i);
+  assert.match(html, /<title>GripSky — Open worldview, skill systems and self-hosting(?: · GripSky)?<\/title>/i);
+  assert.match(html, /rel="icon" href="https:\/\/gripsky\.org\/favicon\.ico"/i);
+  assert.match(html, /application\/ld\+json/i);
+  assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
   assert.match(html, /Worldview into skills/);
   assert.match(html, /Three ways to use GripSky/);
   assert.match(html, /href="\/skills\/catalog"/);
@@ -68,6 +71,27 @@ test("server-renders the Chinese homepage", async () => {
   assert.match(html, /墨青/);
   assert.match(html, /使用 GripSky 的三种方式/);
   assert.match(html, /href="\/zh\/skills\/catalog"/);
+  assert.match(html, /<title>GripSky — 开放世界观、技能体系与自托管<\/title>/i);
+});
+
+test("exposes crawl and install metadata", async () => {
+  const robots = await render("/robots.txt");
+  assert.equal(robots.status, 200);
+  assert.match(await robots.text(), /Sitemap: https:\/\/gripsky\.org\/sitemap\.xml/);
+
+  const sitemap = await render("/sitemap.xml");
+  assert.equal(sitemap.status, 200);
+  const sitemapXml = await sitemap.text();
+  assert.match(sitemapXml, /https:\/\/gripsky\.org\/zh\/skills\/catalog/);
+  assert.match(sitemapXml, /hreflang="zh-CN"/);
+
+  const manifest = await render("/manifest.webmanifest");
+  assert.equal(manifest.status, 200);
+  assert.match(await manifest.text(), /"short_name"\s*:\s*"GripSky"/);
+
+  const favicon = await render("/favicon.ico");
+  assert.equal(favicon.status, 200);
+  assert.match(favicon.headers.get("content-type") ?? "", /^image\//i);
 });
 
 test("real deep routes render their own content", async () => {

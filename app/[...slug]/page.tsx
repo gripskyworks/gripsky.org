@@ -34,15 +34,51 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   const englishPath = path;
   const chinesePath = `/zh${path}`;
 
+  if (!content && !skill) {
+    return {
+      title,
+      description,
+      robots: { index: false, follow: false },
+    };
+  }
+
   return {
     title,
     description,
+    keywords:
+      locale === "zh"
+        ? ["GripSky", "临观", "世界观", "技能体系", "自托管", title]
+        : ["GripSky", "Lin Guan", "open worldview", "skill systems", "self-hosting", title],
     alternates: {
       canonical: locale === "zh" ? chinesePath : englishPath,
       languages: {
         en: englishPath,
         "zh-CN": chinesePath,
+        "x-default": englishPath,
       },
+    },
+    openGraph: {
+      type: "website",
+      url: locale === "zh" ? chinesePath : englishPath,
+      siteName: "GripSky",
+      locale: locale === "zh" ? "zh_CN" : "en_US",
+      alternateLocale: [locale === "zh" ? "en_US" : "zh_CN"],
+      title,
+      description,
+      images: [
+        {
+          url: "/og-system.png",
+          width: 1731,
+          height: 909,
+          alt: locale === "zh" ? "GripSky — 从世界观到技能体系" : "GripSky — Worldview into skills",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-system.png"],
     },
   };
 }
