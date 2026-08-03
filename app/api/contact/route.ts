@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {
+  claimEmailSendBudget,
   ensureSchema,
   forwardContactRequest,
   getD1,
@@ -29,6 +30,13 @@ export async function POST(request: Request) {
 
     const database = getD1();
     await ensureSchema(database);
+    const budget = await claimEmailSendBudget(database, request, "contact-forward", email);
+    if (!budget.ok) {
+      return NextResponse.json(
+        { error: "Too many messages were sent from this address or network. Please try again later." },
+        { status: 429, headers: { "retry-after": String(budget.retryAfterSeconds) } },
+      );
+    }
     const now = Date.now();
     await database
       .prepare(`

@@ -168,6 +168,20 @@ test("local email preview completes the subscription verification flow", async (
   assert.deepEqual(await verify.json(), { ok: true });
 });
 
+test("email endpoints apply a normal-use sending budget", async () => {
+  const email = `rate-test-${Date.now()}@example.com`;
+  const payload = {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": "203.0.113.7" },
+    body: JSON.stringify({ email, locale: "en", topics: ["worldview"] }),
+  };
+  const first = await fetch(`${origin}/api/subscription/request-code`, payload);
+  assert.equal(first.status, 200);
+  const second = await fetch(`${origin}/api/subscription/request-code`, payload);
+  assert.equal(second.status, 429);
+  assert.ok(Number(second.headers.get("retry-after")) >= 60);
+});
+
 test("contact requests are recorded without requiring mail delivery", async () => {
   const response = await fetch(`${origin}/api/contact`, {
     method: "POST",

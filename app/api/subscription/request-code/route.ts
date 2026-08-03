@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   createVerificationCode,
+  claimEmailSendBudget,
   ensureSchema,
   getD1,
   hashVerificationCode,
@@ -30,7 +31,18 @@ export async function POST(request: Request) {
     if (latest && now - latest.requested_at < 60_000) {
       return NextResponse.json(
         { error: "A code was sent recently. Please wait one minute." },
-        { status: 429 },
+        {
+          status: 429,
+          headers: { "retry-after": String(Math.ceil((60_000 - (now - latest.requested_at)) / 1_000)) },
+        },
+      );
+    }
+
+    const budget = await claimEmailSendBudget(database, request, "subscription-code", email);
+    if (!budget.ok) {
+      return NextResponse.json(
+        { error: "Too many verification emails were requested. Please try again later." },
+        { status: 429, headers: { "retry-after": String(budget.retryAfterSeconds) } },
       );
     }
 
