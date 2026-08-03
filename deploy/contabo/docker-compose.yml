@@ -48,6 +48,23 @@ services:
       retries: 3
       start_period: 5s
 
+  tunnel:
+    image: cloudflare/cloudflared:2026.7.3
+    container_name: gripsky-tunnel
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    command:
+      - tunnel
+      - run
+      - --token-file
+      - /run/secrets/tunnel-token
+    volumes:
+      - /srv/gripsky-tunnel/token:/run/secrets/tunnel-token:ro
+    networks:
+      - gripsky-net
+
 networks:
   gripsky-net:
     external: true
