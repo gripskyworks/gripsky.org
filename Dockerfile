@@ -15,6 +15,9 @@ ENV NODE_ENV=production \
     GRIPSKY_DB_PATH=/app/data/gripsky.sqlite
 
 WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+
 COPY --from=build /app/dist/standalone/ ./
 COPY server-selfhost.mjs ./server-selfhost.mjs
 

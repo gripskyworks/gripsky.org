@@ -1,4 +1,4 @@
-import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
+import type { SESv2Client } from "@aws-sdk/client-sesv2";
 import { getRuntimeEnv } from "./runtime-env";
 import type { D1DatabaseLike } from "./runtime-env";
 
@@ -130,7 +130,21 @@ export async function hashVerificationCode(email: string, code: string): Promise
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-function sesClient(): { client: SESv2Client; from: string } | null {
+type SesModule = typeof import("@aws-sdk/client-sesv2");
+
+const sesModuleName = ["@aws-sdk", "client-sesv2"].join("/");
+let sesModulePromise: Promise<SesModule> | null = null;
+
+function loadSesModule(): Promise<SesModule> {
+  sesModulePromise ??= import(/* @vite-ignore */ sesModuleName) as Promise<SesModule>;
+  return sesModulePromise;
+}
+
+async function sesClient(): Promise<{
+  client: SESv2Client;
+  from: string;
+  SendEmailCommand: SesModule["SendEmailCommand"];
+} | null> {
   const values = workerEnv();
   if (
     !values.AWS_SES_REGION ||
@@ -141,6 +155,8 @@ function sesClient(): { client: SESv2Client; from: string } | null {
     return null;
   }
 
+  const { SESv2Client, SendEmailCommand } = await loadSesModule();
+
   return {
     client: new SESv2Client({
       region: values.AWS_SES_REGION,
@@ -150,6 +166,7 @@ function sesClient(): { client: SESv2Client; from: string } | null {
       },
     }),
     from: values.SES_FROM_EMAIL,
+    SendEmailCommand,
   };
 }
 
@@ -158,14 +175,14 @@ export async function sendVerificationEmail(
   code: string,
   locale: "zh" | "en",
 ): Promise<"sent" | "preview"> {
-  const ses = sesClient();
+  const ses = await sesClient();
   if (!ses) {
     if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") return "preview";
     throw new Error("SES is not configured.");
   }
 
   const isZh = locale === "zh";
-  await ses.client.send(new SendEmailCommand({
+  await ses.client.send(new ses.SendEmailCommand({
     FromEmailAddress: ses.from,
     Destination: { ToAddresses: [email] },
     Content: {
@@ -192,11 +209,11 @@ export async function forwardContactRequest(input: {
   brief: string;
   locale: "zh" | "en";
 }): Promise<boolean> {
-  const ses = sesClient();
+  const ses = await sesClient();
   const inbox = workerEnv().SERVICE_INBOX_EMAIL;
   if (!ses || !inbox) return false;
 
-  await ses.client.send(new SendEmailCommand({
+  await ses.client.send(new ses.SendEmailCommand({
     FromEmailAddress: ses.from,
     Destination: { ToAddresses: [inbox] },
     ReplyToAddresses: [input.email],
