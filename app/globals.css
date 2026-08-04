@@ -2341,7 +2341,7 @@ button {
 
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-  color: #4e5657;
+  color: var(--muted-dark);
 }
 
 .subscription-form fieldset {
