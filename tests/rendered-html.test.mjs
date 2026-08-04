@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { after, before, test } from "node:test";
 
 const port = 4_300 + (process.pid % 200);
@@ -61,6 +62,7 @@ test("server-renders the Chinese homepage", async () => {
   const html = await response.text();
   assert.match(html, /世界观落成技能/);
   assert.match(html, /data-locale="zh"/);
+  assert.match(html, /class="site-shell"[^>]*lang="zh-CN"/);
   assert.match(html, /data-theme="paper"/);
   assert.match(html, /世界观落成技能。<\/span>/);
   assert.match(html, /仍然归你掌握。<\/em>/);
@@ -72,6 +74,42 @@ test("server-renders the Chinese homepage", async () => {
   assert.match(html, /从正在发生的事开始/);
   assert.match(html, /href="\/zh\/skills\/catalog"/);
   assert.match(html, /<title>GripSky — 开放世界观、技能体系与自托管<\/title>/i);
+});
+
+test("bilingual deep routes publish canonical and reciprocal language links", async () => {
+  for (const [pathname, canonical] of [
+    ["/skills/catalog", "https://gripsky.org/skills/catalog"],
+    ["/zh/skills/catalog", "https://gripsky.org/zh/skills/catalog"],
+  ]) {
+    const response = await render(pathname);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, new RegExp(`rel="canonical" href="${canonical}"`));
+    assert.match(html, /hrefLang="en" href="https:\/\/gripsky\.org\/skills\/catalog"/);
+    assert.match(html, /hrefLang="zh-CN" href="https:\/\/gripsky\.org\/zh\/skills\/catalog"/);
+  }
+});
+
+test("search and install icons keep their declared pixel sizes", () => {
+  const pngSize = (pathname) => {
+    const file = readFileSync(new URL(pathname, import.meta.url));
+    return [file.readUInt32BE(16), file.readUInt32BE(20)];
+  };
+
+  assert.deepEqual(pngSize("../public/icon-48.png"), [48, 48]);
+  assert.deepEqual(pngSize("../public/icon-96.png"), [96, 96]);
+  assert.deepEqual(pngSize("../public/icon-192.png"), [192, 192]);
+  assert.deepEqual(pngSize("../public/icon-512.png"), [512, 512]);
+
+  const favicon = readFileSync(new URL("../public/favicon.ico", import.meta.url));
+  const iconCount = favicon.readUInt16LE(4);
+  const icoSizes = Array.from({ length: iconCount }, (_, index) => {
+    const offset = 6 + index * 16;
+    const width = favicon.readUInt8(offset) || 256;
+    const height = favicon.readUInt8(offset + 1) || 256;
+    return [width, height];
+  });
+  assert.ok(icoSizes.some(([width, height]) => width === 48 && height === 48));
 });
 
 test("exposes crawl and install metadata", async () => {

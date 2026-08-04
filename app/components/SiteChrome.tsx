@@ -7,6 +7,14 @@ import { Locale, localPath, navGroups, tx } from "../lib/site-data";
 
 type ThemeId = "paper" | "orbit" | "retro" | "liquid" | "tide";
 
+const themeEnvironment: Record<ThemeId, { colorScheme: "light" | "dark"; themeColor: string }> = {
+  paper: { colorScheme: "light", themeColor: "#eeeae0" },
+  orbit: { colorScheme: "dark", themeColor: "#06090b" },
+  retro: { colorScheme: "light", themeColor: "#c9c8bd" },
+  liquid: { colorScheme: "light", themeColor: "#cdd9e4" },
+  tide: { colorScheme: "dark", themeColor: "#173b3a" },
+};
+
 const themeOptions: Array<{
   id: ThemeId;
   label: { en: string; zh: string };
@@ -62,6 +70,13 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
   }, [locale]);
+
+  useEffect(() => {
+    const environment = themeEnvironment[theme];
+    document.documentElement.style.colorScheme = environment.colorScheme;
+    document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+      ?.setAttribute("content", environment.themeColor);
+  }, [theme]);
 
   useEffect(() => {
     const stored = window.localStorage.getItem("gripsky-theme-v2");
@@ -141,7 +156,12 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="site-shell" data-locale={locale} data-theme={theme}>
+    <div
+      className="site-shell"
+      data-locale={locale}
+      data-theme={theme}
+      lang={locale === "zh" ? "zh-CN" : "en"}
+    >
       <div className="theme-backdrop" aria-hidden="true">
         <span className="backdrop-shape shape-one" />
         <span className="backdrop-shape shape-two" />

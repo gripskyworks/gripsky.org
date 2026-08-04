@@ -36,6 +36,9 @@ for (const theme of ["paper", "orbit", "retro", "liquid", "tide"]) {
       const ratio = contrast(background, colorFrom(block, token));
       assert.ok(ratio >= 4.5, `${theme} --${token} contrast is ${ratio.toFixed(2)}:1`);
     }
+
+    const sourceRatio = contrast(colorFrom(block, "source-bg"), colorFrom(block, "source-muted"));
+    assert.ok(sourceRatio >= 4.5, `${theme} source text contrast is ${sourceRatio.toFixed(2)}:1`);
   });
 }
 
