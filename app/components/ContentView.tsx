@@ -22,6 +22,16 @@ const serviceRoutes = [
   ["dedicated", "Dedicated stewardship", "专属共建"],
 ] as const;
 
+function pageFamily(path: string) {
+  if (path.startsWith("/worldview")) return "worldview";
+  if (path.startsWith("/skills")) return "skills";
+  if (path.startsWith("/body")) return "body";
+  if (path.startsWith("/research")) return "research";
+  if (path.startsWith("/updates")) return "updates";
+  if (path.startsWith("/services")) return "services";
+  return "identity";
+}
+
 export function ContentView({
   locale,
   path,
@@ -45,7 +55,7 @@ export function ContentView({
   const isContribute = path === "/research/contribute";
 
   return (
-    <main className="content-main">
+    <main className="content-main" data-page-family={pageFamily(path)}>
       <section className="content-hero">
         <div className="content-orbit" aria-hidden="true">
           <span />
@@ -92,11 +102,11 @@ export function ContentView({
         <section className="contact-options">
           <div className="github-contact">
             <span>PUBLIC / GITHUB</span>
-            <h2>{locale === "zh" ? "公开贡献走 GitHub" : "Public work goes through GitHub"}</h2>
+            <h2>{locale === "zh" ? "公开的工作，留在公开处。" : "Keep public work in public."}</h2>
             <p>
               {locale === "zh"
-                ? "概念修正、来源核验、实现实验和公开文档，请提交到 worldview 仓库。"
-                : "Use the worldview repository for conceptual corrections, source review, implementation experiments and public documentation."}
+                ? "概念修正、来源核验、实现实验和公开文档，都在 worldview 仓库留下来源与讨论。"
+                : "Conceptual corrections, source review, implementation experiments and public documentation keep their history in the worldview repository."}
             </p>
             <a href={GITHUB_ISSUES} target="_blank" rel="noreferrer">
               {locale === "zh" ? "打开 GitHub Issues" : "Open GitHub Issues"}
@@ -124,8 +134,8 @@ export function ContentView({
             <h2>weakdreamer/worldview</h2>
             <p>
               {locale === "zh"
-                ? "已脱敏的世界观、四观推导、主体系统与 GripSky 公开演化记录。"
-                : "Desensitized worldview, the four-view chain, subject systems and GripSky’s public history."}
+                ? "这里保存经过脱敏的世界观、四观推导、主体系统，以及 GripSky 一路公开留下的变化。"
+                : "The repository holds the desensitized worldview, its four-view chain, subject-system work and GripSky’s public history."}
             </p>
           </div>
           <a href={GITHUB_WORLDVIEW} target="_blank" rel="noreferrer">
@@ -138,11 +148,11 @@ export function ContentView({
         <section className="external-source-card">
           <div>
             <span>CONTRIBUTE / GITHUB</span>
-            <h2>{locale === "zh" ? "从一个有边界的问题开始" : "Start with a bounded issue"}</h2>
+            <h2>{locale === "zh" ? "先把问题的边界说清楚。" : "Begin with the edge of the problem."}</h2>
             <p>
               {locale === "zh"
-                ? "说明受影响层、现有证据、建议变化和公开边界。"
-                : "State the affected layer, current evidence, proposed change and public boundary."}
+                ? "写下受影响的层级、手里的证据、希望发生的变化，以及哪些内容可以公开。"
+                : "Name the affected layer, the evidence at hand, the change you want and what may remain public."}
             </p>
           </div>
           <a href={GITHUB_ISSUES} target="_blank" rel="noreferrer">
@@ -218,7 +228,7 @@ function ReleaseIndex({ locale }: { locale: Locale }) {
 
 function SkillDetail({ locale, skill }: { locale: Locale; skill: SkillDefinition }) {
   return (
-    <main className="content-main">
+    <main className="content-main" data-page-family="skills">
       <section className="content-hero skill-detail-hero">
         <div className="content-heading">
           <p className="eyebrow">{skill.number} / {tx(skill.kind, locale)}</p>
@@ -240,8 +250,8 @@ function SkillDetail({ locale, skill }: { locale: Locale; skill: SkillDefinition
           <span>{locale === "zh" ? "运行边界" : "Runtime boundary"}</span>
           <strong>
             {locale === "zh"
-              ? "设备参数、凭据和当前状态不进入公开定义"
-              : "Device parameters, credentials and current state stay outside the public definition"}
+              ? "公开定义不携带设备参数、凭据和眼下的运行状态"
+              : "The public definition travels without device parameters, credentials or current operating state"}
           </strong>
         </div>
       </section>
@@ -249,18 +259,18 @@ function SkillDetail({ locale, skill }: { locale: Locale; skill: SkillDefinition
         <article>
           <span>01</span>
           <div>
-            <h2>{locale === "zh" ? "技能是什么" : "What the skill is"}</h2>
+            <h2>{locale === "zh" ? "它留下什么" : "What remains"}</h2>
             <p>
               {locale === "zh"
-                ? "技能是可重复调用的能力结构，不是一次运行产生的文档、数据或动作痕迹。"
-                : "A skill is a callable capability structure, not the document, data or action trace produced by one run."}
+                ? "一次运行会留下文档、数据和动作痕迹；技能留下的是下一次仍能调用、检查和修正的能力。"
+                : "A run leaves documents, data and traces of action. The skill is what can still be called, checked and revised next time."}
             </p>
           </div>
         </article>
         <article>
           <span>02</span>
           <div>
-            <h2>{locale === "zh" ? "公开要求" : "Release requirements"}</h2>
+            <h2>{locale === "zh" ? "公开时必须带上" : "What travels with a release"}</h2>
             <p>
               {locale === "zh"
                 ? "公开版本需要说明输入、输出、依赖、边界、验收、失败方式、升级和移除影响。"
@@ -271,7 +281,7 @@ function SkillDetail({ locale, skill }: { locale: Locale; skill: SkillDefinition
         <article>
           <span>03</span>
           <div>
-            <h2>{locale === "zh" ? "下一步" : "Next step"}</h2>
+            <h2>{locale === "zh" ? "接下来" : "What comes next"}</h2>
             <p>
               {skill.source === "public"
                 ? locale === "zh"
@@ -301,7 +311,7 @@ function NotFound({ locale }: { locale: Locale }) {
   return (
     <main className="not-found">
       <span>404</span>
-      <h1>{locale === "zh" ? "这个页面尚未进入公开体系。" : "This page is not in the public system."}</h1>
+      <h1>{locale === "zh" ? "这里还没有公开页面。" : "There is no public page here yet."}</h1>
       <Link href={localPath(locale, "/")}>
         {locale === "zh" ? "返回首页" : "Return home"}
       </Link>

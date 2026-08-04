@@ -6,7 +6,7 @@
   --ink-raised: #d9d2c4;
   --paper: #151817;
   --muted: #505957;
-  --muted-dark: #69726f;
+  --muted-dark: #596260;
   --acid: #176d5d;
   --cyan: #257c91;
   --violet: #7056a8;
@@ -91,7 +91,7 @@ button {
   --ink-raised: #10171b;
   --paper: #f1f3ec;
   --muted: #98a4a5;
-  --muted-dark: #657275;
+  --muted-dark: #7d898b;
   --acid: #d7ff57;
   --cyan: #66eff8;
   --violet: #a497ff;
@@ -118,7 +118,7 @@ button {
   --ink-raised: #f0efe6;
   --paper: #111111;
   --muted: #353535;
-  --muted-dark: #565656;
+  --muted-dark: #474747;
   --acid: #0000aa;
   --cyan: #007c76;
   --violet: #710071;
@@ -145,7 +145,7 @@ button {
   --ink-raised: #d9d2c4;
   --paper: #151817;
   --muted: #505957;
-  --muted-dark: #69726f;
+  --muted-dark: #596260;
   --acid: #176d5d;
   --cyan: #257c91;
   --violet: #7056a8;
@@ -170,14 +170,14 @@ button {
   --ink-raised: #e8e7ee;
   --paper: #10233b;
   --muted: #435a70;
-  --muted-dark: #60758a;
-  --acid: #135cc6;
+  --muted-dark: #435a70;
+  --acid: #0e52b5;
   --cyan: #087f91;
   --violet: #6750a4;
   --line: rgba(255, 255, 255, 0.48);
   --line-strong: rgba(255, 255, 255, 0.76);
   --panel: rgba(255, 255, 255, 0.24);
-  --accent-rgb: 19 92 198;
+  --accent-rgb: 14 82 181;
   --header-bg: linear-gradient(180deg, rgba(246, 250, 255, 0.58), rgba(232, 240, 249, 0.35));
   --menu-bg: rgba(233, 240, 248, 0.88);
   --nav-panel-bg: rgba(244, 249, 255, 0.68);
@@ -197,7 +197,7 @@ button {
   --ink-raised: #214846;
   --paper: #f1eadc;
   --muted: #bcc8bf;
-  --muted-dark: #8da29a;
+  --muted-dark: #9daea5;
   --acid: #e7b86f;
   --cyan: #79c9c0;
   --violet: #c4a9c8;
@@ -1744,7 +1744,36 @@ button {
 }
 
 .content-main {
+  --family-rgb: var(--accent-rgb);
   min-height: 100vh;
+}
+
+.content-main[data-page-family="worldview"] {
+  --family-rgb: 151 105 65;
+}
+
+.content-main[data-page-family="skills"] {
+  --family-rgb: var(--accent-rgb);
+}
+
+.content-main[data-page-family="body"] {
+  --family-rgb: 37 124 145;
+}
+
+.content-main[data-page-family="research"] {
+  --family-rgb: 112 86 168;
+}
+
+.content-main[data-page-family="updates"] {
+  --family-rgb: 45 126 112;
+}
+
+.content-main[data-page-family="services"] {
+  --family-rgb: 172 103 55;
+}
+
+.content-main[data-page-family="identity"] {
+  --family-rgb: 91 105 105;
 }
 
 .content-hero {
@@ -1753,6 +1782,16 @@ button {
   min-height: 650px;
   padding: 160px max(10vw, 110px) 90px;
   position: relative;
+}
+
+.content-hero::before {
+  background:
+    radial-gradient(circle at 78% 42%, rgb(var(--family-rgb) / 0.1), transparent 27rem),
+    linear-gradient(115deg, transparent 54%, rgb(var(--family-rgb) / 0.035));
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
 }
 
 .content-hero::after {
@@ -1857,6 +1896,93 @@ button {
   position: absolute;
   top: calc(50% - 5px);
   width: 10px;
+}
+
+[data-page-family="worldview"] .content-orbit {
+  opacity: 0.48;
+  transform: translate3d(var(--motion-x-reverse), var(--motion-y-reverse), 0) rotate(-12deg) scaleX(1.28);
+}
+
+[data-page-family="worldview"] .content-orbit span:nth-child(2) {
+  border-color: rgb(var(--family-rgb) / 0.3);
+  inset: 54px;
+  transform: scaleY(0.42) rotate(38deg);
+}
+
+[data-page-family="skills"] .content-orbit span {
+  border-radius: 3px;
+}
+
+[data-page-family="skills"] .content-orbit span:first-child {
+  background:
+    linear-gradient(var(--scene-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--scene-grid) 1px, transparent 1px);
+  background-size: 38px 38px;
+}
+
+[data-page-family="skills"] .content-orbit span:nth-child(2) {
+  border-color: rgb(var(--family-rgb) / 0.32);
+  transform: rotate(45deg) scale(0.58);
+}
+
+[data-page-family="body"] .content-orbit {
+  opacity: 0.66;
+}
+
+[data-page-family="body"] .content-orbit span:nth-child(2) {
+  border-color: rgb(var(--family-rgb) / 0.36);
+  box-shadow: 0 0 48px rgb(var(--family-rgb) / 0.08);
+}
+
+[data-page-family="research"] .content-orbit span {
+  border-color: rgb(var(--family-rgb) / 0.34);
+  border-style: dashed;
+}
+
+[data-page-family="research"] .content-orbit span:nth-child(2) {
+  inset: 58px 94px;
+  transform: rotate(24deg);
+}
+
+[data-page-family="updates"] .content-orbit {
+  opacity: 0.5;
+  transform: translate3d(var(--motion-x-reverse), var(--motion-y-reverse), 0) scaleX(0.48);
+}
+
+[data-page-family="updates"] .content-orbit span:nth-child(2) {
+  border-color: rgb(var(--family-rgb) / 0.38);
+  inset: 42px;
+  transform: none;
+}
+
+[data-page-family="services"] .content-orbit span {
+  border-radius: 12%;
+  border-color: rgb(var(--family-rgb) / 0.27);
+  transform: rotate(8deg);
+}
+
+[data-page-family="services"] .content-orbit span:nth-child(2) {
+  transform: rotate(36deg) scale(0.58);
+}
+
+[data-page-family="identity"] .content-orbit {
+  opacity: 0.28;
+}
+
+.content-main[data-page-family] .content-sections {
+  background: linear-gradient(180deg, rgb(var(--family-rgb) / 0.025), transparent 22rem);
+}
+
+[data-page-family="services"] :is(.route-card-grid > a, .contact-form) {
+  border-top-color: rgb(var(--family-rgb) / 0.48);
+}
+
+[data-page-family="updates"] :is(.release-index article, .content-sections article) {
+  border-bottom-color: rgb(var(--family-rgb) / 0.22);
+}
+
+[data-page-family="research"] .content-sections article > span {
+  font-style: italic;
 }
 
 .content-sections {
@@ -2871,26 +2997,39 @@ button {
     0 18px 55px rgba(50, 80, 120, 0.16);
 }
 
-:is([data-theme="paper"], [data-theme="liquid"], [data-theme="retro"]) :is(
+.site-shell :is(
   .nav-group > a,
   .nav-panel a,
   .language-switch,
   .hero-intro,
+  .constellation-node,
+  .constellation-node span,
+  .constellation-node b,
+  .system-constellation > p,
   .section-title-row > p,
   .selfhost-copy > p,
   .relation-grid p,
+  .skill-row small,
   .skill-row > p,
   .skill-state,
+  .row-arrow,
+  .host-node,
   .release-list article > span,
   .release-list b,
+  .service-panel p,
   .content-heading > p:last-child,
   .status-pill,
   .content-sections p,
   .content-sections ul,
   .related-links > span,
+  .catalog-grid small,
   .catalog-grid > a > p,
   .catalog-grid dt,
   .catalog-grid dd,
+  .skill-facts span,
+  .release-index article > span,
+  .release-index time,
+  .release-index b,
   .form-heading p,
   .form-field > span,
   .subscription-form legend,
@@ -2898,6 +3037,7 @@ button {
   .form-privacy,
   .form-back,
   .form-complete p,
+  .verification-address span,
   .source-band p,
   .footer-brand p,
   .footer-nav span,
@@ -2907,12 +3047,11 @@ button {
   color: var(--muted);
 }
 
-:is([data-theme="paper"], [data-theme="liquid"], [data-theme="retro"])
-  :is(.subscribe-panel, .github-contact, .external-source-card) p {
+.site-shell :is(.subscribe-panel, .github-contact, .external-source-card) p {
   color: var(--ink);
 }
 
-:is([data-theme="paper"], [data-theme="liquid"], [data-theme="retro"]) .constellation-grid {
+.site-shell .constellation-grid {
   border-color: var(--line);
 }
 

@@ -48,8 +48,8 @@ test("server-renders the English system homepage", async () => {
   assert.match(html, /rel="icon" href="https:\/\/gripsky\.org\/favicon\.ico"/i);
   assert.match(html, /application\/ld\+json/i);
   assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
-  assert.match(html, /Worldview into skills/);
-  assert.match(html, /Three ways to use GripSky/);
+  assert.match(html, /Worldview becomes skill/);
+  assert.match(html, /Begin wherever the work is/);
   assert.match(html, /href="\/skills\/catalog"/);
   assert.match(html, /href="\/body\/self-host"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
@@ -59,17 +59,17 @@ test("server-renders the Chinese homepage", async () => {
   const response = await render("/zh");
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /世界观生成技能/);
+  assert.match(html, /世界观落成技能/);
   assert.match(html, /data-locale="zh"/);
   assert.match(html, /data-theme="paper"/);
-  assert.match(html, /世界观生成技能。<\/span>/);
-  assert.match(html, /外置信息身躯。<\/em>/);
+  assert.match(html, /世界观落成技能。<\/span>/);
+  assert.match(html, /仍然归你掌握。<\/em>/);
   assert.match(html, /亮色/);
   assert.match(html, /暗轨/);
   assert.match(html, /古早网页/);
   assert.match(html, /液态玻璃/);
   assert.match(html, /墨青/);
-  assert.match(html, /使用 GripSky 的三种方式/);
+  assert.match(html, /从正在发生的事开始/);
   assert.match(html, /href="\/zh\/skills\/catalog"/);
   assert.match(html, /<title>GripSky — 开放世界观、技能体系与自托管<\/title>/i);
 });
@@ -97,7 +97,7 @@ test("exposes crawl and install metadata", async () => {
 test("real deep routes render their own content", async () => {
   const catalog = await render("/skills/catalog");
   assert.equal(catalog.status, 200);
-  assert.match(await catalog.text(), /Public definitions and release status/);
+  assert.match(await catalog.text(), /What exists, what is open and what comes next/);
 
   const selfHost = await render("/zh/body/self-host");
   assert.equal(selfHost.status, 200);
@@ -111,7 +111,7 @@ test("real deep routes render their own content", async () => {
 test("unknown routes return the site 404", async () => {
   const response = await render("/not-a-real-gripsky-route");
   assert.equal(response.status, 404);
-  assert.match(await response.text(), /This page is not in the public system/);
+  assert.match(await response.text(), /There is no public page here yet/);
 });
 
 test("every discoverable internal link resolves", async () => {
@@ -183,12 +183,14 @@ test("email endpoints apply a normal-use sending budget", async () => {
 });
 
 test("contact requests are recorded without requiring mail delivery", async () => {
+  const email = `contact-test-${Date.now()}@example.com`;
+  const testIp = `198.51.100.${(Date.now() % 200) + 1}`;
   const response = await fetch(`${origin}/api/contact`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", "cf-connecting-ip": testIp },
     body: JSON.stringify({
       name: "Local verification",
-      email: "contact-test@example.com",
+      email,
       kind: "system-design",
       brief: "This is a local request used to verify the complete form flow.",
       locale: "en",

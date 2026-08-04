@@ -4,8 +4,8 @@ export default function NotFound() {
   return (
     <main className="not-found">
       <span>404</span>
-      <h1>This page is not in the public system.</h1>
-      <p>这个页面尚未进入公开体系。</p>
+      <h1>There is no public page here yet.</h1>
+      <p>这里还没有公开页面。</p>
       <Link href="/">Return home / 返回首页</Link>
     </main>
   );

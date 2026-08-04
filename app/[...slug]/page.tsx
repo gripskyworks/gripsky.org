@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     : content
       ? tx(content.intro, locale)
       : locale === "zh"
-        ? "这个页面尚未进入公开体系。"
-        : "This page is not in the public system.";
+        ? "这里还没有公开页面。"
+        : "There is no public page here yet.";
 
   const englishPath = path;
   const chinesePath = `/zh${path}`;

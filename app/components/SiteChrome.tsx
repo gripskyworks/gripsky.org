@@ -60,6 +60,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const currentTheme = themeOptions.find((option) => option.id === theme) ?? themeOptions[0];
 
   useEffect(() => {
+    document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
+  }, [locale]);
+
+  useEffect(() => {
     const stored = window.localStorage.getItem("gripsky-theme-v2");
     const matched = themeOptions.find((option) => option.id === stored);
     if (!matched) return;
@@ -276,8 +280,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               <strong>GRIPSKY</strong>
               <p>
                 {locale === "zh"
-                  ? "开放世界观、技能体系与自托管实现。"
-                  : "Open worldview, skills and self-hosted implementations."}
+                  ? "让世界观长成技能，让技能留在自己手里。"
+                  : "Worldview into skill. Skill that stays yours."}
               </p>
             </div>
           </div>

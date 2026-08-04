@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s · GripSky",
   },
   description:
-    "GripSky is an open personal-systems project maintained by Lin Guan: worldview, skill systems, self-hosting, deployment and external information-body stewardship.",
+    "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term system stewardship.",
   applicationName: "GripSky",
   authors: [{ name: "Lin Guan", url: "https://linguan.online" }],
   creator: "Lin Guan",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     alternateLocale: ["zh_CN"],
     title: "GripSky — Open worldview, skill systems and self-hosting",
     description:
-      "An open personal-systems project: worldview, public skills, self-hosting and managed stewardship.",
+      "An evolving worldview, public skills, self-hosting paths and systems built to remain under their owner’s control.",
     images: [
       {
         url: "/og-system.png",
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "GripSky — Open worldview and skill systems",
     description:
-      "Worldview, public skills, self-hosting and managed stewardship.",
+      "Worldview into skill. Skill that stays yours.",
     images: ["/og-system.png"],
   },
 };
@@ -116,7 +116,7 @@ export default function RootLayout({
         },
         image: "https://gripsky.org/og-system.png",
         description:
-          "An open personal-systems project publishing worldview, skill systems and self-hosted paths for an external information body.",
+          "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term stewardship.",
         founder: {
           "@type": "Person",
           name: "Lin Guan",

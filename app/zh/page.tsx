@@ -4,7 +4,7 @@ import { HomeView } from "../components/HomeView";
 export const metadata: Metadata = {
   title: { absolute: "GripSky — 开放世界观、技能体系与自托管" },
   description:
-    "GripSky 是临观维护的开放个人系统项目：公开世界观与技能体系，提供公共技能自托管路径，并承接部署、定制与外置信息身躯维护。",
+    "GripSky 公开临观仍在修订的世界观和由此生长的技能，保留开放源、自托管路径，并长期维护真正进入现实的体系。",
   keywords: [
     "GripSky",
     "临观",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     alternateLocale: ["en_US"],
     title: "GripSky — 开放世界观、技能体系与自托管",
     description:
-      "由临观维护的开放个人系统项目：世界观、公共技能、自托管与托管服务。",
+      "让世界观长成技能，让技能留在自己手里。",
     images: [
       {
         url: "/og-system.png",
