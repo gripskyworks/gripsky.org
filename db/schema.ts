@@ -6,6 +6,7 @@ export const subscriptionCodes = sqliteTable(
     id: integer("id").primaryKey({ autoIncrement: true }),
     email: text("email").notNull(),
     codeHash: text("code_hash").notNull(),
+    intent: text("intent").notNull().default("subscribe"),
     locale: text("locale").notNull().default("zh"),
     topics: text("topics").notNull(),
     expiresAt: integer("expires_at").notNull(),

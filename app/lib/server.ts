@@ -12,6 +12,7 @@ export const SUBSCRIPTION_TOPICS = [
 ] as const;
 
 export type SubscriptionTopic = (typeof SUBSCRIPTION_TOPICS)[number];
+export type SubscriptionIntent = "subscribe" | "unsubscribe";
 
 function workerEnv() {
   return getRuntimeEnv();
@@ -36,6 +37,7 @@ export async function ensureSchema(database: D1DatabaseLike): Promise<void> {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL,
             code_hash TEXT NOT NULL,
+            intent TEXT NOT NULL DEFAULT 'subscribe',
             locale TEXT NOT NULL DEFAULT 'zh',
             topics TEXT NOT NULL,
             expires_at INTEGER NOT NULL,
@@ -125,6 +127,7 @@ export async function ensureSchema(database: D1DatabaseLike): Promise<void> {
       await addColumn(database, "ALTER TABLE subscribers ADD COLUMN unsubscribed_at INTEGER");
       await addColumn(database, "ALTER TABLE subscribers ADD COLUMN suppression_reason TEXT");
       await addColumn(database, "ALTER TABLE email_rate_events ADD COLUMN claim_id TEXT");
+      await addColumn(database, "ALTER TABLE subscription_codes ADD COLUMN intent TEXT NOT NULL DEFAULT 'subscribe'");
 
       await database.batch([
         database.prepare(
@@ -177,6 +180,10 @@ export function normalizeEmail(value: unknown): string | null {
 
 export function normalizeLocale(value: unknown): "zh" | "en" {
   return value === "en" ? "en" : "zh";
+}
+
+export function normalizeSubscriptionIntent(value: unknown): SubscriptionIntent {
+  return value === "unsubscribe" ? "unsubscribe" : "subscribe";
 }
 
 export function normalizeTopics(value: unknown): SubscriptionTopic[] {
@@ -491,6 +498,7 @@ export async function sendVerificationEmail(
   email: string,
   code: string,
   locale: "zh" | "en",
+  intent: SubscriptionIntent = "subscribe",
 ): Promise<"sent" | "preview"> {
   const ses = sesConfig();
   if (!ses) {
@@ -499,15 +507,21 @@ export async function sendVerificationEmail(
   }
 
   const isZh = locale === "zh";
-  const subject = isZh ? "GripSky 订阅验证码" : "GripSky subscription code";
+  const isUnsubscribe = intent === "unsubscribe";
+  const subject = isUnsubscribe
+    ? isZh ? "GripSky 退订验证码" : "GripSky unsubscribe code"
+    : isZh ? "GripSky 订阅验证码" : "GripSky subscription code";
+  const purpose = isUnsubscribe
+    ? isZh ? "用于解除 GripSky 更新订阅" : "to unsubscribe from GripSky updates"
+    : isZh ? "用于确认 GripSky 更新订阅" : "to confirm your GripSky update subscription";
   const text = isZh
-    ? `你的验证码是 ${code}，10 分钟内有效。若不是你发起的请求，请忽略此邮件。`
-    : `Your verification code is ${code}. It expires in 10 minutes. Ignore this email if you did not request it.`;
+    ? `你的验证码是 ${code}，${purpose}，10 分钟内有效。若不是你发起的请求，请忽略此邮件。`
+    : `Your verification code is ${code}, ${purpose}. It expires in 10 minutes. Ignore this email if you did not request it.`;
   const html = brandedEmailHtml(
     subject,
     isZh
-      ? `<p>你的验证码是：</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>10 分钟内有效。若不是你发起的请求，请忽略此邮件。</p>`
-      : `<p>Your verification code is:</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>It expires in 10 minutes. Ignore this email if you did not request it.</p>`,
+      ? `<p>你的验证码是：</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>${purpose}，10 分钟内有效。若不是你发起的请求，请忽略此邮件。</p>`
+      : `<p>Your verification code is:</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>Use it ${purpose}. It expires in 10 minutes. Ignore this email if you did not request it.</p>`,
   );
   await sendSesEmail({
     FromEmailAddress: fromEmailAddress(ses.from),

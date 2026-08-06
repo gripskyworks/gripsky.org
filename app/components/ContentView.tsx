@@ -13,7 +13,7 @@ import {
   tx,
 } from "../lib/site-data";
 import { ContactForm } from "./ContactForm";
-import { SubscribeForm } from "./SubscribeForm";
+import { SubscriptionCenter } from "./SubscribeForm";
 
 const serviceRoutes = [
   ["deployment", "Installation & deployment", "安装部署"],
@@ -57,6 +57,33 @@ export function ContentView({
   const isServices = path === "/services";
   const isSource = path === "/worldview/source";
   const isContribute = path === "/research/contribute";
+
+  if (isSubscribe) {
+    return (
+      <main className="content-main subscription-page" data-page-family="updates">
+        <section className="subscription-page-layout">
+          <div className="subscription-intro">
+            <div className="subscription-intro-orbit" aria-hidden="true"><span /><i /></div>
+            <p className="eyebrow">{tx(content.eyebrow, locale)}</p>
+            <h1>{tx(content.title, locale)}</h1>
+            <p className="subscription-lead">{tx(content.intro, locale)}</p>
+            <div className="subscription-notes">
+              {content.sections.map((section, index) => (
+                <article key={tx(section.title, locale)}>
+                  <span>0{index + 1}</span>
+                  <div>
+                    <h2>{tx(section.title, locale)}</h2>
+                    <p>{tx(section.body, locale)}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+          <SubscriptionCenter locale={locale} />
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="content-main" data-page-family={pageFamily(path)}>
@@ -118,11 +145,6 @@ export function ContentView({
 
       {isCatalog && <SkillCatalog locale={locale} />}
       {isReleases && <ReleaseIndex locale={locale} />}
-      {isSubscribe && (
-        <section className="form-section">
-          <SubscribeForm locale={locale} />
-        </section>
-      )}
       {isContact && (
         <section className="contact-options">
           <div className="github-contact">

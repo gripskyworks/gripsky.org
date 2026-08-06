@@ -12,6 +12,7 @@ import {
 type PendingCode = {
   id: number;
   code_hash: string;
+  intent: "subscribe" | "unsubscribe";
   locale: string;
   topics: string;
   expires_at: number;
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
     await ensureSchema(database);
     const pending = await database
       .prepare(`
-        SELECT id, code_hash, locale, topics, expires_at, attempts
+        SELECT id, code_hash, intent, locale, topics, expires_at, attempts
         FROM subscription_codes
         WHERE email = ? AND consumed_at IS NULL
         ORDER BY requested_at DESC
@@ -55,6 +56,36 @@ export async function POST(request: Request) {
         .bind(pending.id)
         .run();
       return NextResponse.json({ error: "The code is incorrect." }, { status: 400 });
+    }
+
+    if (pending.intent === "unsubscribe") {
+      const subscriber = await database
+        .prepare("SELECT id, status FROM subscribers WHERE email = ? LIMIT 1")
+        .bind(email)
+        .first<{ id: number; status: string }>();
+      const statements = [
+        database
+          .prepare("UPDATE subscription_codes SET consumed_at = ? WHERE id = ?")
+          .bind(now, pending.id),
+      ];
+      if (subscriber) {
+        statements.push(
+          database
+            .prepare(`
+              UPDATE subscribers
+              SET topics = '[]', status = 'unsubscribed', updated_at = ?,
+                  unsubscribed_at = ?, suppression_reason = 'self-service'
+              WHERE id = ?
+            `)
+            .bind(now, now, subscriber.id),
+        );
+      }
+      await database.batch(statements);
+      return NextResponse.json({
+        ok: true,
+        action: "unsubscribed",
+        wasSubscribed: subscriber?.status === "verified",
+      });
     }
 
     const publicId = createSubscriberPublicId();

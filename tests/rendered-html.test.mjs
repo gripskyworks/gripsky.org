@@ -173,7 +173,14 @@ test("real deep routes render their own content", async () => {
 
   const subscribe = await render("/updates/subscribe");
   assert.equal(subscribe.status, 200);
-  assert.match(await subscribe.text(), /Enter an email, choose topics/);
+  const subscribeHtml = await subscribe.text();
+  assert.match(subscribeHtml, /Subscribe \/ update topics/);
+  assert.match(subscribeHtml, /Unsubscribe/);
+  assert.match(subscribeHtml, /subscription-page-layout/);
+
+  const chineseSubscribe = await render("/zh/updates/subscribe");
+  assert.equal(chineseSubscribe.status, 200);
+  assert.match(await chineseSubscribe.text(), /如果邮箱客户端没有显示退订入口/);
 });
 
 test("unknown routes return the site 404", async () => {
@@ -297,6 +304,59 @@ test("subscription preferences are noindex and reject missing tokens", async () 
 
   const unauthorized = await fetch(`${origin}/api/internal/updates/process`, { method: "POST" });
   assert.equal(unauthorized.status, 404);
+});
+
+test("verified subscribers can self-unsubscribe with an email code", async () => {
+  const email = `self-unsubscribe-${Date.now()}@example.com`;
+  const subscribeRequest = await fetch(`${origin}/api/subscription/request-code`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      email,
+      locale: "zh",
+      intent: "subscribe",
+      topics: ["worldview", "research"],
+    }),
+  });
+  assert.equal(subscribeRequest.status, 200);
+  const subscribeRequestBody = await subscribeRequest.json();
+
+  const subscribeVerify = await fetch(`${origin}/api/subscription/verify`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, code: subscribeRequestBody.previewCode }),
+  });
+  assert.equal(subscribeVerify.status, 200);
+  const subscribeVerifyBody = await subscribeVerify.json();
+
+  const unsubscribeRequest = await fetch(`${origin}/api/subscription/request-code`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, locale: "zh", intent: "unsubscribe" }),
+  });
+  assert.equal(unsubscribeRequest.status, 200);
+  const unsubscribeRequestBody = await unsubscribeRequest.json();
+  assert.match(unsubscribeRequestBody.previewCode, /^\d{6}$/);
+
+  const unsubscribeVerify = await fetch(`${origin}/api/subscription/verify`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, code: unsubscribeRequestBody.previewCode }),
+  });
+  assert.equal(unsubscribeVerify.status, 200);
+  assert.deepEqual(await unsubscribeVerify.json(), {
+    ok: true,
+    action: "unsubscribed",
+    wasSubscribed: true,
+  });
+
+  const preferences = await fetch(
+    `${origin}/api/subscription/preferences?token=${encodeURIComponent(subscribeVerifyBody.previewManageToken)}`,
+  );
+  assert.equal(preferences.status, 200);
+  const preferencesBody = await preferences.json();
+  assert.equal(preferencesBody.status, "unsubscribed");
+  assert.deepEqual(preferencesBody.topics, []);
 });
 
 test("email endpoints apply a normal-use sending budget", async () => {

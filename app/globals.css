@@ -2443,6 +2443,410 @@ button {
   font-size: 0.78rem;
 }
 
+/* Subscription center: a compact, self-service surface rather than a long form page. */
+.subscription-page {
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.subscription-page-layout {
+  align-items: center;
+  display: grid;
+  gap: clamp(38px, 5vw, 92px);
+  grid-template-columns: minmax(0, 0.9fr) minmax(520px, 1.1fr);
+  min-height: 100svh;
+  padding: clamp(112px, 12vh, 142px) max(6vw, 72px) clamp(34px, 5vh, 58px);
+  position: relative;
+}
+
+.subscription-page-layout::before {
+  background-image:
+    linear-gradient(var(--scene-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--scene-grid) 1px, transparent 1px);
+  background-size: 42px 42px;
+  content: "";
+  inset: 0;
+  mask-image: linear-gradient(90deg, black, rgba(0, 0, 0, 0.16) 72%, transparent);
+  pointer-events: none;
+  position: absolute;
+}
+
+.subscription-intro {
+  max-width: 650px;
+  position: relative;
+  z-index: 1;
+}
+
+.subscription-intro .eyebrow {
+  margin: 0 0 20px;
+}
+
+.subscription-intro h1 {
+  font-family: var(--display);
+  font-size: clamp(4rem, 7vw, 7.4rem);
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  line-height: 0.87;
+  margin: 0;
+  max-width: 7.3em;
+}
+
+[data-locale="zh"] .subscription-intro h1 {
+  font-size: clamp(3.4rem, 5.7vw, 6.15rem);
+  letter-spacing: -0.08em;
+  line-height: 0.94;
+}
+
+.subscription-lead {
+  color: var(--muted);
+  font-size: clamp(0.72rem, 0.88vw, 0.9rem);
+  line-height: 1.75;
+  margin: clamp(22px, 3vh, 34px) 0 0;
+  max-width: 46em;
+}
+
+.subscription-notes {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 0 24px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: clamp(24px, 4vh, 44px);
+}
+
+.subscription-notes article {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 11px;
+  grid-template-columns: 22px 1fr;
+  padding: 14px 0;
+}
+
+.subscription-notes article > span {
+  color: var(--acid);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.48rem;
+  padding-top: 3px;
+}
+
+.subscription-notes h2 {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.subscription-notes p {
+  color: var(--muted);
+  font-size: 0.56rem;
+  line-height: 1.55;
+  margin: 5px 0 0;
+}
+
+.subscription-intro-orbit {
+  border: 1px solid var(--scene-line);
+  border-radius: 50%;
+  height: 320px;
+  opacity: 0.72;
+  pointer-events: none;
+  position: absolute;
+  right: -110px;
+  top: -80px;
+  transform: rotate(-16deg);
+  width: 130px;
+  z-index: -1;
+}
+
+.subscription-intro-orbit::before,
+.subscription-intro-orbit::after {
+  border: 1px solid var(--scene-line);
+  border-radius: 50%;
+  content: "";
+  inset: 30px -46px;
+  position: absolute;
+}
+
+.subscription-intro-orbit::after {
+  inset: 64px -82px;
+}
+
+.subscription-intro-orbit span,
+.subscription-intro-orbit i {
+  background: var(--acid);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgb(var(--accent-rgb) / 0.32);
+  height: 7px;
+  position: absolute;
+  width: 7px;
+}
+
+.subscription-intro-orbit span {
+  right: -4px;
+  top: 74px;
+}
+
+.subscription-intro-orbit i {
+  bottom: 47px;
+  left: -4px;
+}
+
+.interactive-surface {
+  --pointer-x: 74%;
+  --pointer-y: 22%;
+  isolation: isolate;
+  position: relative;
+}
+
+.interactive-surface::before {
+  background: radial-gradient(circle 220px at var(--pointer-x) var(--pointer-y), var(--surface-glow), transparent 72%);
+  content: "";
+  inset: 0;
+  opacity: 0.85;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 180ms ease;
+  z-index: -1;
+}
+
+.subscription-center {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 1px solid var(--line);
+  box-shadow: 0 32px 90px rgba(7, 18, 17, 0.08);
+  min-height: 578px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.interactive-tabs {
+  background: rgb(var(--accent-rgb) / 0.035);
+  display: grid;
+  isolation: isolate;
+  position: relative;
+}
+
+.subscription-tabs {
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: 1fr 1fr;
+  padding: 6px;
+}
+
+.subscription-tab-indicator {
+  background: var(--acid);
+  bottom: 6px;
+  left: 6px;
+  position: absolute;
+  top: 6px;
+  transform: translateX(0);
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), background 220ms ease;
+  width: calc(50% - 6px);
+  z-index: -1;
+}
+
+.subscription-center[data-mode="unsubscribe"] .subscription-tab-indicator {
+  transform: translateX(100%);
+}
+
+.subscription-tabs button {
+  align-items: center;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.64rem;
+  gap: 13px;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 16px;
+  position: relative;
+  transition: color 190ms ease, transform 150ms ease;
+}
+
+.subscription-tabs button > span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.47rem;
+  opacity: 0.72;
+}
+
+.subscription-tabs button:hover:not(.active) {
+  color: var(--paper);
+  transform: translateY(-1px);
+}
+
+.subscription-tabs button:active {
+  transform: translateY(1px) scale(0.992);
+}
+
+.subscription-tabs button.active {
+  color: var(--ink);
+}
+
+.subscription-tabs button:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: -5px;
+}
+
+.subscription-form.compact {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  max-width: none;
+  padding: clamp(25px, 3vw, 38px);
+}
+
+.form-heading.compact {
+  gap: 17px;
+  grid-template-columns: 28px 1fr;
+  margin-bottom: 22px;
+  padding-bottom: 19px;
+}
+
+.form-heading.compact > span {
+  font-size: 0.49rem;
+  padding-top: 5px;
+}
+
+.form-heading.compact h2 {
+  font-size: clamp(1.8rem, 2.6vw, 2.8rem);
+}
+
+.form-heading.compact p {
+  margin-top: 8px;
+}
+
+.subscription-fields .form-field,
+.verification-fields .form-field {
+  margin-bottom: 19px;
+}
+
+.topic-grid.compact {
+  gap: 7px;
+}
+
+.topic-grid.compact label {
+  min-height: 43px;
+  padding: 8px 12px;
+  transition: background 180ms ease, border-color 180ms ease, transform 150ms ease;
+}
+
+.topic-grid.compact label:hover {
+  background: rgb(var(--accent-rgb) / 0.075);
+  border-color: rgb(var(--accent-rgb) / 0.48);
+  transform: translateY(-1px);
+}
+
+.topic-grid.compact label:active {
+  transform: translateY(1px);
+}
+
+.subscription-form.compact fieldset {
+  margin-bottom: 20px;
+}
+
+.unsubscribe-explanation {
+  align-items: start;
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 28px 1fr;
+  margin-bottom: 25px;
+  min-height: 128px;
+  padding: 28px 5px;
+}
+
+.unsubscribe-explanation > span {
+  color: var(--acid);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.unsubscribe-explanation p {
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.verification-fields {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 0.68fr;
+}
+
+.verification-fields .verification-address {
+  margin-bottom: 19px;
+}
+
+.verification-fields strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subscription-submit-row {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+}
+
+.subscription-submit-row .form-back {
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.subscription-fallback-note {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.54rem;
+  line-height: 1.55;
+  margin: 0 30px;
+  padding: 15px 0 17px;
+}
+
+.form-complete.compact {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  max-width: none;
+  min-height: 470px;
+  padding: clamp(38px, 5vw, 68px);
+}
+
+.form-complete.compact h2 {
+  font-size: clamp(2.4rem, 4vw, 4rem);
+}
+
+[data-theme="liquid"] .subscription-center {
+  backdrop-filter: blur(30px) saturate(1.45);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.12));
+  border-color: rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.84),
+    0 30px 78px rgba(54, 79, 109, 0.14);
+}
+
+[data-theme="liquid"] .subscription-tabs {
+  border-radius: 22px 22px 0 0;
+}
+
+[data-theme="liquid"] .subscription-tab-indicator {
+  border-radius: 18px;
+}
+
+[data-theme="retro"] .subscription-center {
+  background: var(--panel);
+  border: 2px solid;
+  border-color: #ffffff #444444 #444444 #ffffff;
+  box-shadow: 5px 5px 0 #0000aa;
+}
+
+[data-theme="retro"] .subscription-tab-indicator {
+  background: #0000aa;
+}
+
+[data-theme="retro"] .subscription-tabs button.active {
+  color: #ffffff;
+}
+
 .contact-options {
   display: grid;
   gap: 1px;
@@ -3176,6 +3580,21 @@ button {
 }
 
 @media (max-width: 1180px) {
+  .subscription-page-layout {
+    gap: 30px;
+    grid-template-columns: minmax(0, 0.78fr) minmax(500px, 1.22fr);
+    padding-left: 42px;
+    padding-right: 42px;
+  }
+
+  .subscription-intro h1 {
+    font-size: clamp(3.5rem, 6.2vw, 5.4rem);
+  }
+
+  [data-locale="zh"] .subscription-intro h1 {
+    font-size: clamp(3rem, 5.2vw, 4.7rem);
+  }
+
   .site-header {
     grid-template-columns: 1fr auto;
   }
@@ -3238,6 +3657,35 @@ button {
 }
 
 @media (max-width: 880px) {
+  .subscription-page {
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .subscription-page-layout {
+    gap: 46px;
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 128px 22px 76px;
+  }
+
+  .subscription-intro {
+    max-width: 680px;
+  }
+
+  .subscription-intro h1,
+  [data-locale="zh"] .subscription-intro h1 {
+    font-size: clamp(3.45rem, 11vw, 6.2rem);
+  }
+
+  .subscription-intro-orbit {
+    right: 10%;
+  }
+
+  .subscription-center {
+    min-height: 0;
+  }
+
   .site-header {
     height: 72px;
     padding: 0 22px;
@@ -3529,6 +3977,53 @@ button {
 }
 
 @media (max-width: 560px) {
+  .subscription-page-layout {
+    gap: 34px;
+    padding: 112px 16px 60px;
+  }
+
+  .subscription-intro h1,
+  [data-locale="zh"] .subscription-intro h1 {
+    font-size: clamp(2.85rem, 14vw, 4.5rem);
+  }
+
+  .subscription-lead {
+    font-size: 0.7rem;
+  }
+
+  .subscription-notes {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-intro-orbit {
+    opacity: 0.45;
+    right: 16px;
+    top: -54px;
+  }
+
+  .subscription-tabs button {
+    font-size: 0.56rem;
+    gap: 7px;
+    padding: 9px 6px;
+  }
+
+  .subscription-form.compact,
+  .form-complete.compact {
+    padding: 24px 18px;
+  }
+
+  .form-heading.compact h2 {
+    font-size: 1.75rem;
+  }
+
+  .verification-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-fallback-note {
+    margin: 0 18px;
+  }
+
   .brand-word {
     font-size: 0.68rem;
   }
