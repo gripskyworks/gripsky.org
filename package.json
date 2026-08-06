@@ -14,7 +14,6 @@
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
-    "@aws-sdk/client-sesv2": "^3.1098.0",
     "drizzle-orm": "0.45.2",
     "next": "16.2.12",
     "react": "19.2.6",

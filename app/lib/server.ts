@@ -1,4 +1,3 @@
-import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { getRuntimeEnv } from "./runtime-env";
 import type { D1DatabaseLike } from "./runtime-env";
 
@@ -354,11 +353,28 @@ export async function releaseEmailSendBudget(
   await database.prepare("DELETE FROM email_rate_events WHERE claim_id = ?").bind(claimId).run();
 }
 
-async function sesClient(): Promise<{
-  client: SESv2Client;
+type SesEmailRequest = {
+  FromEmailAddress: string;
+  Destination: { ToAddresses: string[] };
+  ReplyToAddresses?: string[];
+  Content: {
+    Simple: {
+      Subject: { Data: string; Charset: "UTF-8" };
+      Headers?: Array<{ Name: string; Value: string }>;
+      Body: {
+        Text: { Data: string; Charset: "UTF-8" };
+        Html: { Data: string; Charset: "UTF-8" };
+      };
+    };
+  };
+};
+
+function sesConfig(): {
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
   from: string;
-  SendEmailCommand: typeof SendEmailCommand;
-} | null> {
+} | null {
   const values = workerEnv();
   if (
     !values.AWS_SES_REGION ||
@@ -370,16 +386,77 @@ async function sesClient(): Promise<{
   }
 
   return {
-    client: new SESv2Client({
-      region: values.AWS_SES_REGION,
-      credentials: {
-        accessKeyId: values.AWS_SES_ACCESS_KEY_ID,
-        secretAccessKey: values.AWS_SES_SECRET_ACCESS_KEY,
-      },
-    }),
+    region: values.AWS_SES_REGION,
+    accessKeyId: values.AWS_SES_ACCESS_KEY_ID,
+    secretAccessKey: values.AWS_SES_SECRET_ACCESS_KEY,
     from: values.SES_FROM_EMAIL,
-    SendEmailCommand,
   };
+}
+
+const textEncoder = new TextEncoder();
+
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function sha256(value: string): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest("SHA-256", textEncoder.encode(value)));
+}
+
+async function hmacSha256(key: Uint8Array, value: string): Promise<Uint8Array> {
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    key,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  return new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, textEncoder.encode(value)));
+}
+
+async function sendSesEmail(request: SesEmailRequest): Promise<{ MessageId?: string }> {
+  const config = sesConfig();
+  if (!config) throw new Error("SES is not configured.");
+
+  const body = JSON.stringify(request);
+  const hostname = `email.${config.region}.amazonaws.com`;
+  const path = "/v2/email/outbound-emails";
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const payloadHash = bytesToHex(await sha256(body));
+  const signedHeaders = "content-type;host;x-amz-date";
+  const canonicalHeaders = `content-type:application/json\nhost:${hostname}\nx-amz-date:${amzDate}\n`;
+  const canonicalRequest = ["POST", path, "", canonicalHeaders, signedHeaders, payloadHash].join("\n");
+  const credentialScope = `${dateStamp}/${config.region}/ses/aws4_request`;
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    credentialScope,
+    bytesToHex(await sha256(canonicalRequest)),
+  ].join("\n");
+  const dateKey = await hmacSha256(textEncoder.encode(`AWS4${config.secretAccessKey}`), dateStamp);
+  const regionKey = await hmacSha256(dateKey, config.region);
+  const serviceKey = await hmacSha256(regionKey, "ses");
+  const signingKey = await hmacSha256(serviceKey, "aws4_request");
+  const signature = bytesToHex(await hmacSha256(signingKey, stringToSign));
+  const authorization = `AWS4-HMAC-SHA256 Credential=${config.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const response = await fetch(`https://${hostname}${path}`, {
+    method: "POST",
+    headers: {
+      authorization,
+      "content-type": "application/json",
+      "x-amz-content-sha256": payloadHash,
+      "x-amz-date": amzDate,
+    },
+    body,
+  });
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 500);
+    throw new Error(`SES SendEmail failed (${response.status}): ${detail}`);
+  }
+  return await response.json() as { MessageId?: string };
 }
 
 function fromEmailAddress(address: string): string {
@@ -415,7 +492,7 @@ export async function sendVerificationEmail(
   code: string,
   locale: "zh" | "en",
 ): Promise<"sent" | "preview"> {
-  const ses = await sesClient();
+  const ses = sesConfig();
   if (!ses) {
     if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") return "preview";
     throw new Error("SES is not configured.");
@@ -432,7 +509,7 @@ export async function sendVerificationEmail(
       ? `<p>你的验证码是：</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>10 分钟内有效。若不是你发起的请求，请忽略此邮件。</p>`
       : `<p>Your verification code is:</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>It expires in 10 minutes. Ignore this email if you did not request it.</p>`,
   );
-  await ses.client.send(new ses.SendEmailCommand({
+  await sendSesEmail({
     FromEmailAddress: fromEmailAddress(ses.from),
     Destination: { ToAddresses: [email] },
     Content: {
@@ -444,7 +521,7 @@ export async function sendVerificationEmail(
         },
       },
     },
-  }));
+  });
   return "sent";
 }
 
@@ -479,7 +556,7 @@ export async function sendUpdateEmail(input: {
     `<p>${escapeEmailHtml(input.summary)}</p><p style="margin:26px 0"><a href="${escapeEmailHtml(input.url)}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px">${action}</a></p><hr style="border:0;border-top:1px solid #e2e8f0;margin:28px 0 18px" /><p style="font-size:13px;color:#64748b">${isZh ? "您收到这封邮件，是因为已订阅 GripSky 的相关更新。" : "You received this message because you subscribed to this GripSky update topic."}<br /><a href="${escapeEmailHtml(preferencesUrl.toString())}" style="color:#475569">${manage}</a></p>`,
   );
 
-  const ses = await sesClient();
+  const ses = sesConfig();
   if (!ses) {
     if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") {
       return { delivery: "preview", messageId: "preview" };
@@ -487,7 +564,7 @@ export async function sendUpdateEmail(input: {
     throw new Error("SES is not configured.");
   }
 
-  const result = await ses.client.send(new ses.SendEmailCommand({
+  const result = await sendSesEmail({
     FromEmailAddress: fromEmailAddress(ses.from),
     Destination: { ToAddresses: [input.email] },
     Content: {
@@ -503,7 +580,7 @@ export async function sendUpdateEmail(input: {
         },
       },
     },
-  }));
+  });
   return { delivery: "sent", messageId: result.MessageId ?? "accepted" };
 }
 
@@ -514,11 +591,11 @@ export async function forwardContactRequest(input: {
   brief: string;
   locale: "zh" | "en";
 }): Promise<boolean> {
-  const ses = await sesClient();
+  const ses = sesConfig();
   const inbox = workerEnv().SERVICE_INBOX_EMAIL;
   if (!ses || !inbox) return false;
 
-  await ses.client.send(new ses.SendEmailCommand({
+  await sendSesEmail({
     FromEmailAddress: fromEmailAddress(ses.from),
     Destination: { ToAddresses: [inbox] },
     ReplyToAddresses: [input.email],
@@ -547,7 +624,7 @@ export async function forwardContactRequest(input: {
         },
       },
     },
-  }));
+  });
   return true;
 }
 
