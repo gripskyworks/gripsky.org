@@ -46,7 +46,7 @@ test("server-renders the English system homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GripSky — Open worldview, skill systems and self-hosting(?: · GripSky)?<\/title>/i);
-  assert.match(html, /rel="icon" href="https:\/\/gripsky\.org\/favicon\.ico"/i);
+  assert.match(html, /rel="icon" href="https:\/\/gripsky\.org\/gripsky-favicon-20260806\.ico"/i);
   assert.match(html, /application\/ld\+json/i);
   assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
   assert.match(html, /Worldview becomes skill/);

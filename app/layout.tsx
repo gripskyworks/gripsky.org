@@ -44,12 +44,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon-48.png", sizes: "48x48", type: "image/png" },
-      { url: "/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/gripsky-favicon-20260806.ico", sizes: "any" },
+      { url: "/gripsky-favicon-20260806-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/gripsky-favicon-20260806-96.png", sizes: "96x96", type: "image/png" },
     ],
-    shortcut: "/favicon.ico",
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/gripsky-favicon-20260806.ico",
+    apple: [{ url: "/gripsky-favicon-20260806-180.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   robots: {
@@ -110,7 +110,7 @@ export default function RootLayout({
         url: "https://gripsky.org/",
         logo: {
           "@type": "ImageObject",
-          url: "https://gripsky.org/icon-512.png",
+          url: "https://gripsky.org/gripsky-favicon-20260806-512.png",
           width: 512,
           height: 512,
         },
