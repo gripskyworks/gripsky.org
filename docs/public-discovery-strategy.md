@@ -13,7 +13,7 @@
 - 组织的 `sameAs` 只保留 GitHub Organization，worldview 仓库改作公开原则来源，避免把仓库误写成组织同一实体；
 - 新增 `CITATION.cff`，记录组织站代码的作者、ORCID、版本与首选引用边界；
 - 已核对 ORCID `0009-0009-9675-5355` 的公开记录：其中列出 GripSky 官网、个人 GitHub 与 GitHub Organization，构成第三方身份基础设施上的互相指向；
-- 已确认 `gripskyworks/.github` 组织 Profile 仓库存在；其早期简介需要按本战略更新，而不再创建重复仓库。
+- 已确认并更新 `gripskyworks/.github` 组织 Profile 仓库；公开简介、官网、FAQ、版本、订阅、世界观源与维护者 ORCID 已形成真实互链，没有创建重复仓库。
 
 ## 一、战略判断
 
