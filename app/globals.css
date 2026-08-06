@@ -2588,6 +2588,16 @@ button {
   color: var(--ink);
 }
 
+.identity-links {
+  display: grid;
+  gap: 18px;
+  min-width: min(330px, 30vw);
+}
+
+.identity-links a {
+  justify-content: space-between;
+}
+
 .not-found {
   align-items: flex-start;
   display: flex;

@@ -22,6 +22,8 @@ export type PageDefinition = {
 
 export const GITHUB_WORLDVIEW = "https://github.com/weakdreamer/worldview";
 export const GITHUB_ISSUES = "https://github.com/weakdreamer/worldview/issues";
+export const GITHUB_ORGANIZATION = "https://github.com/gripskyworks";
+export const FOUNDER_ORCID = "https://orcid.org/0009-0009-9675-5355";
 
 export const tx = (value: LocalizedText, locale: Locale) => value[locale];
 
@@ -907,6 +909,90 @@ export const pages: Record<string, PageDefinition> = {
     ],
     [{ label: { en: "Discuss scope", zh: "讨论合作范围" }, href: "/contact" }],
   ),
+  "/faq": page(
+    { en: "REFERENCE / FAQ", zh: "参考 / 常见问题" },
+    { en: "What GripSky is, in plain terms.", zh: "把 GripSky 是什么，说清楚。" },
+    {
+      en: "These answers describe the public system as it exists now: who maintains it, what it publishes, how it should run and where participation begins.",
+      zh: "这里说明当前真实存在的公共体系：由谁维护、公开什么、如何运行，以及从哪里参与。",
+    },
+    [
+      {
+        title: { en: "What is GripSky?", zh: "GripSky 是什么？" },
+        body: {
+          en: "GripSky is the public body of a personal system maintained by Lin Guan. It publishes an evolving worldview, the skills derived from it, research questions, release history and self-hosting paths.",
+          zh: "GripSky 是由临观维护的一套个人系统的公共身躯。它公开仍在演化的世界观、由此生长的技能、研究问题、版本记录与自托管路径。",
+        },
+      },
+      {
+        title: { en: "Who maintains GripSky?", zh: "GripSky 由谁维护？" },
+        body: {
+          en: "Lin Guan (临观) founded and maintains GripSky. The organization carries the public project; the maintainer remains a separate person with an ORCID record and personal work history.",
+          zh: "GripSky 由临观（Lin Guan）发起并维护。组织承载公共项目；维护者仍是独立的自然人，并以 ORCID 与个人工作记录保持身份连续性。",
+        },
+      },
+      {
+        title: { en: "What problem does it address?", zh: "它解决什么问题？" },
+        body: {
+          en: "It explores how one person can turn judgment into reusable skills, connect those skills to information systems and AI, and keep control when machines, vendors or operators change.",
+          zh: "它探索一个人如何把判断转化为可复用技能，把技能接入信息系统与 AI，并在机器、供应商或维护者变化时仍保有控制权。",
+        },
+      },
+      {
+        title: { en: "Why is it maintained in public?", zh: "为什么要公开维护？" },
+        body: {
+          en: "A powerful personal system should remain inspectable, portable and open to correction. Public definitions and history make self-hosting, independent verification and shared improvement possible.",
+          zh: "强大的个人系统应当可检查、可迁移，也允许被修正。公开定义与历史，使自托管、独立核验和共同改进成为可能。",
+        },
+      },
+      {
+        title: { en: "Who is it for?", zh: "它适合谁？" },
+        body: {
+          en: "It is for people building long-lived personal systems, contributors studying human–AI collaboration, and clients who need a skill system or external information body designed and maintained around real work.",
+          zh: "它面向正在建立长期个人系统的人、研究人机协作的贡献者，以及需要围绕真实工作构造和维护技能体系或外置信息身躯的委托方。",
+        },
+      },
+      {
+        title: { en: "How do worldview, skills and the external body relate?", zh: "世界观、技能与外置身躯是什么关系？" },
+        body: {
+          en: "Worldview supplies revisable judgments. Skills turn those judgments and repeated practice into callable abilities. The external body gives those abilities memory, interfaces, computation and a place to operate in the world.",
+          zh: "世界观提供可修订的判断；技能把判断与反复实践整理成可调用能力；外置身躯则为能力提供记忆、界面、计算和进入现实的运行位置。",
+        },
+      },
+      {
+        title: { en: "Is GripSky open source?", zh: "GripSky 开源吗？" },
+        body: {
+          en: "The desensitized worldview is public, and reusable skill definitions and implementations are intended to be released openly where privacy and security allow. Private runtime state, credentials and personal records do not travel with a public release.",
+          zh: "经过脱敏的世界观已经公开；在隐私与安全允许的范围内，可复用的技能定义和实现会逐步开放。私有运行态、凭据与个人记录不会随公开版本发布。",
+        },
+      },
+      {
+        title: { en: "What is the ideal way to run it?", zh: "理想的运行方式是什么？" },
+        body: {
+          en: "Keep public definitions readable, host sensitive state under the owner’s control, document dependencies and preserve export, upgrade and removal paths. Managed service should operate the same portable form, not create a lock-in-only edition.",
+          zh: "公开定义保持可读，敏感状态由所有者控制，依赖得到记录，并保留导出、升级与移除路径。托管服务运行的也应是同一套可迁移形态，而不是只能被锁定使用的特供版本。",
+        },
+      },
+      {
+        title: { en: "How can I follow changes?", zh: "如何获知更新？" },
+        body: {
+          en: "Subscribe by email for selected topics, follow the RSS release feed, or watch the relevant GitHub repositories. Worldview, skills, compatibility and research can move at different speeds.",
+          zh: "可以按主题订阅邮件、关注 RSS 版本流，或在 GitHub 观察相关仓库。世界观、技能、兼容性与研究可以按各自节奏更新。",
+        },
+      },
+      {
+        title: { en: "How can I contribute or commission work?", zh: "如何参与或委托？" },
+        body: {
+          en: "Public corrections, evidence and implementations belong on GitHub. Deployment, managed operation, custom skills and continuing stewardship begin through the service contact channel with scope and privacy boundaries stated explicitly.",
+          zh: "公开修正、证据与实现进入 GitHub；部署、托管运行、定制技能与长期维护，则从服务联系入口开始，并先说明范围与隐私边界。",
+        },
+      },
+    ],
+    [
+      { label: { en: "Browse the skill catalog", zh: "浏览技能目录" }, href: "/skills/catalog" },
+      { label: { en: "Choose update topics", zh: "选择订阅主题" }, href: "/updates/subscribe" },
+    ],
+  ),
   "/about": page(
     { en: "ABOUT", zh: "关于" },
     { en: "GripSky publishes the system Lin Guan is building.", zh: "GripSky 公开临观正在建立的体系。" },
@@ -929,7 +1015,15 @@ export const pages: Record<string, PageDefinition> = {
           zh: "gripsky.org 是组织入口，linguan.online 继续作为发起人个人站。",
         },
       },
+      {
+        title: { en: "Maintainer identity", zh: "维护者身份" },
+        body: {
+          en: "Lin Guan and GripSky remain distinct public entities. The maintainer’s ORCID record links the organization site, personal GitHub account and GripSky organization as persistent identity references.",
+          zh: "临观与 GripSky 保持为两个不同的公共实体。维护者的 ORCID 记录把组织官网、个人 GitHub 与 GripSky 组织作为持续身份引用连接起来。",
+        },
+      },
     ],
+    [{ label: { en: "Read the FAQ", zh: "阅读常见问题" }, href: "/faq" }],
   ),
   "/contact": page(
     { en: "CONTACT", zh: "联系" },

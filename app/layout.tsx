@@ -121,23 +121,41 @@ export default function RootLayout({
         image: "https://gripsky.org/og-system.png",
         description:
           "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term stewardship.",
-        founder: {
-          "@type": "Person",
-          name: "Lin Guan",
-          alternateName: "临观",
-          url: "https://linguan.online/",
-        },
-        sameAs: [
-          "https://github.com/gripskyworks",
-          "https://github.com/weakdreamer/worldview",
-          "https://linguan.online/",
-        ],
+        founder: { "@id": "https://gripsky.org/#founder" },
+        sameAs: ["https://github.com/gripskyworks"],
+        publishingPrinciples: "https://github.com/weakdreamer/worldview",
         knowsAbout: [
           "Open worldview",
           "Skill systems",
           "Self-hosting",
           "External information body",
           "AI-assisted workflows",
+        ],
+      },
+      {
+        "@type": "Person",
+        "@id": "https://gripsky.org/#founder",
+        name: "Lin Guan",
+        alternateName: "临观",
+        url: "https://linguan.online/",
+        sameAs: [
+          "https://orcid.org/0009-0009-9675-5355",
+          "https://github.com/weakdreamer",
+          "https://linguan.online/",
+        ],
+        identifier: {
+          "@type": "PropertyValue",
+          propertyID: "ORCID",
+          value: "0009-0009-9675-5355",
+          url: "https://orcid.org/0009-0009-9675-5355",
+        },
+        affiliation: { "@id": "https://gripsky.org/#organization" },
+        knowsAbout: [
+          "AI agents",
+          "Human-AI collaboration",
+          "Knowledge infrastructure",
+          "Digital identity",
+          "Open knowledge systems",
         ],
       },
       {
@@ -153,6 +171,14 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="GripSky release feed"
+          href="/feed.xml"
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <script
           type="application/ld+json"

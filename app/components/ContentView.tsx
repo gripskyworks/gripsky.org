@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {
+  FOUNDER_ORCID,
   GITHUB_ISSUES,
+  GITHUB_ORGANIZATION,
   GITHUB_WORLDVIEW,
   Locale,
   PageDefinition,
@@ -50,12 +52,35 @@ export function ContentView({
   const isReleases = path === "/updates/releases";
   const isSubscribe = path === "/updates/subscribe";
   const isContact = path === "/contact";
+  const isFaq = path === "/faq";
+  const isAbout = path === "/about";
   const isServices = path === "/services";
   const isSource = path === "/worldview/source";
   const isContribute = path === "/research/contribute";
 
   return (
     <main className="content-main" data-page-family={pageFamily(path)}>
+      {isFaq && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "@id": `https://gripsky.org${locale === "zh" ? "/zh" : ""}/faq#faq`,
+              inLanguage: locale === "zh" ? "zh-CN" : "en",
+              mainEntity: content.sections.map((section) => ({
+                "@type": "Question",
+                name: tx(section.title, locale),
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: tx(section.body, locale),
+                },
+              })),
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
+      )}
       <section className="content-hero">
         <div className="content-orbit" aria-hidden="true">
           <span />
@@ -159,6 +184,29 @@ export function ContentView({
             {locale === "zh" ? "提交 Issue" : "Open an issue"}
             <i aria-hidden="true">↗</i>
           </a>
+        </section>
+      )}
+      {isAbout && (
+        <section className="external-source-card identity-source-card">
+          <div>
+            <span>IDENTITY / PUBLIC REFERENCES</span>
+            <h2>{locale === "zh" ? "同一个维护者，清楚分开的主体。" : "One maintainer, clearly separated entities."}</h2>
+            <p>
+              {locale === "zh"
+                ? "ORCID 提供持久的自然人标识；GitHub Organization 承载 GripSky 的公开代码与协作记录。两处都指回本组织站。"
+                : "ORCID provides the maintainer’s persistent person identifier. The GitHub organization carries GripSky’s public code and collaboration history. Both point back to this organization site."}
+            </p>
+          </div>
+          <div className="identity-links">
+            <a href={FOUNDER_ORCID} target="_blank" rel="me noreferrer">
+              {locale === "zh" ? "临观的 ORCID" : "Lin Guan on ORCID"}
+              <i aria-hidden="true">↗</i>
+            </a>
+            <a href={GITHUB_ORGANIZATION} target="_blank" rel="me noreferrer">
+              {locale === "zh" ? "GripSky 的 GitHub" : "GripSky on GitHub"}
+              <i aria-hidden="true">↗</i>
+            </a>
+          </div>
         </section>
       )}
 

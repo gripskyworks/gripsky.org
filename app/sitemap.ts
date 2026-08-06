@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { pages, skills } from "./lib/site-data";
 
 const origin = "https://gripsky.org";
-const lastModified = new Date("2026-08-04T00:00:00+08:00");
+const lastModified = new Date("2026-08-06T00:00:00+08:00");
 
 const publicPaths = [
   "/",

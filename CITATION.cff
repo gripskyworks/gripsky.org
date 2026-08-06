@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you reference the GripSky organization site or its public system map, cite this repository. Cite individual worldview or skill releases from their own repositories when available."
+title: "GripSky organization site"
+type: software
+authors:
+  - family-names: "Lin"
+    given-names: "Guan"
+    alias: "临观"
+    orcid: "https://orcid.org/0009-0009-9675-5355"
+repository-code: "https://github.com/gripskyworks/gripsky.org"
+url: "https://gripsky.org"
+version: 0.1.0
+date-released: 2026-08-06

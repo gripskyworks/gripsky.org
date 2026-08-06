@@ -50,6 +50,8 @@ test("server-renders the English system homepage", async () => {
   assert.match(html, /https:\/\/gripsky\.org\/gripsky-brand-mark-v1\.png/);
   assert.match(html, /application\/ld\+json/i);
   assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
+  assert.match(html, /https:\/\/gripsky\.org\/#founder/i);
+  assert.match(html, /https:\/\/orcid\.org\/0009-0009-9675-5355/i);
   assert.match(html, /Worldview becomes skill/);
   assert.match(html, /Begin wherever the work is/);
   assert.match(html, /href="\/skills\/catalog"/);
@@ -131,6 +133,33 @@ test("exposes crawl and install metadata", async () => {
   const favicon = await render("/favicon.ico");
   assert.equal(favicon.status, 200);
   assert.match(favicon.headers.get("content-type") ?? "", /^image\//i);
+
+  const llms = await render("/llms.txt");
+  assert.equal(llms.status, 200);
+  assert.match(await llms.text(), /GripSky GitHub organization/);
+
+  const feed = await render("/feed.xml");
+  assert.equal(feed.status, 200);
+  assert.match(feed.headers.get("content-type") ?? "", /^application\/rss\+xml/i);
+  assert.match(await feed.text(), /<title>GripSky release feed<\/title>/);
+});
+
+test("FAQ publishes visible bilingual answers and matching structured data", async () => {
+  const english = await render("/faq");
+  assert.equal(english.status, 200);
+  const englishHtml = await english.text();
+  assert.match(englishHtml, /What is GripSky\?/);
+  assert.match(englishHtml, /FAQPage/);
+
+  const chinese = await render("/zh/faq");
+  assert.equal(chinese.status, 200);
+  const chineseHtml = await chinese.text();
+  assert.match(chineseHtml, /GripSky 是什么？/);
+  assert.match(chineseHtml, /FAQPage/);
+
+  const about = await render("/about");
+  assert.equal(about.status, 200);
+  assert.match(await about.text(), /Lin Guan on ORCID/);
 });
 
 test("real deep routes render their own content", async () => {

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Locale, localPath, navGroups, tx } from "../lib/site-data";
+import { GITHUB_ORGANIZATION, Locale, localPath, navGroups, tx } from "../lib/site-data";
 
 type ThemeId = "paper" | "orbit" | "retro" | "liquid" | "tide";
 
@@ -308,11 +308,11 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               <span>{locale === "zh" ? "使用" : "Use"}</span>
               <Link href={localPath(locale, "/worldview")}>{locale === "zh" ? "世界观" : "Worldview"}</Link>
               <Link href={localPath(locale, "/skills/catalog")}>{locale === "zh" ? "技能目录" : "Skill catalog"}</Link>
-              <Link href={localPath(locale, "/body/self-host")}>{locale === "zh" ? "自托管" : "Self-host"}</Link>
+              <Link href={localPath(locale, "/faq")}>{locale === "zh" ? "常见问题" : "FAQ"}</Link>
             </div>
             <div>
               <span>{locale === "zh" ? "参与" : "Participate"}</span>
-              <Link href={localPath(locale, "/research")}>{locale === "zh" ? "研究" : "Research"}</Link>
+              <a href={GITHUB_ORGANIZATION} target="_blank" rel="noreferrer">GitHub</a>
               <Link href={localPath(locale, "/research/contribute")}>{locale === "zh" ? "参与贡献" : "Contribute"}</Link>
               <Link href={localPath(locale, "/updates/subscribe")}>{locale === "zh" ? "订阅更新" : "Updates"}</Link>
             </div>
@@ -336,6 +336,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <Link href={localPath(locale, "/legal/terms")}>
               {locale === "zh" ? "条款" : "Terms"}
             </Link>
+            <a href="/feed.xml">RSS</a>
           </div>
         </div>
       </footer>
