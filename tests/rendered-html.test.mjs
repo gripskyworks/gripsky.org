@@ -233,7 +233,70 @@ test("local email preview completes the subscription verification flow", async (
     body: JSON.stringify({ email, code: requestBody.previewCode }),
   });
   assert.equal(verify.status, 200);
-  assert.deepEqual(await verify.json(), { ok: true });
+  const verifyBody = await verify.json();
+  assert.equal(verifyBody.ok, true);
+  assert.match(verifyBody.previewManageToken, /^[0-9a-f-]{36}\.[A-Za-z0-9_-]{43}$/i);
+
+  const preferences = await fetch(
+    `${origin}/api/subscription/preferences?token=${encodeURIComponent(verifyBody.previewManageToken)}`,
+  );
+  assert.equal(preferences.status, 200);
+  assert.deepEqual((await preferences.json()).topics, ["worldview", "skills"]);
+
+  const publication = await fetch(`${origin}/api/internal/updates/publish`, {
+    method: "POST",
+    headers: {
+      authorization: "Bearer local-preview-update-token-0000000000000000",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      slug: `local-release-${Date.now()}`,
+      topic: "skills",
+      titleEn: "Local release verification",
+      titleZh: "本地版本验证",
+      summaryEn: "Checks the queued update delivery path without sending external mail.",
+      summaryZh: "检查更新任务队列，但不向外发送邮件。",
+      url: "https://gripsky.org/updates/releases",
+      publishedAt: Date.now(),
+    }),
+  });
+  assert.equal(publication.status, 200);
+  assert.ok((await publication.json()).eligibleSubscribers >= 1);
+
+  const processUpdates = await fetch(`${origin}/api/internal/updates/process`, {
+    method: "POST",
+    headers: { authorization: "Bearer local-preview-update-token-0000000000000000" },
+  });
+  assert.equal(processUpdates.status, 200);
+  assert.ok((await processUpdates.json()).sent >= 1);
+
+  const oneClick = await fetch(
+    `${origin}/api/subscription/unsubscribe?token=${encodeURIComponent(verifyBody.previewManageToken)}&topic=skills`,
+    { method: "POST", body: "List-Unsubscribe=One-Click" },
+  );
+  assert.equal(oneClick.status, 200);
+
+  const afterOneClick = await fetch(
+    `${origin}/api/subscription/preferences?token=${encodeURIComponent(verifyBody.previewManageToken)}`,
+  );
+  assert.deepEqual((await afterOneClick.json()).topics, ["worldview"]);
+
+  const unsubscribeAll = await fetch(`${origin}/api/subscription/preferences`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ token: verifyBody.previewManageToken, topics: [] }),
+  });
+  assert.equal(unsubscribeAll.status, 200);
+  assert.equal((await unsubscribeAll.json()).status, "unsubscribed");
+});
+
+test("subscription preferences are noindex and reject missing tokens", async () => {
+  const page = await render("/zh/unsubscribe");
+  assert.equal(page.status, 200);
+  assert.match(await page.text(), /name="robots" content="noindex, nofollow"/i);
+
+  const unauthorized = await fetch(`${origin}/api/internal/updates/process`, { method: "POST" });
+  assert.equal(unauthorized.status, 404);
 });
 
 test("email endpoints apply a normal-use sending budget", async () => {

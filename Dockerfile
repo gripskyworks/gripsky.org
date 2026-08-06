@@ -20,6 +20,7 @@ RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 
 COPY --from=build /app/dist/standalone/ ./
 COPY server-selfhost.mjs ./server-selfhost.mjs
+COPY scripts ./scripts
 
 RUN mkdir -p /app/data && chown -R node:node /app
 

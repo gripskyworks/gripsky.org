@@ -54,7 +54,13 @@ GripSky 的本地组织站。它不是一个通用服务工作室主页，而是
 
 ## 邮件订阅与联系
 
-基础订阅免费。访客可选择世界观、技能、兼容性、研究或服务主题，通过六位邮箱验证码确认地址。联系表单先写入 D1；配置 SES 后同时转发到指定收件箱。
+基础订阅免费。访客可选择世界观、技能、兼容性、研究或服务主题，通过六位邮箱验证码确认地址。验证码只保存带 pepper 的哈希，10 分钟后失效，验证成功才写入正式订阅者。联系表单先写入 D1；配置 SES 后同时转发到指定收件箱。
+
+版本通知使用 SQLite Outbox：发布记录先写入 `update_publications`，每位符合主题的订阅者对应一条幂等的 `update_deliveries`，Worker 再以小批量逐封交给 SES。失败按退避时间重试，最多五次；单日应用层上限为 500 封。邮件同时包含：
+
+- `List-Unsubscribe` 与 `List-Unsubscribe-Post`，供 Gmail 等客户端显示一键退订；
+- 正文中的订阅管理链接，可修改单个主题或退订全部更新；
+- 每位订阅者独立的签名令牌，不在链接中暴露邮箱。
 
 需要的运行变量见 `.dev.vars.example`：
 
@@ -64,10 +70,11 @@ GripSky 的本地组织站。它不是一个通用服务工作室主页，而是
 - `SES_FROM_EMAIL`
 - `SERVICE_INBOX_EMAIL`
 - `SUBSCRIPTION_CODE_PEPPER`
+- `UPDATE_PUBLISH_TOKEN`
 
 本地界面验证可以设置 `LOCAL_EMAIL_PREVIEW=true`，验证码会显示在页面上，不会发送邮件。不要将真实密钥写入项目文件。
 
-D1 表结构由 `db/schema.ts` 定义，迁移文件位于 `drizzle/`。接口在首次本地调用时也会以 `CREATE TABLE IF NOT EXISTS` 检查基础表，方便原型直接运行。
+D1 表结构由 `db/schema.ts` 定义，迁移文件位于 `drizzle/`。接口在首次本地调用时也会检查并补齐基础表，方便原型直接运行。发布与 Worker 操作见 [`docs/email-subscription-operations.md`](docs/email-subscription-operations.md)。
 
 ## 本地运行
 
@@ -84,6 +91,7 @@ npm run dev
 - `server-selfhost.mjs`：提供 Node 运行时环境和持久化 SQLite 适配；
 - `deploy/contabo/docker-compose.yml`：将站点加入现有 `gripsky-net`，不直接占用宿主机公网端口；
 - `deploy/contabo/nginx-gripsky-org.conf`：由现有 Nginx 为 `gripsky.org` 和 `www.gripsky.org` 转发请求。
+- `deploy/contabo/gripsky-update-mailer.*`：每两分钟唤醒一次小批量更新邮件 Worker。
 
 生产环境变量只保存在服务器的 `deploy/contabo/.env`，不进入 Git。订阅和联系记录保存在 `deploy/contabo/data/gripsky.sqlite`；删除项目时应先决定是否保留或导出该数据目录。
 

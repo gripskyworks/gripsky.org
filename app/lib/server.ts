@@ -1,4 +1,4 @@
-import type { SESv2Client } from "@aws-sdk/client-sesv2";
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { getRuntimeEnv } from "./runtime-env";
 import type { D1DatabaseLike } from "./runtime-env";
 
@@ -12,7 +12,7 @@ export const SUBSCRIPTION_TOPICS = [
   "services",
 ] as const;
 
-type SubscriptionTopic = (typeof SUBSCRIPTION_TOPICS)[number];
+export type SubscriptionTopic = (typeof SUBSCRIPTION_TOPICS)[number];
 
 function workerEnv() {
   return getRuntimeEnv();
@@ -30,8 +30,8 @@ let schemaReady: Promise<void> | null = null;
 
 export async function ensureSchema(database: D1DatabaseLike): Promise<void> {
   if (!schemaReady) {
-    schemaReady = database
-      .batch([
+    schemaReady = (async () => {
+      await database.batch([
         database.prepare(`
           CREATE TABLE IF NOT EXISTS subscription_codes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,12 +60,12 @@ export async function ensureSchema(database: D1DatabaseLike): Promise<void> {
             status TEXT NOT NULL DEFAULT 'verified',
             created_at INTEGER NOT NULL,
             verified_at INTEGER NOT NULL,
-            updated_at INTEGER NOT NULL
+            updated_at INTEGER NOT NULL,
+            public_id TEXT,
+            unsubscribed_at INTEGER,
+            suppression_reason TEXT
           )
         `),
-        database.prepare(
-          "CREATE UNIQUE INDEX IF NOT EXISTS subscribers_email_unique ON subscribers (email)",
-        ),
         database.prepare(`
           CREATE TABLE IF NOT EXISTS contact_requests (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,21 +87,86 @@ export async function ensureSchema(database: D1DatabaseLike): Promise<void> {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             scope TEXT NOT NULL,
             subject_hash TEXT NOT NULL,
+            created_at INTEGER NOT NULL,
+            claim_id TEXT
+          )
+        `),
+        database.prepare(`
+          CREATE TABLE IF NOT EXISTS update_publications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            slug TEXT NOT NULL,
+            topic TEXT NOT NULL,
+            title_en TEXT NOT NULL,
+            title_zh TEXT NOT NULL,
+            summary_en TEXT NOT NULL,
+            summary_zh TEXT NOT NULL,
+            url TEXT NOT NULL,
+            published_at INTEGER NOT NULL,
             created_at INTEGER NOT NULL
           )
         `),
+        database.prepare(`
+          CREATE TABLE IF NOT EXISTS update_deliveries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            publication_id INTEGER NOT NULL REFERENCES update_publications(id),
+            subscriber_id INTEGER NOT NULL REFERENCES subscribers(id),
+            status TEXT NOT NULL DEFAULT 'pending',
+            attempts INTEGER NOT NULL DEFAULT 0,
+            next_attempt_at INTEGER NOT NULL,
+            claim_token TEXT,
+            provider_message_id TEXT,
+            last_error TEXT,
+            created_at INTEGER NOT NULL,
+            sent_at INTEGER
+          )
+        `),
+      ]);
+
+      await addColumn(database, "ALTER TABLE subscribers ADD COLUMN public_id TEXT");
+      await addColumn(database, "ALTER TABLE subscribers ADD COLUMN unsubscribed_at INTEGER");
+      await addColumn(database, "ALTER TABLE subscribers ADD COLUMN suppression_reason TEXT");
+      await addColumn(database, "ALTER TABLE email_rate_events ADD COLUMN claim_id TEXT");
+
+      await database.batch([
+        database.prepare(
+          "CREATE UNIQUE INDEX IF NOT EXISTS subscribers_email_unique ON subscribers (email)",
+        ),
+        database.prepare(
+          "CREATE UNIQUE INDEX IF NOT EXISTS subscribers_public_id_unique ON subscribers (public_id)",
+        ),
         database.prepare(
           "CREATE INDEX IF NOT EXISTS email_rate_events_scope_subject_created_at_idx ON email_rate_events (scope, subject_hash, created_at)",
         ),
-      ])
-      .then(() => undefined)
-      .catch((error) => {
-        schemaReady = null;
-        throw error;
-      });
+        database.prepare(
+          "CREATE INDEX IF NOT EXISTS email_rate_events_claim_id_idx ON email_rate_events (claim_id)",
+        ),
+        database.prepare(
+          "CREATE UNIQUE INDEX IF NOT EXISTS update_publications_slug_unique ON update_publications (slug)",
+        ),
+        database.prepare(
+          "CREATE UNIQUE INDEX IF NOT EXISTS update_deliveries_publication_subscriber_unique ON update_deliveries (publication_id, subscriber_id)",
+        ),
+        database.prepare(
+          "CREATE INDEX IF NOT EXISTS update_deliveries_status_next_attempt_idx ON update_deliveries (status, next_attempt_at)",
+        ),
+      ]);
+    })().catch((error) => {
+      schemaReady = null;
+      throw error;
+    });
   }
 
   return schemaReady;
+}
+
+async function addColumn(database: D1DatabaseLike, statement: string): Promise<void> {
+  try {
+    await database.prepare(statement).run();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/duplicate column|already exists/i.test(message)) return;
+    throw error;
+  }
 }
 
 export function normalizeEmail(value: unknown): string | null {
@@ -131,14 +196,83 @@ export function createVerificationCode(): string {
 }
 
 export async function hashVerificationCode(email: string, code: string): Promise<string> {
-  const pepper = workerEnv().SUBSCRIPTION_CODE_PEPPER;
-  const localPreview = workerEnv().LOCAL_EMAIL_PREVIEW === "true";
-  if (!pepper && !localPreview) {
-    throw new Error("SUBSCRIPTION_CODE_PEPPER is required when email preview is disabled.");
-  }
-  const data = new TextEncoder().encode(`${email}:${code}:${pepper ?? "local-preview-only"}`);
+  const data = new TextEncoder().encode(`${email}:${code}:${subscriptionPepper()}`);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function subscriptionPepper(): string {
+  const pepper = workerEnv().SUBSCRIPTION_CODE_PEPPER;
+  if (pepper) return pepper;
+  if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") return "local-preview-only";
+  throw new Error("SUBSCRIPTION_CODE_PEPPER is required when email preview is disabled.");
+}
+
+function base64Url(bytes: Uint8Array): string {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/g, "");
+}
+
+async function subscriberSignature(publicId: string): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(subscriptionPepper()),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  return new Uint8Array(await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(`unsubscribe:${publicId}`),
+  ));
+}
+
+export async function createSubscriberToken(publicId: string): Promise<string> {
+  return `${publicId}.${base64Url(await subscriberSignature(publicId))}`;
+}
+
+export async function verifySubscriberToken(token: unknown): Promise<string | null> {
+  if (typeof token !== "string" || token.length > 160) return null;
+  const match = token.match(/^([0-9a-f-]{36})\.([A-Za-z0-9_-]{43})$/i);
+  if (!match) return null;
+  const expected = base64Url(await subscriberSignature(match[1]));
+  const actualBytes = new TextEncoder().encode(match[2]);
+  const expectedBytes = new TextEncoder().encode(expected);
+  if (actualBytes.length !== expectedBytes.length) return null;
+  let difference = 0;
+  for (let index = 0; index < actualBytes.length; index += 1) {
+    difference |= actualBytes[index] ^ expectedBytes[index];
+  }
+  return difference === 0 ? match[1] : null;
+}
+
+export function createSubscriberPublicId(): string {
+  return crypto.randomUUID();
+}
+
+export function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  const visible = local.slice(0, Math.min(2, local.length));
+  return `${visible}${"•".repeat(Math.max(3, local.length - visible.length))}@${domain}`;
+}
+
+export async function authorizeUpdateRequest(request: Request): Promise<boolean> {
+  const expected = workerEnv().UPDATE_PUBLISH_TOKEN ?? (
+    workerEnv().LOCAL_EMAIL_PREVIEW === "true"
+      ? "local-preview-update-token-0000000000000000"
+      : undefined
+  );
+  if (!expected || expected.length < 32) return false;
+  const supplied = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+  const expectedDigest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(expected));
+  const suppliedDigest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(supplied));
+  const left = new Uint8Array(expectedDigest);
+  const right = new Uint8Array(suppliedDigest);
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) difference |= left[index] ^ right[index];
+  return difference === 0;
 }
 
 function clientAddress(request: Request): string {
@@ -167,8 +301,12 @@ export async function claimEmailSendBudget(
   request: Request,
   kind: "subscription-code" | "contact-forward",
   email: string,
-): Promise<{ ok: true } | { ok: false; retryAfterSeconds: number }> {
+): Promise<
+  { ok: true; claimId: string } |
+  { ok: false; retryAfterSeconds: number }
+> {
   const now = Date.now();
+  const claimId = crypto.randomUUID();
   const address = clientAddress(request);
   const limits: EmailRateLimit[] = kind === "subscription-code"
     ? [
@@ -203,26 +341,23 @@ export async function claimEmailSendBudget(
   await database.batch([
     database.prepare("DELETE FROM email_rate_events WHERE created_at < ?").bind(now - 31 * 24 * 60 * 60_000),
     ...hashedLimits.map((limit) => database
-      .prepare("INSERT INTO email_rate_events (scope, subject_hash, created_at) VALUES (?, ?, ?)")
-      .bind(limit.scope, limit.subjectHash, now)),
+      .prepare("INSERT INTO email_rate_events (scope, subject_hash, created_at, claim_id) VALUES (?, ?, ?, ?)")
+      .bind(limit.scope, limit.subjectHash, now, claimId)),
   ]);
-  return { ok: true };
+  return { ok: true, claimId };
 }
 
-type SesModule = typeof import("@aws-sdk/client-sesv2");
-
-const sesModuleName = ["@aws-sdk", "client-sesv2"].join("/");
-let sesModulePromise: Promise<SesModule> | null = null;
-
-function loadSesModule(): Promise<SesModule> {
-  sesModulePromise ??= import(/* @vite-ignore */ sesModuleName) as Promise<SesModule>;
-  return sesModulePromise;
+export async function releaseEmailSendBudget(
+  database: D1DatabaseLike,
+  claimId: string,
+): Promise<void> {
+  await database.prepare("DELETE FROM email_rate_events WHERE claim_id = ?").bind(claimId).run();
 }
 
 async function sesClient(): Promise<{
   client: SESv2Client;
   from: string;
-  SendEmailCommand: SesModule["SendEmailCommand"];
+  SendEmailCommand: typeof SendEmailCommand;
 } | null> {
   const values = workerEnv();
   if (
@@ -233,8 +368,6 @@ async function sesClient(): Promise<{
   ) {
     return null;
   }
-
-  const { SESv2Client, SendEmailCommand } = await loadSesModule();
 
   return {
     client: new SESv2Client({
@@ -313,6 +446,65 @@ export async function sendVerificationEmail(
     },
   }));
   return "sent";
+}
+
+export async function sendUpdateEmail(input: {
+  email: string;
+  locale: "zh" | "en";
+  topic: SubscriptionTopic;
+  title: string;
+  summary: string;
+  url: string;
+  subscriberToken: string;
+}): Promise<{ delivery: "sent" | "preview"; messageId: string }> {
+  const preferencesUrl = new URL(input.locale === "zh" ? "/zh/unsubscribe" : "/unsubscribe", "https://gripsky.org");
+  preferencesUrl.searchParams.set("token", input.subscriberToken);
+  const oneClickUrl = new URL("/api/subscription/unsubscribe", "https://gripsky.org");
+  oneClickUrl.searchParams.set("token", input.subscriberToken);
+  oneClickUrl.searchParams.set("topic", input.topic);
+
+  const isZh = input.locale === "zh";
+  const action = isZh ? "阅读这次更新" : "Read this update";
+  const manage = isZh ? "管理订阅或退订" : "Manage or unsubscribe";
+  const text = [
+    input.title,
+    "",
+    input.summary,
+    "",
+    `${action}: ${input.url}`,
+    `${manage}: ${preferencesUrl.toString()}`,
+  ].join("\n");
+  const html = brandedEmailHtml(
+    input.title,
+    `<p>${escapeEmailHtml(input.summary)}</p><p style="margin:26px 0"><a href="${escapeEmailHtml(input.url)}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px">${action}</a></p><hr style="border:0;border-top:1px solid #e2e8f0;margin:28px 0 18px" /><p style="font-size:13px;color:#64748b">${isZh ? "您收到这封邮件，是因为已订阅 GripSky 的相关更新。" : "You received this message because you subscribed to this GripSky update topic."}<br /><a href="${escapeEmailHtml(preferencesUrl.toString())}" style="color:#475569">${manage}</a></p>`,
+  );
+
+  const ses = await sesClient();
+  if (!ses) {
+    if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") {
+      return { delivery: "preview", messageId: "preview" };
+    }
+    throw new Error("SES is not configured.");
+  }
+
+  const result = await ses.client.send(new ses.SendEmailCommand({
+    FromEmailAddress: fromEmailAddress(ses.from),
+    Destination: { ToAddresses: [input.email] },
+    Content: {
+      Simple: {
+        Subject: { Data: `[GripSky] ${input.title}`, Charset: "UTF-8" },
+        Headers: [
+          { Name: "List-Unsubscribe", Value: `<${oneClickUrl.toString()}>` },
+          { Name: "List-Unsubscribe-Post", Value: "List-Unsubscribe=One-Click" },
+        ],
+        Body: {
+          Text: { Data: text, Charset: "UTF-8" },
+          Html: { Data: html, Charset: "UTF-8" },
+        },
+      },
+    },
+  }));
+  return { delivery: "sent", messageId: result.MessageId ?? "accepted" };
 }
 
 export async function forwardContactRequest(input: {

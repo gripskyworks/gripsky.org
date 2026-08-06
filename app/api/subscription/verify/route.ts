@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import {
+  createSubscriberPublicId,
+  createSubscriberToken,
   ensureSchema,
   getD1,
   hashVerificationCode,
   normalizeEmail,
+  localPreviewEnabled,
 } from "@/app/lib/server";
 
 type PendingCode = {
@@ -54,6 +57,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "The code is incorrect." }, { status: 400 });
     }
 
+    const publicId = createSubscriberPublicId();
     await database.batch([
       database
         .prepare("UPDATE subscription_codes SET consumed_at = ? WHERE id = ?")
@@ -61,18 +65,33 @@ export async function POST(request: Request) {
       database
         .prepare(`
           INSERT INTO subscribers
-            (email, locale, topics, status, created_at, verified_at, updated_at)
-          VALUES (?, ?, ?, 'verified', ?, ?, ?)
+            (email, locale, topics, status, created_at, verified_at, updated_at, public_id, unsubscribed_at, suppression_reason)
+          VALUES (?, ?, ?, 'verified', ?, ?, ?, ?, NULL, NULL)
           ON CONFLICT(email) DO UPDATE SET
             locale = excluded.locale,
             topics = excluded.topics,
             status = 'verified',
             verified_at = excluded.verified_at,
-            updated_at = excluded.updated_at
+            updated_at = excluded.updated_at,
+            public_id = COALESCE(subscribers.public_id, excluded.public_id),
+            unsubscribed_at = NULL,
+            suppression_reason = NULL
         `)
-        .bind(email, pending.locale, pending.topics, now, now, now),
+        .bind(email, pending.locale, pending.topics, now, now, now, publicId),
     ]);
 
+    if (localPreviewEnabled()) {
+      const verified = await database
+        .prepare("SELECT public_id FROM subscribers WHERE email = ? LIMIT 1")
+        .bind(email)
+        .first<{ public_id: string | null }>();
+      return NextResponse.json({
+        ok: true,
+        ...(verified?.public_id
+          ? { previewManageToken: await createSubscriberToken(verified.public_id) }
+          : {}),
+      });
+    }
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("subscription verify failed", error);

@@ -1,6 +1,7 @@
 # Local-only example. Copy values into .dev.vars and keep that file untracked.
 LOCAL_EMAIL_PREVIEW=true
 SUBSCRIPTION_CODE_PEPPER=replace-with-a-long-random-value
+UPDATE_PUBLISH_TOKEN=replace-with-a-separate-long-random-value
 
 # Amazon SES
 AWS_SES_REGION=us-west-2

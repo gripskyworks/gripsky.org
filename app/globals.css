@@ -2598,6 +2598,17 @@ button {
   justify-content: space-between;
 }
 
+.unsubscribe-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.unsubscribe-actions .form-back {
+  margin: 0;
+}
+
 .not-found {
   align-items: flex-start;
   display: flex;

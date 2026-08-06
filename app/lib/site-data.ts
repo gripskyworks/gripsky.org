@@ -779,7 +779,22 @@ export const pages: Record<string, PageDefinition> = {
       en: "Enter an email, choose topics and verify the address. The subscription is free. It does not create a paid service plan.",
       zh: "填写邮箱、选择主题并验证地址即可完成免费订阅。这不会创建付费服务方案。",
     },
-    [],
+    [
+      {
+        title: { en: "The address remains under your control", zh: "邮箱始终由您控制" },
+        body: {
+          en: "Every release email carries a visible preferences link and a standards-based one-click unsubscribe header for mail clients that support it.",
+          zh: "每封版本通知都带有可见的订阅管理入口，也提供符合标准的一键退订邮件头，供支持它的邮箱客户端直接使用。",
+        },
+      },
+      {
+        title: { en: "Topics stay separate", zh: "主题分别管理" },
+        body: {
+          en: "Stop one topic without losing the rest, or unsubscribe from every update. Verification and necessary security messages are not subscription releases.",
+          zh: "可以只停止一个主题而保留其他更新，也可以全部退订。验证码与必要的安全邮件不属于版本订阅。",
+        },
+      },
+    ],
   ),
   "/services": page(
     { en: "06 / SERVICES", zh: "06 / 服务" },

@@ -1,0 +1,8 @@
+[Unit]
+Description=Process queued GripSky update emails
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker exec gripsky-site node /app/scripts/process-updates.mjs

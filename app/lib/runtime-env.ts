@@ -24,6 +24,7 @@ export type GripSkyRuntimeEnvironment = {
   SERVICE_INBOX_EMAIL?: string;
   SUBSCRIPTION_CODE_PEPPER?: string;
   LOCAL_EMAIL_PREVIEW?: string;
+  UPDATE_PUBLISH_TOKEN?: string;
 };
 
 declare global {

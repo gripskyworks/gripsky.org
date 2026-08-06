@@ -9,6 +9,7 @@ import {
   normalizeEmail,
   normalizeLocale,
   normalizeTopics,
+  releaseEmailSendBudget,
   sendVerificationEmail,
 } from "@/app/lib/server";
 
@@ -23,6 +24,10 @@ export async function POST(request: Request) {
     const database = getD1();
     await ensureSchema(database);
     const now = Date.now();
+    await database
+      .prepare("DELETE FROM subscription_codes WHERE expires_at < ? OR (consumed_at IS NOT NULL AND requested_at < ?)")
+      .bind(now, now - 24 * 60 * 60_000)
+      .run();
     const latest = await database
       .prepare("SELECT requested_at FROM subscription_codes WHERE email = ? ORDER BY requested_at DESC LIMIT 1")
       .bind(email)
@@ -46,26 +51,37 @@ export async function POST(request: Request) {
       );
     }
 
-    const code = createVerificationCode();
-    const locale = normalizeLocale(body.locale);
-    const topics = normalizeTopics(body.topics);
-    const codeHash = await hashVerificationCode(email, code);
+    try {
+      const code = createVerificationCode();
+      const locale = normalizeLocale(body.locale);
+      const topics = normalizeTopics(body.topics);
+      const codeHash = await hashVerificationCode(email, code);
 
-    await database
-      .prepare(`
-        INSERT INTO subscription_codes
-          (email, code_hash, locale, topics, expires_at, attempts, requested_at)
-        VALUES (?, ?, ?, ?, ?, 0, ?)
-      `)
-      .bind(email, codeHash, locale, JSON.stringify(topics), now + 10 * 60_000, now)
-      .run();
+      await database
+        .prepare(`
+          INSERT INTO subscription_codes
+            (email, code_hash, locale, topics, expires_at, attempts, requested_at)
+          VALUES (?, ?, ?, ?, ?, 0, ?)
+        `)
+        .bind(email, codeHash, locale, JSON.stringify(topics), now + 10 * 60_000, now)
+        .run();
 
-    const delivery = await sendVerificationEmail(email, code, locale);
-    return NextResponse.json({
-      ok: true,
-      delivery,
-      ...(delivery === "preview" && localPreviewEnabled() ? { previewCode: code } : {}),
-    });
+      const delivery = await sendVerificationEmail(email, code, locale);
+      return NextResponse.json({
+        ok: true,
+        delivery,
+        ...(delivery === "preview" && localPreviewEnabled() ? { previewCode: code } : {}),
+      });
+    } catch (error) {
+      await Promise.allSettled([
+        database
+          .prepare("DELETE FROM subscription_codes WHERE email = ? AND requested_at = ?")
+          .bind(email, now)
+          .run(),
+        releaseEmailSendBudget(database, budget.claimId),
+      ]);
+      throw error;
+    }
   } catch (error) {
     console.error("subscription request-code failed", error);
     return NextResponse.json(

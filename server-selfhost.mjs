@@ -76,6 +76,7 @@ globalThis.__GRIPSKY_ENV__ = {
   SERVICE_INBOX_EMAIL: process.env.SERVICE_INBOX_EMAIL,
   SUBSCRIPTION_CODE_PEPPER: process.env.SUBSCRIPTION_CODE_PEPPER,
   LOCAL_EMAIL_PREVIEW: process.env.LOCAL_EMAIL_PREVIEW,
+  UPDATE_PUBLISH_TOKEN: process.env.UPDATE_PUBLISH_TOKEN,
 };
 
 const port = Number.parseInt(process.env.PORT ?? "3000", 10);

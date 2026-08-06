@@ -8,6 +8,13 @@
       "when": 1785407775585,
       "tag": "0000_superb_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785997365628,
+      "tag": "0001_mushy_supreme_intelligence",
+      "breakpoints": true
     }
   ]
 }
