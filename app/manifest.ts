@@ -12,12 +12,12 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#073844",
     icons: [
       {
-        src: "/gripsky-favicon-20260806-192.png",
+        src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/gripsky-favicon-20260806-512.png",
+        src: "/gripsky-brand-mark-v1.png",
         sizes: "512x512",
         type: "image/png",
       },

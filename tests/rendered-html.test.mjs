@@ -46,7 +46,8 @@ test("server-renders the English system homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GripSky — Open worldview, skill systems and self-hosting(?: · GripSky)?<\/title>/i);
-  assert.match(html, /rel="icon" href="https:\/\/gripsky\.org\/gripsky-favicon-20260806\.ico"/i);
+  assert.match(html, /rel="icon" href="http:\/\/localhost:3000\/gripsky-favicon-light-20260806\.ico"/i);
+  assert.match(html, /https:\/\/gripsky\.org\/gripsky-brand-mark-v1\.png/);
   assert.match(html, /application\/ld\+json/i);
   assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
   assert.match(html, /Worldview becomes skill/);
@@ -78,15 +79,15 @@ test("server-renders the Chinese homepage", async () => {
 
 test("bilingual deep routes publish canonical and reciprocal language links", async () => {
   for (const [pathname, canonical] of [
-    ["/skills/catalog", "https://gripsky.org/skills/catalog"],
-    ["/zh/skills/catalog", "https://gripsky.org/zh/skills/catalog"],
+    ["/skills/catalog", "http://localhost:3000/skills/catalog"],
+    ["/zh/skills/catalog", "http://localhost:3000/zh/skills/catalog"],
   ]) {
     const response = await render(pathname);
     assert.equal(response.status, 200);
     const html = await response.text();
     assert.match(html, new RegExp(`rel="canonical" href="${canonical}"`));
-    assert.match(html, /hrefLang="en" href="https:\/\/gripsky\.org\/skills\/catalog"/);
-    assert.match(html, /hrefLang="zh-CN" href="https:\/\/gripsky\.org\/zh\/skills\/catalog"/);
+    assert.match(html, /hrefLang="en" href="http:\/\/localhost:3000\/skills\/catalog"/);
+    assert.match(html, /hrefLang="zh-CN" href="http:\/\/localhost:3000\/zh\/skills\/catalog"/);
   }
 });
 
@@ -99,7 +100,7 @@ test("search and install icons keep their declared pixel sizes", () => {
   assert.deepEqual(pngSize("../public/icon-48.png"), [48, 48]);
   assert.deepEqual(pngSize("../public/icon-96.png"), [96, 96]);
   assert.deepEqual(pngSize("../public/icon-192.png"), [192, 192]);
-  assert.deepEqual(pngSize("../public/icon-512.png"), [512, 512]);
+  assert.deepEqual(pngSize("../public/gripsky-brand-mark-v1.png"), [512, 512]);
 
   const favicon = readFileSync(new URL("../public/favicon.ico", import.meta.url));
   const iconCount = favicon.readUInt16LE(4);

@@ -268,7 +268,7 @@ function brandedEmailHtml(title: string, content: string): string {
 <html lang="en"><body style="margin:0;background:#f4f7fb;color:#18202b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
   <main style="max-width:560px;margin:32px auto;padding:0 20px">
     <section style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:32px;box-shadow:0 12px 36px rgba(15,23,42,.08)">
-      <img src="https://gripsky.org/gripsky-favicon-20260806-192.png" width="56" height="56" alt="GripSky" style="display:block;border-radius:14px;margin:0 0 20px" />
+      <img src="https://gripsky.org/gripsky-favicon-light-20260806-192.png" width="56" height="56" alt="GripSky" style="display:block;border-radius:14px;margin:0 0 20px" />
       <div style="font-size:12px;letter-spacing:.12em;color:#64748b">GRIPSKY</div>
       <h1 style="margin:10px 0 16px;font-size:24px;line-height:1.25">${escapeEmailHtml(title)}</h1>
       <div style="font-size:16px;line-height:1.7;color:#334155">${content}</div>

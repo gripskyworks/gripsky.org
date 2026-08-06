@@ -170,7 +170,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <header className="site-header">
         <Link className="brand-lockup" href={localPath(locale, "/")} aria-label="GripSky home">
           <span className="brand-mark" aria-hidden="true">
-            <span />
           </span>
           <span className="brand-word">GRIPSKY</span>
         </Link>
@@ -294,7 +293,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         <div className="footer-top">
           <div className="footer-brand">
             <span className="brand-mark" aria-hidden="true">
-              <span />
             </span>
             <div>
               <strong>GRIPSKY</strong>

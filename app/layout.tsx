@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteOrigin = process.env.NODE_ENV === "development"
+  ? "http://localhost:3000"
+  : "https://gripsky.org";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gripsky.org"),
+  metadataBase: new URL(siteOrigin),
   title: {
     default: "GripSky — Open worldview, skill systems and self-hosting",
     template: "%s · GripSky",
@@ -44,12 +48,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/gripsky-favicon-20260806.ico", sizes: "any" },
-      { url: "/gripsky-favicon-20260806-48.png", sizes: "48x48", type: "image/png" },
-      { url: "/gripsky-favicon-20260806-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/gripsky-favicon-light-20260806.ico", sizes: "any" },
+      { url: "/gripsky-favicon-light-20260806-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/gripsky-favicon-light-20260806-96.png", sizes: "96x96", type: "image/png" },
     ],
-    shortcut: "/gripsky-favicon-20260806.ico",
-    apple: [{ url: "/gripsky-favicon-20260806-180.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/gripsky-favicon-light-20260806.ico",
+    apple: [{ url: "/gripsky-favicon-light-20260806-180.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   robots: {
@@ -110,7 +114,7 @@ export default function RootLayout({
         url: "https://gripsky.org/",
         logo: {
           "@type": "ImageObject",
-          url: "https://gripsky.org/gripsky-favicon-20260806-512.png",
+          url: "https://gripsky.org/gripsky-brand-mark-v1.png",
           width: 512,
           height: 512,
         },
