@@ -1,4 +1,4 @@
-# GripSky
+const llmsIndex = `# GripSky
 
 > GripSky is the public body of a personal system maintained by Lin Guan (临观). It publishes an evolving worldview, the skills derived from it, research questions, release history, self-hosting paths and a managed-service layer.
 
@@ -30,4 +30,14 @@ GripSky separates public definitions from private runtime state. Public skills s
 
 ## Languages
 
-English pages use paths without a language prefix. Simplified Chinese pages use the `/zh` prefix, for example [中文 FAQ](https://gripsky.org/zh/faq). Canonical and `hreflang` links connect each language pair.
+English pages use paths without a language prefix. Simplified Chinese pages use the \`/zh\` prefix, for example [中文 FAQ](https://gripsky.org/zh/faq). Canonical and \`hreflang\` links connect each language pair.
+`;
+
+export function GET() {
+  return new Response(llmsIndex, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=300, s-maxage=3600",
+    },
+  });
+}
