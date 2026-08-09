@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { pages, skills } from "./lib/site-data";
 
 const origin = "https://gripsky.org";
-const lastModified = new Date("2026-08-06T00:00:00+08:00");
+const lastModified = new Date("2026-08-09T00:00:00+08:00");
 
 const publicPaths = [
   "/",
@@ -15,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const englishUrl = `${origin}${path === "/" ? "" : path}`;
     const chinesePath = path === "/" ? "/zh" : `/zh${path}`;
     const chineseUrl = `${origin}${chinesePath}`;
-    const priority = path === "/" ? 1 : path.split("/").length === 2 ? 0.8 : 0.65;
+    const priority = path === "/" ? 1 : path === "/contact" ? 0.85 : path.split("/").length === 2 ? 0.8 : 0.65;
     const alternates = {
       languages: {
         en: englishUrl,
@@ -28,14 +28,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       {
         url: englishUrl,
         lastModified,
-        changeFrequency: path.startsWith("/updates") ? "weekly" : "monthly",
+        changeFrequency: path.startsWith("/updates") || path === "/contact" ? "weekly" : "monthly",
         priority,
         alternates,
       },
       {
         url: chineseUrl,
         lastModified,
-        changeFrequency: path.startsWith("/updates") ? "weekly" : "monthly",
+        changeFrequency: path.startsWith("/updates") || path === "/contact" ? "weekly" : "monthly",
         priority,
         alternates,
       },

@@ -74,21 +74,23 @@ export const navGroups = [
     ],
   },
   {
-    label: { en: "Updates", zh: "更新" },
-    href: "/updates",
-    items: [
-      { label: { en: "Releases", zh: "版本发布" }, href: "/updates/releases" },
-      { label: { en: "Changelog", zh: "变更记录" }, href: "/updates/changelog" },
-      { label: { en: "Subscribe", zh: "订阅更新" }, href: "/updates/subscribe" },
-    ],
-  },
-  {
     label: { en: "Services", zh: "服务" },
     href: "/services",
     items: [
       { label: { en: "Deployment", zh: "安装部署" }, href: "/services/deployment" },
       { label: { en: "Managed operation", zh: "托管运行" }, href: "/services/managed-hosting" },
       { label: { en: "Custom systems", zh: "体系构造" }, href: "/services/system-design" },
+    ],
+  },
+  {
+    label: { en: "Updates / Contact", zh: "更新 / 联系" },
+    href: "/contact",
+    activePaths: ["/contact", "/updates"],
+    items: [
+      { label: { en: "Releases", zh: "版本发布" }, href: "/updates/releases" },
+      { label: { en: "Changelog", zh: "变更记录" }, href: "/updates/changelog" },
+      { label: { en: "Subscribe", zh: "订阅更新" }, href: "/updates/subscribe" },
+      { label: { en: "Contact", zh: "直接联系" }, href: "/contact#service-contact" },
     ],
   },
 ] as const;
@@ -730,24 +732,6 @@ export const pages: Record<string, PageDefinition> = {
     [],
     { en: "GitHub collaboration open", zh: "GitHub 协作入口开放" },
   ),
-  "/updates": page(
-    { en: "05 / UPDATES", zh: "05 / 更新中心" },
-    { en: "Worldview and skills, version by version.", zh: "世界观和技能，都按版本继续。" },
-    {
-      en: "Every release says what changed and where it belongs. Subscribe only to the parts of the system you want to follow.",
-      zh: "每次发布都说明改了什么、影响哪里。只订阅自己想继续跟踪的部分即可。",
-    },
-    [
-      {
-        title: { en: "Versioned subjects", zh: "可订阅主题" },
-        body: {
-          en: "Worldview releases, skill packages, compatibility changes, research calls and managed-service notices are kept separate.",
-          zh: "世界观版本、技能包、兼容性变化、研究协作和托管服务通知相互分开。",
-        },
-      },
-    ],
-    [{ label: { en: "Choose update topics", zh: "选择更新主题" }, href: "/updates/subscribe" }],
-  ),
   "/updates/releases": page(
     { en: "UPDATES / RELEASES", zh: "更新 / 版本发布" },
     { en: "Dates the system can point back to.", zh: "让体系能够回望的日期。" },
@@ -799,7 +783,7 @@ export const pages: Record<string, PageDefinition> = {
     ],
   ),
   "/services": page(
-    { en: "06 / SERVICES", zh: "06 / 服务" },
+    { en: "05 / SERVICES", zh: "05 / 服务" },
     { en: "Implementation, operation and long-term care.", zh: "部署、运行，以及长期维护。" },
     {
       en: "The public source remains open to read and self-host. Service begins when GripSky takes responsibility for building, adapting or keeping a system alive.",
@@ -1043,11 +1027,11 @@ export const pages: Record<string, PageDefinition> = {
     [{ label: { en: "Read the FAQ", zh: "阅读常见问题" }, href: "/faq" }],
   ),
   "/contact": page(
-    { en: "CONTACT", zh: "联系" },
-    { en: "Public work and commissioned work meet at different doors.", zh: "公开协作与付费委托，各自有入口。" },
+    { en: "06 / UPDATES & CONTACT", zh: "06 / 更新与联系" },
+    { en: "Updates live here. So does contact.", zh: "更新在这里，联系也在。" },
     {
-      en: "Use GitHub for public corrections and contributions. Use the service channel when you need deployment, customization or continuing maintenance.",
-      zh: "公开修正和贡献走 GitHub；需要部署、定制或持续维护时，使用服务联系渠道。",
+      en: "Read release history, subscribe to selected topics, contribute in public or contact GripSky directly about research and commissioned work.",
+      zh: "查看版本记录、订阅所需主题、参与公开协作，或就研究与委托工作直接联系 GripSky。",
     },
     [
       {

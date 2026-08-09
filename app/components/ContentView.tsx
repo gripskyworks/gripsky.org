@@ -87,6 +87,92 @@ export function ContentView({
     );
   }
 
+  if (isContact) {
+    const latestReleases = releases.slice(-2).reverse();
+
+    return (
+      <main className="content-main updates-contact-page" data-page-family="updates">
+        <section className="updates-contact-layout">
+          <div className="updates-contact-summary">
+            <div className="updates-contact-orbit" aria-hidden="true"><span /><i /></div>
+            <div className="updates-contact-intro">
+              <p className="eyebrow">{tx(content.eyebrow, locale)}</p>
+              <h1>{tx(content.title, locale)}</h1>
+              <p>{tx(content.intro, locale)}</p>
+            </div>
+
+            <section className="latest-updates" aria-labelledby="latest-updates-title">
+              <div className="latest-updates-heading">
+                <div>
+                  <span>RELEASES</span>
+                  <h2 id="latest-updates-title">{locale === "zh" ? "最近发布" : "Latest releases"}</h2>
+                </div>
+                <Link href={localPath(locale, "/updates/releases")}>
+                  {locale === "zh" ? "全部版本" : "All releases"}<i aria-hidden="true">↗</i>
+                </Link>
+              </div>
+              <div className="latest-update-list">
+                {latestReleases.map((release) => (
+                  <article key={release.version}>
+                    <time dateTime={release.date}>{release.date}</time>
+                    <div>
+                      <span>{tx(release.type, locale)} · {release.version}</span>
+                      <p>{tx(release.title, locale)}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <nav className="update-entry-links" aria-label={locale === "zh" ? "更新入口" : "Update channels"}>
+              <Link href={localPath(locale, "/updates/subscribe")}>
+                <span>{locale === "zh" ? "邮件订阅" : "Email subscription"}</span><i aria-hidden="true">→</i>
+              </Link>
+              <Link href={localPath(locale, "/updates/changelog")}>
+                <span>{locale === "zh" ? "变更记录" : "Changelog"}</span><i aria-hidden="true">→</i>
+              </Link>
+              <a href="/feed.xml">
+                <span>RSS</span><i aria-hidden="true">→</i>
+              </a>
+            </nav>
+          </div>
+
+          <div className="updates-contact-work">
+            <section className="contact-directory" id="service-contact">
+              <div className="contact-directory-heading">
+                <span>DIRECT / PUBLIC</span>
+                <h2>{locale === "zh" ? "直接联系" : "Direct contact"}</h2>
+                <p>
+                  {locale === "zh"
+                    ? "邮件适合正式沟通和材料确认；微信适合先建立联系。公开修正与贡献请留在 GitHub。"
+                    : "Use email for formal correspondence and material review, WeChat to establish contact, and GitHub for public corrections and contributions."}
+                </p>
+              </div>
+              <div className="contact-channel-grid">
+                <a href={`mailto:${CONTACT_EMAIL}`}>
+                  <span>{locale === "zh" ? "邮箱" : "Email"}</span>
+                  <strong>{CONTACT_EMAIL}</strong>
+                  <i aria-hidden="true">↗</i>
+                </a>
+                <div>
+                  <span>{locale === "zh" ? "微信 ID" : "WeChat ID"}</span>
+                  <strong>{WECHAT_ID}</strong>
+                  <i aria-hidden="true">●</i>
+                </div>
+              </div>
+              <a className="contact-github-link" href={GITHUB_ISSUES} target="_blank" rel="noreferrer">
+                <span>{locale === "zh" ? "公开协作与问题反馈" : "Public collaboration and issue reports"}</span>
+                <strong>GitHub Issues</strong>
+                <i aria-hidden="true">↗</i>
+              </a>
+            </section>
+            <ContactForm locale={locale} compact />
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="content-main" data-page-family={pageFamily(path)}>
       {isFaq && (
@@ -147,32 +233,6 @@ export function ContentView({
 
       {isCatalog && <SkillCatalog locale={locale} />}
       {isReleases && <ReleaseIndex locale={locale} />}
-      {isContact && (
-        <section className="contact-options">
-          <div className="contact-side">
-            <div className="github-contact">
-              <span>PUBLIC / GITHUB</span>
-              <h2>{locale === "zh" ? "公开的工作，留在公开处。" : "Keep public work in public."}</h2>
-              <p>
-                {locale === "zh"
-                  ? "概念修正、来源核验、实现实验和公开文档，都在 worldview 仓库留下来源与讨论。"
-                  : "Conceptual corrections, source review, implementation experiments and public documentation keep their history in the worldview repository."}
-              </p>
-              <a href={GITHUB_ISSUES} target="_blank" rel="noreferrer">
-                {locale === "zh" ? "打开 GitHub Issues" : "Open GitHub Issues"}
-                <i aria-hidden="true">↗</i>
-              </a>
-            </div>
-            <aside className="direct-contact" id="service-contact">
-              <span>DIRECT / SERVICE</span>
-              <h2>{locale === "zh" ? "需要一条直接的线。" : "When the work needs a direct line."}</h2>
-              <a className="contact-email" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}<i aria-hidden="true">↗</i></a>
-              <p><span>{locale === "zh" ? "微信 ID" : "WeChat ID"}</span><strong>{WECHAT_ID}</strong></p>
-            </aside>
-          </div>
-          <ContactForm locale={locale} />
-        </section>
-      )}
       {isServices && (
         <section className="route-card-grid">
           {serviceRoutes.map(([slug, en, zh], index) => (

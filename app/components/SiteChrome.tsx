@@ -66,7 +66,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const [themeOpen, setThemeOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeId>("paper");
   const currentTheme = themeOptions.find((option) => option.id === theme) ?? themeOptions[0];
-  const contactHref = localPath(locale, "/contact");
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
@@ -100,6 +99,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       ".subscription-form",
       ".contact-form",
       ".external-source-card",
+      ".latest-update-list article",
+      ".update-entry-links a",
+      ".contact-channel-grid > *",
+      ".contact-github-link",
     ].join(",");
 
     const onPointerMove = (event: PointerEvent) => {
@@ -178,9 +181,11 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         <nav className="desktop-nav" aria-label={locale === "zh" ? "主导航" : "Primary navigation"}>
           {navGroups.map((group) => {
             const href = localPath(locale, group.href);
-            const active =
-              pathname === href ||
-              (group.href !== "/" && pathname.startsWith(`${href}/`));
+            const activePaths = "activePaths" in group ? group.activePaths : [group.href];
+            const active = activePaths.some((path) => {
+              const localizedPath = localPath(locale, path);
+              return pathname === localizedPath || pathname.startsWith(`${localizedPath}/`);
+            });
 
             return (
               <div className={`nav-group ${active ? "active" : ""}`} key={group.href}>
@@ -196,12 +201,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               </div>
             );
           })}
-          <Link
-            className={`nav-direct ${pathname === contactHref ? "active" : ""}`}
-            href={contactHref}
-          >
-            {locale === "zh" ? "联系" : "Contact"}
-          </Link>
         </nav>
 
         <div className="header-actions">
@@ -285,13 +284,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             {tx(group.label, locale)}
           </Link>
         ))}
-        <Link
-          href={contactHref}
-          onClick={() => setMenuOpen(false)}
-        >
-          <span>0{navGroups.length + 1}</span>
-          {locale === "zh" ? "联系" : "Contact"}
-        </Link>
         <Link
           href={localPath(locale, "/updates/subscribe")}
           onClick={() => setMenuOpen(false)}

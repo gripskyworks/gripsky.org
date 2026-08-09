@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { Locale } from "../lib/site-data";
 
-export function ContactForm({ locale }: { locale: Locale }) {
+export function ContactForm({ locale, compact = false }: { locale: Locale; compact?: boolean }) {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +41,20 @@ export function ContactForm({ locale }: { locale: Locale }) {
   };
 
   return (
-    <form className="contact-form" onSubmit={submit}>
+    <form className={`contact-form ${compact ? "contact-form-compact" : ""}`} onSubmit={submit}>
+      {compact && (
+        <div className="contact-form-heading">
+          <span>SERVICE / RESEARCH</span>
+          <div>
+            <h2>{locale === "zh" ? "说明要做的事" : "Describe the work"}</h2>
+            <p>
+              {locale === "zh"
+                ? "用于研究合作、部署、定制与持续维护。通常会通过邮箱回复。"
+                : "For research, deployment, customization and continuing maintenance. Replies normally arrive by email."}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="field-row">
         <label className="form-field">
           <span>{locale === "zh" ? "称呼" : "Name"}</span>
@@ -64,7 +77,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
         <span>{locale === "zh" ? "需求简述" : "Brief"}</span>
         <textarea
           name="brief"
-          rows={6}
+          rows={compact ? 4 : 6}
           required
           placeholder={
             locale === "zh"

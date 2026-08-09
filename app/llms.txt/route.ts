@@ -12,7 +12,7 @@ GripSky separates public definitions from private runtime state. Public skills s
 - [Skill catalog](https://gripsky.org/skills/catalog): Public skills, maturity, openness and self-host status
 - [External body](https://gripsky.org/body): Memory, interfaces, computation and runtime
 - [Research](https://gripsky.org/research): Open questions and contribution paths
-- [Updates](https://gripsky.org/updates): Release history and subscriptions
+- [Updates and contact](https://gripsky.org/contact): Release history, subscriptions and direct contact
 - [Services](https://gripsky.org/services): Deployment, managed operation, custom systems and stewardship
 
 ## Public sources and identity

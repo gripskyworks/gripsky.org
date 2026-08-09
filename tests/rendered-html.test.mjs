@@ -60,6 +60,7 @@ test("server-renders the English system homepage", async () => {
   assert.match(html, /href="\/skills\/catalog"/);
   assert.match(html, /href="\/body\/self-host"/);
   assert.match(html, /href="\/contact"/);
+  assert.doesNotMatch(html, /href="\/updates"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 
@@ -193,9 +194,15 @@ test("real deep routes render their own content", async () => {
   const contact = await render("/zh/contact");
   assert.equal(contact.status, 200);
   const contactHtml = await contact.text();
+  assert.match(contactHtml, /更新在这里，联系也在。/);
+  assert.match(contactHtml, /邮件订阅/);
+  assert.match(contactHtml, /最近发布/);
   assert.match(contactHtml, /href="mailto:contact@gripsky\.org"/);
   assert.match(contactHtml, /微信 ID/);
   assert.match(contactHtml, /gripsky/);
+
+  const retiredUpdatesLanding = await render("/updates");
+  assert.equal(retiredUpdatesLanding.status, 404);
 });
 
 test("unknown routes return the site 404", async () => {
@@ -235,9 +242,10 @@ test("every discoverable internal link resolves", async () => {
 
 test("local email preview completes the subscription verification flow", async () => {
   const email = `local-test-${Date.now()}@example.com`;
+  const requestAddress = `2001:db8::${Date.now().toString(16)}`;
   const requestCode = await fetch(`${origin}/api/subscription/request-code`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", "cf-connecting-ip": requestAddress },
     body: JSON.stringify({
       email,
       locale: "en",
@@ -323,9 +331,13 @@ test("subscription preferences are noindex and reject missing tokens", async () 
 
 test("verified subscribers can self-unsubscribe with an email code", async () => {
   const email = `self-unsubscribe-${Date.now()}@example.com`;
+  const verificationHeaders = {
+    "content-type": "application/json",
+    "cf-connecting-ip": `2001:db8:1::${Date.now().toString(16)}`,
+  };
   const subscribeRequest = await fetch(`${origin}/api/subscription/request-code`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: verificationHeaders,
     body: JSON.stringify({
       email,
       locale: "zh",
@@ -346,7 +358,7 @@ test("verified subscribers can self-unsubscribe with an email code", async () =>
 
   const unsubscribeRequest = await fetch(`${origin}/api/subscription/request-code`, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: verificationHeaders,
     body: JSON.stringify({ email, locale: "zh", intent: "unsubscribe" }),
   });
   assert.equal(unsubscribeRequest.status, 200);
