@@ -59,6 +59,7 @@ test("server-renders the English system homepage", async () => {
   assert.match(html, /Begin wherever the work is/);
   assert.match(html, /href="\/skills\/catalog"/);
   assert.match(html, /href="\/body\/self-host"/);
+  assert.match(html, /href="\/contact"/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/i);
 });
 
@@ -79,6 +80,7 @@ test("server-renders the Chinese homepage", async () => {
   assert.match(html, /墨青/);
   assert.match(html, /从正在发生的事开始/);
   assert.match(html, /href="\/zh\/skills\/catalog"/);
+  assert.match(html, /href="\/zh\/contact"/);
   assert.match(html, /<title>GripSky — 开放世界观、技能体系与自托管<\/title>/i);
 });
 

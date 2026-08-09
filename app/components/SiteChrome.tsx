@@ -66,6 +66,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const [themeOpen, setThemeOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeId>("paper");
   const currentTheme = themeOptions.find((option) => option.id === theme) ?? themeOptions[0];
+  const contactHref = localPath(locale, "/contact");
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
@@ -195,6 +196,12 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               </div>
             );
           })}
+          <Link
+            className={`nav-direct ${pathname === contactHref ? "active" : ""}`}
+            href={contactHref}
+          >
+            {locale === "zh" ? "联系" : "Contact"}
+          </Link>
         </nav>
 
         <div className="header-actions">
@@ -278,6 +285,13 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             {tx(group.label, locale)}
           </Link>
         ))}
+        <Link
+          href={contactHref}
+          onClick={() => setMenuOpen(false)}
+        >
+          <span>0{navGroups.length + 1}</span>
+          {locale === "zh" ? "联系" : "Contact"}
+        </Link>
         <Link
           href={localPath(locale, "/updates/subscribe")}
           onClick={() => setMenuOpen(false)}

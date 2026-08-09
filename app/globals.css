@@ -538,7 +538,8 @@ button {
   position: relative;
 }
 
-.nav-group > a {
+.nav-group > a,
+.nav-direct {
   color: #8f9697;
   font-size: 0.69rem;
   padding: 30px 0;
@@ -546,7 +547,8 @@ button {
   transition: color 180ms ease;
 }
 
-.nav-group > a::after {
+.nav-group > a::after,
+.nav-direct::after {
   background: var(--acid);
   bottom: 20px;
   content: "";
@@ -561,13 +563,22 @@ button {
 
 .nav-group:hover > a,
 .nav-group:focus-within > a,
-.nav-group.active > a {
+.nav-group.active > a,
+.nav-direct:hover,
+.nav-direct:focus-visible,
+.nav-direct.active {
   color: var(--paper);
 }
 
-.nav-group.active > a::after {
+.nav-group.active > a::after,
+.nav-direct.active::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.nav-direct:focus-visible {
+  outline: 1px solid var(--acid);
+  outline-offset: 5px;
 }
 
 .nav-panel {
