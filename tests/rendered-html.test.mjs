@@ -52,6 +52,9 @@ test("server-renders the English system homepage", async () => {
   assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
   assert.match(html, /https:\/\/gripsky\.org\/#founder/i);
   assert.match(html, /https:\/\/orcid\.org\/0009-0009-9675-5355/i);
+  assert.match(html, /contact@gripsky\.org/i);
+  assert.match(html, /ContactPoint/i);
+  assert.match(html, /WeChat ID/i);
   assert.match(html, /Worldview becomes skill/);
   assert.match(html, /Begin wherever the work is/);
   assert.match(html, /href="\/skills\/catalog"/);
@@ -136,7 +139,10 @@ test("exposes crawl and install metadata", async () => {
 
   const llms = await render("/llms.txt");
   assert.equal(llms.status, 200);
-  assert.match(await llms.text(), /GripSky GitHub organization/);
+  const llmsText = await llms.text();
+  assert.match(llmsText, /GripSky GitHub organization/);
+  assert.match(llmsText, /contact@gripsky\.org/);
+  assert.match(llmsText, /WeChat ID: gripsky/);
 
   const feed = await render("/feed.xml");
   assert.equal(feed.status, 200);
@@ -181,6 +187,13 @@ test("real deep routes render their own content", async () => {
   const chineseSubscribe = await render("/zh/updates/subscribe");
   assert.equal(chineseSubscribe.status, 200);
   assert.match(await chineseSubscribe.text(), /如果邮箱客户端没有显示退订入口/);
+
+  const contact = await render("/zh/contact");
+  assert.equal(contact.status, 200);
+  const contactHtml = await contact.text();
+  assert.match(contactHtml, /href="mailto:contact@gripsky\.org"/);
+  assert.match(contactHtml, /微信 ID/);
+  assert.match(contactHtml, /gripsky/);
 });
 
 test("unknown routes return the site 404", async () => {

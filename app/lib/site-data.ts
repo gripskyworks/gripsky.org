@@ -24,6 +24,8 @@ export const GITHUB_WORLDVIEW = "https://github.com/weakdreamer/worldview";
 export const GITHUB_ISSUES = "https://github.com/weakdreamer/worldview/issues";
 export const GITHUB_ORGANIZATION = "https://github.com/gripskyworks";
 export const FOUNDER_ORCID = "https://orcid.org/0009-0009-9675-5355";
+export const CONTACT_EMAIL = "contact@gripsky.org";
+export const WECHAT_ID = "gripsky";
 
 export const tx = (value: LocalizedText, locale: Locale) => value[locale];
 
@@ -1060,6 +1062,13 @@ export const pages: Record<string, PageDefinition> = {
         body: {
           en: "State the system to be built or maintained, current materials, desired delivery and privacy constraints.",
           zh: "说明需要构造或维护的体系、已有材料、希望交付的结果和隐私约束。",
+        },
+      },
+      {
+        title: { en: "Direct contact", zh: "直接联系" },
+        body: {
+          en: "For service and collaboration enquiries, write to contact@gripsky.org. WeChat ID: gripsky. The contact page remains the current public directory as more channels are added.",
+          zh: "服务委托与协作咨询可发送至 contact@gripsky.org；微信 ID：gripsky。后续新增的公开联系渠道会持续在本页汇总。",
         },
       },
     ],

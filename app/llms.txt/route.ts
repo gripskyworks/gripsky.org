@@ -22,6 +22,12 @@ GripSky separates public definitions from private runtime state. Public skills s
 - [Lin Guan ORCID](https://orcid.org/0009-0009-9675-5355)
 - [About GripSky](https://gripsky.org/about)
 
+## Contact
+
+- [Contact page](https://gripsky.org/contact): Public directory for service and collaboration enquiries
+- Email: contact@gripsky.org
+- WeChat ID: gripsky
+
 ## Update channels
 
 - [Release feed](https://gripsky.org/feed.xml)

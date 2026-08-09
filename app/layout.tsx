@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteChrome } from "./components/SiteChrome";
+import { CONTACT_EMAIL, WECHAT_ID } from "./lib/site-data";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -122,6 +123,21 @@ export default function RootLayout({
         description:
           "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term stewardship.",
         founder: { "@id": "https://gripsky.org/#founder" },
+        email: CONTACT_EMAIL,
+        contactPoint: {
+          "@type": "ContactPoint",
+          "@id": "https://gripsky.org/contact#service-contact",
+          email: CONTACT_EMAIL,
+          url: "https://gripsky.org/contact",
+          contactType: "service and collaboration inquiries",
+          availableLanguage: ["en", "zh-CN"],
+          areaServed: "Worldwide",
+          identifier: {
+            "@type": "PropertyValue",
+            propertyID: "WeChat ID",
+            value: WECHAT_ID,
+          },
+        },
         sameAs: ["https://github.com/gripskyworks"],
         publishingPrinciples: "https://github.com/weakdreamer/worldview",
         knowsAbout: [

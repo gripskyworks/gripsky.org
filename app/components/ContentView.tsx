@@ -4,6 +4,7 @@ import {
   GITHUB_ISSUES,
   GITHUB_ORGANIZATION,
   GITHUB_WORLDVIEW,
+  CONTACT_EMAIL,
   Locale,
   PageDefinition,
   SkillDefinition,
@@ -11,6 +12,7 @@ import {
   releases,
   skills,
   tx,
+  WECHAT_ID,
 } from "../lib/site-data";
 import { ContactForm } from "./ContactForm";
 import { SubscriptionCenter } from "./SubscribeForm";
@@ -147,18 +149,26 @@ export function ContentView({
       {isReleases && <ReleaseIndex locale={locale} />}
       {isContact && (
         <section className="contact-options">
-          <div className="github-contact">
-            <span>PUBLIC / GITHUB</span>
-            <h2>{locale === "zh" ? "公开的工作，留在公开处。" : "Keep public work in public."}</h2>
-            <p>
-              {locale === "zh"
-                ? "概念修正、来源核验、实现实验和公开文档，都在 worldview 仓库留下来源与讨论。"
-                : "Conceptual corrections, source review, implementation experiments and public documentation keep their history in the worldview repository."}
-            </p>
-            <a href={GITHUB_ISSUES} target="_blank" rel="noreferrer">
-              {locale === "zh" ? "打开 GitHub Issues" : "Open GitHub Issues"}
-              <i aria-hidden="true">↗</i>
-            </a>
+          <div className="contact-side">
+            <div className="github-contact">
+              <span>PUBLIC / GITHUB</span>
+              <h2>{locale === "zh" ? "公开的工作，留在公开处。" : "Keep public work in public."}</h2>
+              <p>
+                {locale === "zh"
+                  ? "概念修正、来源核验、实现实验和公开文档，都在 worldview 仓库留下来源与讨论。"
+                  : "Conceptual corrections, source review, implementation experiments and public documentation keep their history in the worldview repository."}
+              </p>
+              <a href={GITHUB_ISSUES} target="_blank" rel="noreferrer">
+                {locale === "zh" ? "打开 GitHub Issues" : "Open GitHub Issues"}
+                <i aria-hidden="true">↗</i>
+              </a>
+            </div>
+            <aside className="direct-contact" id="service-contact">
+              <span>DIRECT / SERVICE</span>
+              <h2>{locale === "zh" ? "需要一条直接的线。" : "When the work needs a direct line."}</h2>
+              <a className="contact-email" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}<i aria-hidden="true">↗</i></a>
+              <p><span>{locale === "zh" ? "微信 ID" : "WeChat ID"}</span><strong>{WECHAT_ID}</strong></p>
+            </aside>
           </div>
           <ContactForm locale={locale} />
         </section>

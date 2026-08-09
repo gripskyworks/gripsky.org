@@ -2854,10 +2854,16 @@ button {
   padding: 20px max(10vw, 110px) 120px;
 }
 
+.contact-side {
+  display: grid;
+  gap: 1px;
+  grid-template-rows: 1fr auto;
+}
+
 .github-contact {
   background: var(--acid);
   color: var(--ink);
-  min-height: 560px;
+  min-height: 375px;
   padding: 42px;
 }
 
@@ -2873,7 +2879,7 @@ button {
   font-weight: 400;
   letter-spacing: -0.05em;
   line-height: 0.96;
-  margin: 120px 0 25px;
+  margin: 70px 0 25px;
 }
 
 .github-contact p {
@@ -2894,6 +2900,58 @@ button {
 
 .github-contact a i {
   color: var(--ink);
+}
+
+.direct-contact {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 28px 42px 31px;
+}
+
+.direct-contact > span,
+.direct-contact p > span {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+}
+
+.direct-contact h2 {
+  font-family: var(--display);
+  font-size: clamp(1.45rem, 2.1vw, 2.35rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  margin: 22px 0 24px;
+}
+
+.contact-email {
+  align-items: center;
+  border-bottom: 1px solid var(--line-strong);
+  display: flex;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(0.63rem, 0.82vw, 0.76rem);
+  justify-content: space-between;
+  padding-bottom: 10px;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.contact-email:hover {
+  border-color: var(--acid);
+  color: var(--acid);
+}
+
+.direct-contact p {
+  align-items: center;
+  display: flex;
+  gap: 13px;
+  margin: 17px 0 0;
+}
+
+.direct-contact p strong {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
 }
 
 .contact-form {
@@ -3943,13 +4001,21 @@ button {
     padding: 0 22px 80px;
   }
 
+  .contact-side {
+    grid-template-rows: auto;
+  }
+
   .github-contact {
-    min-height: 440px;
+    min-height: 360px;
     padding: 30px;
   }
 
   .github-contact h2 {
     margin-top: 75px;
+  }
+
+  .direct-contact {
+    padding: 28px 30px;
   }
 
   .external-source-card {
