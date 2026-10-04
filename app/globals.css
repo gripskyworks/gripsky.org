@@ -3068,7 +3068,7 @@ button {
 .contact-directory {
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 21px clamp(26px, 2.5vw, 38px) 17px;
+  padding: 15px clamp(24px, 2.3vw, 34px) 12px;
 }
 
 .contact-directory-heading {
@@ -3103,7 +3103,7 @@ button {
   border-top: 1px solid var(--line-strong);
   display: grid;
   grid-template-columns: 1.25fr 0.75fr;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .contact-channel-grid > * {
@@ -3170,7 +3170,7 @@ button {
   flex-direction: column;
   height: 100%;
   max-width: none;
-  padding: clamp(22px, 2vw, 29px);
+  padding: clamp(18px, 1.65vw, 24px);
 }
 
 .contact-form-heading {
@@ -3178,8 +3178,8 @@ button {
   display: grid;
   gap: 20px;
   grid-template-columns: minmax(110px, 0.48fr) 1.52fr;
-  margin-bottom: 14px;
-  padding-bottom: 14px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .contact-form-heading > span {
@@ -3187,7 +3187,7 @@ button {
 }
 
 .contact-form-compact .form-field {
-  margin-bottom: 9px;
+  margin-bottom: 7px;
 }
 
 .contact-form-compact .form-field > span {
@@ -3199,8 +3199,8 @@ button {
 }
 
 .contact-form-compact textarea {
-  height: 74px;
-  min-height: 74px;
+  height: 64px;
+  min-height: 64px;
 }
 
 .contact-form-compact .form-submit {
@@ -3224,6 +3224,306 @@ button {
   border: 2px solid;
   border-color: #ffffff #444444 #444444 #ffffff;
   box-shadow: 3px 3px 0 #0000aa;
+}
+
+/* Updates and contact: actions occupy the first screen; history grows below it. */
+.updates-contact-first {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0 auto;
+  min-height: 100svh;
+  padding: 94px max(4vw, 48px) 12px;
+  position: relative;
+  width: min(100%, 1760px);
+}
+
+.updates-contact-first::before {
+  background-image:
+    linear-gradient(var(--scene-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--scene-grid) 1px, transparent 1px);
+  background-size: 42px 42px;
+  content: "";
+  inset: 0;
+  mask-image: linear-gradient(180deg, black, rgba(0, 0, 0, 0.18) 74%, transparent);
+  pointer-events: none;
+  position: absolute;
+}
+
+.updates-contact-masthead {
+  align-items: end;
+  display: grid;
+  gap: clamp(24px, 3vw, 58px);
+  grid-template-columns: minmax(140px, 0.42fr) minmax(360px, 0.95fr) minmax(330px, 1.05fr);
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.updates-contact-masthead .eyebrow {
+  margin: 0 0 8px;
+}
+
+.updates-contact-masthead h1 {
+  font-family: var(--display);
+  font-size: clamp(3rem, 4.35vw, 5.5rem);
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  line-height: 0.91;
+  margin: 0;
+}
+
+[data-locale="zh"] .updates-contact-masthead h1 {
+  font-size: clamp(2.8rem, 3.9vw, 4.95rem);
+  letter-spacing: -0.075em;
+}
+
+.updates-contact-masthead > p:last-child {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.65;
+  margin: 0 0 4px;
+  max-width: 52em;
+}
+
+.updates-contact-portals {
+  display: grid;
+  flex: 1;
+  gap: 1px;
+  grid-template-columns: minmax(520px, 1fr) minmax(590px, 1fr);
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.updates-subscription-portal {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+}
+
+.updates-portal-heading {
+  align-items: end;
+  background: rgb(var(--family-rgb) / 0.035);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(135px, 0.48fr) 1.52fr;
+  padding: 16px clamp(24px, 2.3vw, 36px);
+}
+
+.updates-portal-heading > span {
+  color: var(--acid);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.updates-portal-heading h2 {
+  font-family: var(--display);
+  font-size: clamp(1.55rem, 2vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.updates-portal-heading p {
+  color: var(--muted);
+  font-size: 0.57rem;
+  line-height: 1.5;
+  margin: 7px 0 0;
+}
+
+.updates-subscription-portal .subscription-center {
+  height: 100%;
+  min-height: 0;
+}
+
+.updates-subscription-portal .subscription-form.compact {
+  padding: 24px 30px 20px;
+}
+
+.updates-subscription-portal .form-heading.compact {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+}
+
+.updates-subscription-portal .subscription-fields .form-field {
+  margin-bottom: 14px;
+}
+
+.updates-subscription-portal .subscription-form.compact fieldset {
+  margin-bottom: 14px;
+}
+
+.updates-subscription-portal .topic-grid.compact label {
+  min-height: 39px;
+}
+
+.updates-subscription-portal .subscription-fallback-note {
+  padding-bottom: 11px;
+  padding-top: 11px;
+}
+
+.updates-contact-portals .updates-contact-work {
+  min-height: 0;
+}
+
+.updates-release-stream {
+  background:
+    linear-gradient(90deg, rgb(var(--family-rgb) / 0.045), transparent 54%),
+    var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line-strong);
+  display: grid;
+  gap: clamp(60px, 8vw, 140px);
+  grid-template-columns: minmax(300px, 0.72fr) minmax(520px, 1.28fr);
+  min-height: 72svh;
+  padding: clamp(86px, 10vw, 150px) max(7vw, 80px) clamp(100px, 12vw, 170px);
+}
+
+.updates-release-heading {
+  align-self: start;
+  max-width: 620px;
+}
+
+.updates-release-heading .eyebrow {
+  margin: 0 0 clamp(42px, 6vw, 82px);
+}
+
+.updates-release-heading h2 {
+  font-family: var(--display);
+  font-size: clamp(3rem, 5vw, 6.7rem);
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  line-height: 0.9;
+  margin: 0;
+}
+
+[data-locale="zh"] .updates-release-heading h2 {
+  font-size: clamp(2.8rem, 4.45vw, 5.8rem);
+  letter-spacing: -0.075em;
+  line-height: 0.94;
+}
+
+.updates-release-heading > p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.75;
+  margin: 28px 0 0;
+  max-width: 47em;
+}
+
+.updates-release-heading nav {
+  border-top: 1px solid var(--line-strong);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 42px;
+}
+
+.updates-release-heading nav a {
+  align-items: center;
+  display: flex;
+  font-size: 0.58rem;
+  justify-content: space-between;
+  padding: 15px 10px 15px 0;
+  transition: background 180ms ease, padding 180ms ease;
+}
+
+.updates-release-heading nav a + a {
+  border-left: 1px solid var(--line);
+  padding-left: 14px;
+}
+
+.updates-release-heading nav a:hover {
+  background: rgb(var(--family-rgb) / 0.055);
+  padding-left: 10px;
+}
+
+.updates-release-heading nav a + a:hover {
+  padding-left: 18px;
+}
+
+.updates-release-heading nav i {
+  color: var(--acid);
+  font-style: normal;
+}
+
+.updates-release-list {
+  border-top: 1px solid var(--line-strong);
+}
+
+.updates-release-list article {
+  align-items: start;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: clamp(18px, 2.3vw, 42px);
+  grid-template-columns: 34px 92px 1fr;
+  padding: clamp(24px, 3vw, 40px) 12px 28px 0;
+  position: relative;
+  transition: background 180ms ease, padding-left 180ms ease;
+}
+
+.updates-release-list article::before {
+  background: var(--acid);
+  content: "";
+  height: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transition: height 220ms ease;
+  width: 2px;
+}
+
+.updates-release-list article:hover {
+  background: rgb(var(--family-rgb) / 0.04);
+  padding-left: 12px;
+}
+
+.updates-release-list article:hover::before {
+  height: 100%;
+}
+
+.release-stream-number,
+.updates-release-list time,
+.updates-release-list article > div > span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.52rem;
+}
+
+.release-stream-number,
+.updates-release-list article > div > span {
+  color: var(--acid);
+}
+
+.updates-release-list time {
+  color: var(--muted);
+}
+
+.updates-release-list h3 {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 2vw, 2.55rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin: 12px 0 0;
+}
+
+[data-theme="liquid"] :is(.updates-portal-heading, .updates-release-list article) {
+  backdrop-filter: blur(22px) saturate(1.25);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+  border-color: rgba(255, 255, 255, 0.52);
+}
+
+[data-theme="retro"] .updates-portal-heading {
+  background: var(--panel);
+  border: 2px solid;
+  border-color: #ffffff #444444 #444444 #ffffff;
+}
+
+[data-theme="retro"] .updates-release-list {
+  border-top-width: 2px;
 }
 
 .contact-options {
@@ -4655,6 +4955,136 @@ button {
     align-items: flex-start;
     flex-direction: column;
     gap: 17px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .updates-contact-first {
+    min-height: 0;
+    padding: 112px 28px 60px;
+  }
+
+  .updates-contact-masthead {
+    grid-template-columns: minmax(120px, 0.34fr) minmax(330px, 0.9fr) minmax(300px, 1fr);
+  }
+
+  .updates-contact-portals {
+    grid-template-columns: 1fr;
+  }
+
+  .updates-subscription-portal .subscription-center {
+    min-height: 578px;
+  }
+
+  .updates-release-stream {
+    gap: 70px;
+    grid-template-columns: 1fr;
+    padding-left: max(7vw, 58px);
+    padding-right: max(7vw, 58px);
+  }
+
+  .updates-release-heading {
+    max-width: 760px;
+  }
+}
+
+@media (max-width: 760px) {
+  .updates-contact-first {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+  .updates-contact-masthead {
+    align-items: start;
+    gap: 18px;
+    grid-template-columns: 1fr;
+  }
+
+  .updates-contact-masthead h1,
+  [data-locale="zh"] .updates-contact-masthead h1 {
+    font-size: clamp(3rem, 13vw, 5.2rem);
+  }
+
+  .updates-contact-masthead > p:last-child {
+    max-width: 54em;
+  }
+
+  .updates-contact-portals {
+    margin-top: 20px;
+  }
+
+  .updates-portal-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .updates-release-stream {
+    gap: 54px;
+    padding: 82px 22px 100px;
+  }
+
+  .updates-release-heading .eyebrow {
+    margin-bottom: 42px;
+  }
+
+  .updates-release-list article {
+    gap: 14px 20px;
+    grid-template-columns: 30px 1fr;
+  }
+
+  .updates-release-list article > div {
+    grid-column: 1 / -1;
+    padding-left: 50px;
+  }
+}
+
+@media (max-width: 560px) {
+  .updates-contact-first {
+    padding: 100px 16px 48px;
+  }
+
+  .updates-contact-masthead h1,
+  [data-locale="zh"] .updates-contact-masthead h1 {
+    font-size: clamp(2.85rem, 14vw, 4.45rem);
+  }
+
+  .updates-portal-heading {
+    padding: 20px;
+  }
+
+  .updates-subscription-portal .subscription-center {
+    min-height: 0;
+  }
+
+  .updates-release-stream {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .updates-release-heading h2,
+  [data-locale="zh"] .updates-release-heading h2 {
+    font-size: clamp(2.7rem, 13vw, 4.15rem);
+  }
+
+  .updates-release-heading nav {
+    grid-template-columns: 1fr;
+  }
+
+  .updates-release-heading nav a + a {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+  }
+
+  .updates-release-heading nav a + a:hover {
+    padding-left: 10px;
+  }
+
+  .updates-release-list article {
+    padding-right: 4px;
+  }
+
+  .updates-release-list h3 {
+    font-size: 1.35rem;
   }
 }
 

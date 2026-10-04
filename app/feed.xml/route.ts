@@ -34,7 +34,7 @@ export function GET() {
   <channel>
     <title>GripSky release feed</title>
     <description>Worldview, skill and interface releases published by GripSky.</description>
-    <link>${origin}/updates</link>
+    <link>${origin}/updates/releases</link>
     <atom:link href="${origin}/feed.xml" rel="self" type="application/rss+xml" />
     <language>en</language>
     <lastBuildDate>${new Date(`${latestDate}T00:00:00Z`).toUTCString()}</lastBuildDate>${items}

@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import { SiteChrome } from "./components/SiteChrome";
-import { CONTACT_EMAIL, WECHAT_ID } from "./lib/site-data";
+import { CONTACT_EMAIL, WECHAT_ID, pages, skills } from "./lib/site-data";
+import { homeDescription } from "./lib/public-metadata";
 import "./globals.css";
+import "./interior.css";
+import "./atlas.css";
+import "./interior-atlas.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,17 +20,16 @@ const geistMono = Geist_Mono({
 });
 
 const siteOrigin = process.env.NODE_ENV === "development"
-  ? "http://localhost:3000"
+  ? "http://localhost:3014"
   : "https://gripsky.org";
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   metadataBase: new URL(siteOrigin),
   title: {
     default: "GripSky — Open worldview, skill systems and self-hosting",
     template: "%s · GripSky",
   },
-  description:
-    "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term system stewardship.",
+  description: homeDescription.en,
   applicationName: "GripSky",
   authors: [{ name: "Lin Guan", url: "https://linguan.online" }],
   creator: "Lin Guan",
@@ -75,8 +79,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     alternateLocale: ["zh_CN"],
     title: "GripSky — Open worldview, skill systems and self-hosting",
-    description:
-      "An evolving worldview, public skills, self-hosting paths and systems built to remain under their owner’s control.",
+    description: homeDescription.en,
     images: [
       {
         url: "/og-system.png",
@@ -89,22 +92,46 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "GripSky — Open worldview and skill systems",
-    description:
-      "Worldview into skill. Skill that stays yours.",
+    description: homeDescription.en,
     images: ["/og-system.png"],
   },
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const pathname = requestHeaders.get("x-gripsky-pathname");
+  const path = pathname === "/zh" ? "/" : pathname?.startsWith("/zh/") ? pathname.slice(3) : pathname;
+  const knownPage = !path || path === "/" || path === "/unsubscribe" || Object.hasOwn(pages, path)
+    || skills.some((skill) => path === `/skills/${skill.slug}`);
+  if (knownPage) return baseMetadata;
+
+  // Vinext's not-found boundary keeps layout metadata but drops the page's
+  // metadata. Use the URL-derived header so a real 404 cannot inherit the home
+  // summary. The proxy overwrites incoming values; this does not change status.
+  const chinese = requestHeaders.get("x-gripsky-language") === "zh-CN";
+  const title = chinese ? "页面未找到" : "Page not found";
+  const description = chinese ? "这里还没有公开页面。" : "There is no public page here yet.";
+  return {
+    ...baseMetadata,
+    title,
+    description,
+    robots: { index: false, follow: false },
+    openGraph: { ...baseMetadata.openGraph, title, description, locale: chinese ? "zh_CN" : "en_US" },
+    twitter: { ...baseMetadata.twitter, title, description },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#eeeae0",
   colorScheme: "light dark",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const language = (await headers()).get("x-gripsky-language") === "zh-CN" ? "zh-CN" : "en";
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
@@ -120,8 +147,7 @@ export default function RootLayout({
           height: 512,
         },
         image: "https://gripsky.org/og-system.png",
-        description:
-          "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term stewardship.",
+        description: homeDescription[language === "zh-CN" ? "zh" : "en"],
         founder: { "@id": "https://gripsky.org/#founder" },
         email: CONTACT_EMAIL,
         contactPoint: {
@@ -186,7 +212,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang={language}>
       <head>
         <link
           rel="alternate"

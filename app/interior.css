@@ -1,0 +1,107 @@
+/* Preserved pre-Atlas reading and form layout. These pages await their own design pass. */
+/* Reading, directories and operations share a language, not a giant hero. */
+.site-shell .content-hero { min-height: 510px; padding: 170px var(--page-edge) 64px; align-items: end; }
+.site-shell .content-hero::after { left: var(--page-edge); right: var(--page-edge); }
+.site-shell .content-hero::before { background: none; }
+.site-shell .content-heading { max-width: 760px; }
+.site-shell .content-heading h1 {
+  font-size: clamp(2.5rem, 4.6vw, 4.25rem);
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  margin: 30px 0 26px;
+}
+.site-shell[data-locale="zh"] .content-heading h1 { font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1.3; letter-spacing: -0.02em; }
+.site-shell .content-heading > p:last-child { font-size: 17px; line-height: 1.8; max-width: 60ch; }
+.site-shell .status-pill { font-size: 12px; margin-top: 20px; }
+.site-shell .content-orbit { width: 330px; height: 330px; right: var(--page-edge); top: 145px; opacity: 0.24; z-index: 0; }
+.site-shell .content-orbit :is(span, i) { animation: none; }
+.site-shell .content-sections { padding: 64px var(--page-edge) 80px; }
+.site-shell .content-sections article { grid-template-columns: 72px minmax(0, 760px); gap: 24px; padding: 40px 0; }
+.site-shell .content-sections article > span { font-size: 13px; }
+.site-shell .content-sections h2 { font-size: 28px; line-height: 1.4; letter-spacing: -0.025em; }
+.site-shell .content-sections :is(p, ul) { font-size: 17px; line-height: 1.85; max-width: 65ch; }
+.site-shell .content-sections li { font-size: 16px; line-height: 1.8; }
+.site-shell .content-sections p { margin-top: 20px; }
+.site-shell .catalog-grid,
+.site-shell .route-card-grid { padding-inline: var(--page-edge); gap: 24px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.site-shell .catalog-grid > a { min-height: 0; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; }
+.site-shell .catalog-grid > a > b { position: static; margin-top: auto; padding-top: 24px; font-size: 14px; min-height: 44px; }
+.site-shell .catalog-grid > a > p { min-height: 0; }
+.site-shell .catalog-grid dl { margin: 24px 0 0; }
+.site-shell .catalog-card-top > span { font-size: 12px; }
+.site-shell .source-state { box-shadow: none; background: var(--acid); }
+.site-shell .source-state.planned { background: transparent; border: 1px solid var(--acid); }
+.site-shell .source-state.definition { border-radius: 0; background: transparent; border: 1px solid var(--acid); }
+.site-shell .catalog-grid h2 { font-family: var(--font-geist-sans), "PingFang SC", sans-serif; font-size: 24px; }
+.site-shell .catalog-grid h2,
+.site-shell .route-card-grid h2 { font-size: 28px; line-height: 1.4; }
+.site-shell .catalog-grid > a > p { font-size: 16px; line-height: 1.8; }
+.site-shell .catalog-grid :is(small, dt, dd),
+.site-shell .skill-facts :is(span, b) { font-size: 13px; }
+.site-shell .related-links { padding-inline: var(--page-edge); }
+.site-shell .related-links > span,
+.site-shell .related-links a { font-size: 14px; min-height: 44px; }
+.site-shell .updates-contact-page { padding-inline: 0; }
+.site-shell .updates-contact-first { width: 100%; padding: 112px var(--page-edge) 48px; }
+.site-shell .updates-contact-first::before { opacity: 0.35; }
+.site-shell .updates-contact-masthead { padding-top: 0; grid-template-columns: 1.15fr 1fr; gap: 20px 32px; }
+.site-shell .updates-contact-masthead .eyebrow { grid-column: 1 / -1; }
+.site-shell .updates-contact-portals { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.site-shell .updates-portal-heading,
+.site-shell .contact-directory-heading { grid-template-columns: 1fr; }
+.site-shell .updates-portal-heading :is(span, p),
+.site-shell .contact-directory-heading :is(span, p) { font-size: 13px; line-height: 1.7; }
+.site-shell .updates-contact-masthead h1 { font-size: 40px; line-height: 1.25; letter-spacing: -0.025em; }
+.site-shell .updates-contact-masthead > p:last-child { font-size: 16px; line-height: 1.8; }
+.site-shell .updates-portal-heading h2,
+.site-shell .contact-directory-heading h2,
+.site-shell .form-heading h2 { font-family: var(--font-geist-sans), "PingFang SC", sans-serif; font-size: 24px; font-weight: 500; line-height: 1.4; }
+.site-shell .form-heading > span,
+.site-shell .contact-channel-grid span { font-size: 12px; }
+.site-shell .contact-channel-grid strong { font-size: 14px; }
+.site-shell .contact-github-link { font-size: 14px; }
+.site-shell .subscription-tabs button { font-size: 14px; min-height: 44px; }
+.site-shell .subscription-tab-help,
+.site-shell .form-privacy,
+.site-shell .form-back { font-size: 13px; line-height: 1.7; }
+.site-shell .topic-grid label { font-size: 14px; }
+.site-shell .form-field > span { font-size: 14px; }
+.site-shell .form-field :is(input, textarea, select) { font-size: 16px; }
+.site-shell .form-message { font-size: 14px; line-height: 1.7; }
+.site-shell .subscription-page { padding-inline: var(--page-edge); }
+.site-shell .subscription-intro h1 { font-size: clamp(2rem, 3vw, 3rem); line-height: 1.3; }
+.site-shell .subscription-intro > p:not(.eyebrow) { font-size: 16px; }
+.site-shell .site-footer { padding: 64px var(--page-edge) 28px; }
+.site-shell .footer-brand strong { font-size: 14px; }
+.site-shell .footer-brand p { font-size: 14px; max-width: 28ch; line-height: 1.8; }
+.site-shell .footer-nav span { font-size: 12px; }
+.site-shell .footer-nav a { font-size: 14px; min-height: 32px; }
+.site-shell .site-footer a:hover { color: var(--source-muted); text-decoration: underline; text-underline-offset: 4px; }
+.site-shell .footer-bottom { font-size: 12px; gap: 24px; }
+
+
+@media (min-width: 768px) and (max-width: 1119px) {
+.site-shell .updates-contact-portals { grid-template-columns: 1fr; }
+}
+@media (max-width: 767px) {
+  .site-shell .content-hero { min-height: 0; padding-top: 132px; padding-bottom: 48px; }
+  .site-shell .content-heading h1,
+  .site-shell[data-locale="zh"] .content-heading h1 { font-size: 36px; line-height: 1.3; }
+  .site-shell .content-heading > p:last-child { font-size: 16px; }
+  .site-shell .content-orbit { display: none; }
+  .site-shell .content-sections { padding-block: 32px 64px; }
+  .site-shell .content-sections article { grid-template-columns: 1fr; gap: 16px; padding-block: 28px; }
+  .site-shell .content-sections h2 { font-size: 24px; }
+  .site-shell .content-sections :is(p, ul) { font-size: 16px; }
+  .site-shell .catalog-grid,
+  .site-shell .route-card-grid { grid-template-columns: 1fr; }
+  .site-shell .catalog-grid > a { padding: 26px; }
+  .site-shell .updates-contact-first { padding-top: 108px; padding-bottom: 32px; }
+  .site-shell .updates-contact-masthead { grid-template-columns: 1fr; gap: 20px; }
+  .site-shell .updates-contact-portals { grid-template-columns: 1fr; }
+  .site-shell .updates-contact-masthead h1 { font-size: 34px; }
+  .site-shell .footer-top { grid-template-columns: 1fr; gap: 40px; }
+  .site-shell .footer-nav { gap: 16px; }
+  .site-shell .footer-nav a { min-height: 44px; }
+  .site-shell .footer-bottom { display: grid; gap: 20px; margin-top: 36px; }
+}

@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Locale } from "../lib/site-data";
+import { formErrorMessage } from "../lib/form-feedback";
 
 export function ContactForm({ locale, compact = false }: { locale: Locale; compact?: boolean }) {
   const [status, setStatus] = useState("");
@@ -9,9 +10,10 @@ export function ContactForm({ locale, compact = false }: { locale: Locale; compa
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formElement = event.currentTarget;
     setLoading(true);
     setStatus("");
-    const form = new FormData(event.currentTarget);
+    const form = new FormData(formElement);
 
     try {
       const response = await fetch("/api/contact", {
@@ -27,14 +29,14 @@ export function ContactForm({ locale, compact = false }: { locale: Locale; compa
       });
       const data = (await response.json()) as { error?: string };
       if (!response.ok) throw new Error(data.error || "Request failed");
-      event.currentTarget.reset();
+      formElement.reset();
       setStatus(
         locale === "zh"
-          ? "需求已经记录。邮件通道可用时也会转发到服务邮箱。"
-          : "The request has been recorded and will also be forwarded when the mail channel is available.",
+          ? "信息已收到。后续通常通过邮箱联系。"
+          : "Your message has been received. Follow-up is usually by email.",
       );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Request failed");
+      setStatus(formErrorMessage(error, locale, "contact"));
     } finally {
       setLoading(false);
     }
@@ -68,9 +70,9 @@ export function ContactForm({ locale, compact = false }: { locale: Locale; compa
       <label className="form-field">
         <span>{locale === "zh" ? "联系类型" : "Request type"}</span>
         <select name="kind" defaultValue="service">
-          <option value="service">{locale === "zh" ? "服务委托" : "Paid service"}</option>
+          <option value="service">{locale === "zh" ? "服务委托" : "Service request"}</option>
           <option value="research">{locale === "zh" ? "研究合作" : "Research collaboration"}</option>
-          <option value="other">{locale === "zh" ? "其它" : "Other"}</option>
+          <option value="other">{locale === "zh" ? "其他" : "Other"}</option>
         </select>
       </label>
       <label className="form-field">
@@ -82,15 +84,15 @@ export function ContactForm({ locale, compact = false }: { locale: Locale; compa
           placeholder={
             locale === "zh"
               ? "说明要构造或维护的体系、已有材料、希望交付的结果和隐私约束。"
-              : "Describe the system, current materials, desired delivery and privacy constraints."
+              : "Describe the system to build or maintain, the materials available, the intended result and any privacy constraints."
           }
         />
       </label>
       <button className="primary-button form-submit" type="submit" disabled={loading}>
         {loading
           ? locale === "zh"
-            ? "记录中…"
-            : "Recording…"
+            ? "提交中…"
+            : "Submitting…"
           : locale === "zh"
             ? "提交需求"
             : "Submit request"}

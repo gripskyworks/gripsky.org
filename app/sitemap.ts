@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { pages, skills } from "./lib/site-data";
 
 const origin = "https://gripsky.org";
-const lastModified = new Date("2026-08-09T00:00:00+08:00");
 
 const publicPaths = [
   "/",
@@ -27,14 +26,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return [
       {
         url: englishUrl,
-        lastModified,
         changeFrequency: path.startsWith("/updates") || path === "/contact" ? "weekly" : "monthly",
         priority,
         alternates,
       },
       {
         url: chineseUrl,
-        lastModified,
         changeFrequency: path.startsWith("/updates") || path === "/contact" ? "weekly" : "monthly",
         priority,
         alternates,

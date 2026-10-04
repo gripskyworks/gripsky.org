@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentView } from "../components/ContentView";
 import { Locale, pages, skills, tx } from "../lib/site-data";
+import { publicPageName } from "../lib/public-metadata";
 
 type RouteProps = {
   params: Promise<{ slug: string[] }>;
@@ -22,7 +23,13 @@ function resolveRoute(slug: string[]) {
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
   const { slug } = await params;
   const { locale, path, content, skill } = resolveRoute(slug);
-  const title = skill ? tx(skill.name, locale) : content ? tx(content.title, locale) : "Not found";
+  const title = skill
+    ? tx(skill.name, locale)
+    : content
+      ? publicPageName(path, locale, tx(content.title, locale))
+      : locale === "zh"
+        ? "页面未找到"
+        : "Not found";
   const description = skill
     ? tx(skill.summary, locale)
     : content

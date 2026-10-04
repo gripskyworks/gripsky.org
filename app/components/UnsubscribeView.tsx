@@ -3,12 +3,13 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Locale } from "../lib/site-data";
+import { formErrorMessage } from "../lib/form-feedback";
 
 const topics = [
   { id: "worldview", en: "Worldview releases", zh: "世界观版本" },
-  { id: "skills", en: "Skill packages", zh: "技能包发布" },
+  { id: "skills", en: "Skill releases", zh: "技能发布" },
   { id: "compatibility", en: "Compatibility changes", zh: "兼容性变化" },
-  { id: "research", en: "Research and contribution calls", zh: "研究与协作邀请" },
+  { id: "research", en: "Research and collaboration invitations", zh: "研究与协作邀请" },
   { id: "services", en: "Managed-service notices", zh: "托管服务通知" },
 ] as const;
 
@@ -21,7 +22,7 @@ export function UnsubscribeView({ locale }: { locale: Locale }) {
   const [email, setEmail] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [message, setMessage] = useState(
-    token ? "" : locale === "zh" ? "这个订阅链接不可用。" : "This subscription link is unavailable.",
+    token ? "" : formErrorMessage("This subscription link is unavailable.", locale, "load-preferences"),
   );
 
   useEffect(() => {
@@ -34,9 +35,9 @@ export function UnsubscribeView({ locale }: { locale: Locale }) {
         setSelected(data.topics ?? []);
         setState("ready");
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         setState("error");
-        setMessage(locale === "zh" ? "这个订阅链接不可用或已经失效。" : "This subscription link is unavailable or invalid.");
+        setMessage(formErrorMessage(error, locale, "load-preferences"));
       });
   }, [locale, token]);
 
@@ -62,9 +63,9 @@ export function UnsubscribeView({ locale }: { locale: Locale }) {
       setMessage(nextTopics.length
         ? locale === "zh" ? "订阅主题已经更新。" : "Your update topics have been saved."
         : locale === "zh" ? "已退订全部 GripSky 更新。" : "You have unsubscribed from all GripSky updates.");
-    } catch {
+    } catch (error) {
       setState("error");
-      setMessage(locale === "zh" ? "订阅设置没有保存，请稍后重试。" : "Your subscription settings were not saved. Try again later.");
+      setMessage(formErrorMessage(error, locale, "save-preferences"));
     }
   };
 
@@ -81,7 +82,7 @@ export function UnsubscribeView({ locale }: { locale: Locale }) {
           <h1>{locale === "zh" ? "只保留仍然想看的更新。" : "Keep only the updates you still want."}</h1>
           <p>
             {locale === "zh"
-              ? "可以修改主题，也可以在这里停止全部邮件。验证码和必要的安全邮件不属于订阅通知。"
+              ? "可以修改主题，也可以在这里停止全部更新邮件。验证码和必要的安全邮件不属于订阅通知。"
               : "Change individual topics or stop every subscription email here. Verification and necessary security messages are not subscription updates."}
           </p>
         </div>
@@ -92,7 +93,9 @@ export function UnsubscribeView({ locale }: { locale: Locale }) {
             <span>01</span>
             <div>
               <h2>{locale === "zh" ? "管理订阅" : "Manage subscription"}</h2>
-              <p>{email || (locale === "zh" ? "正在读取订阅…" : "Loading subscription…")}</p>
+              {(email || state === "loading") && (
+                <p>{email || (locale === "zh" ? "正在读取订阅…" : "Loading subscription…")}</p>
+              )}
             </div>
           </div>
 

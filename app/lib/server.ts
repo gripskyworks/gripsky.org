@@ -406,11 +406,11 @@ function bytesToHex(bytes: Uint8Array): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function sha256(value: string): Promise<Uint8Array> {
+async function sha256(value: string): Promise<Uint8Array<ArrayBuffer>> {
   return new Uint8Array(await crypto.subtle.digest("SHA-256", textEncoder.encode(value)));
 }
 
-async function hmacSha256(key: Uint8Array, value: string): Promise<Uint8Array> {
+async function hmacSha256(key: Uint8Array<ArrayBuffer>, value: string): Promise<Uint8Array<ArrayBuffer>> {
   const cryptoKey = await crypto.subtle.importKey(
     "raw",
     key,
@@ -480,9 +480,9 @@ function escapeEmailHtml(value: string): string {
   })[character] ?? character);
 }
 
-function brandedEmailHtml(title: string, content: string): string {
+function brandedEmailHtml(title: string, content: string, locale: "zh" | "en" = "en"): string {
   return `<!doctype html>
-<html lang="en"><body style="margin:0;background:#f4f7fb;color:#18202b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+<html lang="${locale === "zh" ? "zh-CN" : "en"}"><body style="margin:0;background:#f4f7fb;color:#18202b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
   <main style="max-width:560px;margin:32px auto;padding:0 20px">
     <section style="background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:32px;box-shadow:0 12px 36px rgba(15,23,42,.08)">
       <img src="https://gripsky.org/gripsky-favicon-light-20260806-192.png" width="56" height="56" alt="GripSky" style="display:block;border-radius:14px;margin:0 0 20px" />
@@ -500,9 +500,9 @@ export async function sendVerificationEmail(
   locale: "zh" | "en",
   intent: SubscriptionIntent = "subscribe",
 ): Promise<"sent" | "preview"> {
+  if (localPreviewEnabled()) return "preview";
   const ses = sesConfig();
   if (!ses) {
-    if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") return "preview";
     throw new Error("SES is not configured.");
   }
 
@@ -516,12 +516,13 @@ export async function sendVerificationEmail(
     : isZh ? "用于确认 GripSky 更新订阅" : "to confirm your GripSky update subscription";
   const text = isZh
     ? `你的验证码是 ${code}，${purpose}，10 分钟内有效。若不是你发起的请求，请忽略此邮件。`
-    : `Your verification code is ${code}, ${purpose}. It expires in 10 minutes. Ignore this email if you did not request it.`;
+    : `Your verification code is ${code}. Use it ${purpose}. It expires in 10 minutes. Ignore this email if you did not request it.`;
   const html = brandedEmailHtml(
     subject,
     isZh
       ? `<p>你的验证码是：</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>${purpose}，10 分钟内有效。若不是你发起的请求，请忽略此邮件。</p>`
       : `<p>Your verification code is:</p><p style="margin:20px 0;font-size:32px;font-weight:700;letter-spacing:.18em;color:#0f766e">${code}</p><p>Use it ${purpose}. It expires in 10 minutes. Ignore this email if you did not request it.</p>`,
+    locale,
   );
   await sendSesEmail({
     FromEmailAddress: fromEmailAddress(ses.from),
@@ -548,6 +549,7 @@ export async function sendUpdateEmail(input: {
   url: string;
   subscriberToken: string;
 }): Promise<{ delivery: "sent" | "preview"; messageId: string }> {
+  if (localPreviewEnabled()) return { delivery: "preview", messageId: "preview" };
   const preferencesUrl = new URL(input.locale === "zh" ? "/zh/unsubscribe" : "/unsubscribe", "https://gripsky.org");
   preferencesUrl.searchParams.set("token", input.subscriberToken);
   const oneClickUrl = new URL("/api/subscription/unsubscribe", "https://gripsky.org");
@@ -556,7 +558,7 @@ export async function sendUpdateEmail(input: {
 
   const isZh = input.locale === "zh";
   const action = isZh ? "阅读这次更新" : "Read this update";
-  const manage = isZh ? "管理订阅或退订" : "Manage or unsubscribe";
+  const manage = isZh ? "管理订阅或退订" : "Manage subscription or unsubscribe";
   const text = [
     input.title,
     "",
@@ -568,13 +570,11 @@ export async function sendUpdateEmail(input: {
   const html = brandedEmailHtml(
     input.title,
     `<p>${escapeEmailHtml(input.summary)}</p><p style="margin:26px 0"><a href="${escapeEmailHtml(input.url)}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px">${action}</a></p><hr style="border:0;border-top:1px solid #e2e8f0;margin:28px 0 18px" /><p style="font-size:13px;color:#64748b">${isZh ? "您收到这封邮件，是因为已订阅 GripSky 的相关更新。" : "You received this message because you subscribed to this GripSky update topic."}<br /><a href="${escapeEmailHtml(preferencesUrl.toString())}" style="color:#475569">${manage}</a></p>`,
+    input.locale,
   );
 
   const ses = sesConfig();
   if (!ses) {
-    if (workerEnv().LOCAL_EMAIL_PREVIEW === "true") {
-      return { delivery: "preview", messageId: "preview" };
-    }
     throw new Error("SES is not configured.");
   }
 
@@ -605,6 +605,7 @@ export async function forwardContactRequest(input: {
   brief: string;
   locale: "zh" | "en";
 }): Promise<boolean> {
+  if (localPreviewEnabled()) return false;
   const ses = sesConfig();
   const inbox = workerEnv().SERVICE_INBOX_EMAIL;
   if (!ses || !inbox) return false;

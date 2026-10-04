@@ -2,12 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { GITHUB_ORGANIZATION, Locale, localPath, navGroups, tx } from "../lib/site-data";
+import { useEffect, useRef, useState } from "react";
+import { attachEnvironmentMotion } from "../lib/environment-motion";
+import {
+  GITHUB_ORGANIZATION,
+  Locale,
+  localPath,
+  navGroups,
+  tx,
+} from "../lib/site-data";
 
 type ThemeId = "paper" | "orbit" | "retro" | "liquid" | "tide";
+type HeaderPanel = "menu" | "theme" | null;
 
-const themeEnvironment: Record<ThemeId, { colorScheme: "light" | "dark"; themeColor: string }> = {
+const themeEnvironment: Record<
+  ThemeId,
+  { colorScheme: "light" | "dark"; themeColor: string }
+> = {
   paper: { colorScheme: "light", themeColor: "#eeeae0" },
   orbit: { colorScheme: "dark", themeColor: "#06090b" },
   retro: { colorScheme: "light", themeColor: "#c9c8bd" },
@@ -61,11 +72,21 @@ function equivalentLanguagePath(pathname: string, locale: Locale) {
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const shell = useRef<HTMLDivElement>(null);
   const locale = getLocale(pathname);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false);
+  const [panel, setPanel] = useState<{ pathname: string; active: HeaderPanel }>({
+    pathname,
+    active: null,
+  });
+  // A header panel belongs to the route where it was opened. Reset before
+  // rendering the new page, including history navigation, without remounting
+  // the whole shell or resetting the reader's theme.
+  if (panel.pathname !== pathname) setPanel({ pathname, active: null });
+  const menuOpen = panel.pathname === pathname && panel.active === "menu";
+  const themeOpen = panel.pathname === pathname && panel.active === "theme";
   const [theme, setTheme] = useState<ThemeId>("paper");
-  const currentTheme = themeOptions.find((option) => option.id === theme) ?? themeOptions[0];
+  const currentTheme =
+    themeOptions.find((option) => option.id === theme) ?? themeOptions[0];
 
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
@@ -74,12 +95,18 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const environment = themeEnvironment[theme];
     document.documentElement.style.colorScheme = environment.colorScheme;
-    document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    document
+      .querySelector<HTMLMetaElement>('meta[name="theme-color"]')
       ?.setAttribute("content", environment.themeColor);
   }, [theme]);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("gripsky-theme-v2");
+    let stored: string | null = null;
+    try {
+      stored = window.localStorage.getItem("gripsky-precision-theme");
+    } catch {
+      // A denied storage API must not prevent this session's controls working.
+    }
     const matched = themeOptions.find((option) => option.id === stored);
     if (!matched) return;
     const frame = window.requestAnimationFrame(() => setTheme(matched.id));
@@ -87,112 +114,102 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    let frame = 0;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const interactiveSelector = [
-      ".relation-grid article",
-      ".skill-row",
-      ".catalog-grid > a",
-      ".route-card-grid > a",
-      ".release-list article",
-      ".release-index article",
-      ".subscription-form",
-      ".contact-form",
-      ".external-source-card",
-      ".latest-update-list article",
-      ".update-entry-links a",
-      ".contact-channel-grid > *",
-      ".contact-github-link",
-    ].join(",");
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType === "touch" || reduceMotion.matches) return;
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        const shell = document.querySelector<HTMLElement>(".site-shell");
-        if (!shell) return;
-
-        const normalizedX = event.clientX / window.innerWidth - 0.5;
-        const normalizedY = event.clientY / window.innerHeight - 0.5;
-        shell.style.setProperty("--pointer-x", `${event.clientX}px`);
-        shell.style.setProperty("--pointer-y", `${event.clientY}px`);
-        shell.style.setProperty("--motion-x", `${normalizedX * 14}px`);
-        shell.style.setProperty("--motion-y", `${normalizedY * 12}px`);
-        shell.style.setProperty("--motion-x-reverse", `${normalizedX * -9}px`);
-        shell.style.setProperty("--motion-y-reverse", `${normalizedY * -7}px`);
-
-        const target = event.target instanceof Element
-          ? event.target.closest<HTMLElement>(interactiveSelector)
-          : null;
-        if (target) {
-          const rect = target.getBoundingClientRect();
-          target.style.setProperty("--surface-x", `${event.clientX - rect.left}px`);
-          target.style.setProperty("--surface-y", `${event.clientY - rect.top}px`);
-        }
-      });
-    };
-
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setThemeOpen(false);
-    };
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (event.target instanceof Element && !event.target.closest(".theme-control")) {
-        setThemeOpen(false);
+      if (event.key === "Escape") {
+        setPanel((current) => ({ ...current, active: null }));
       }
     };
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    const onPointerDown = (event: PointerEvent) => {
+      if (!(event.target instanceof Element)) return;
+      const target = event.target;
+      setPanel((current) => {
+        const owner = current.active === "theme"
+          ? ".theme-control"
+          : ".menu-button, .mobile-menu";
+        return current.active && !target.closest(owner)
+          ? { ...current, active: null }
+          : current;
+      });
+    };
+
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
 
+  useEffect(() => {
+    if (shell.current) return attachEnvironmentMotion(shell.current);
+  }, [pathname]);
+
+  const closePanel = () => setPanel({ pathname, active: null });
+  const togglePanel = (active: Exclude<HeaderPanel, null>) => {
+    setPanel((current) => ({
+      pathname,
+      active: current.pathname === pathname && current.active === active ? null : active,
+    }));
+  };
+
   const chooseTheme = (nextTheme: ThemeId) => {
     setTheme(nextTheme);
-    setThemeOpen(false);
-    window.localStorage.setItem("gripsky-theme-v2", nextTheme);
+    closePanel();
+    try {
+      window.localStorage.setItem("gripsky-precision-theme", nextTheme);
+    } catch {
+      // Keep the chosen theme for this session when persistent storage is unavailable.
+    }
   };
 
   return (
     <div
       className="site-shell"
+      ref={shell}
       data-locale={locale}
       data-theme={theme}
       lang={locale === "zh" ? "zh-CN" : "en"}
     >
-      <div className="theme-backdrop" aria-hidden="true">
-        <span className="backdrop-shape shape-one" />
-        <span className="backdrop-shape shape-two" />
-        <span className="backdrop-shape shape-three" />
-      </div>
+      <a className="skip-content" href="#main-content">
+        {locale === "zh" ? "跳到正文" : "Skip to content"}
+      </a>
       <header className="site-header">
-        <Link className="brand-lockup" href={localPath(locale, "/")} aria-label="GripSky home">
-          <span className="brand-mark" aria-hidden="true">
-          </span>
+        <Link
+          className="brand-lockup"
+          href={localPath(locale, "/")}
+          onClick={closePanel}
+          aria-label={locale === "zh" ? "GripSky 首页" : "GripSky home"}
+        >
+          <span className="brand-mark" aria-hidden="true"></span>
           <span className="brand-word">GRIPSKY</span>
         </Link>
 
-        <nav className="desktop-nav" aria-label={locale === "zh" ? "主导航" : "Primary navigation"}>
+        <nav
+          className="desktop-nav"
+          aria-label={locale === "zh" ? "主导航" : "Primary navigation"}
+        >
           {navGroups.map((group) => {
             const href = localPath(locale, group.href);
-            const activePaths = "activePaths" in group ? group.activePaths : [group.href];
+            const activePaths =
+              "activePaths" in group ? group.activePaths : [group.href];
             const active = activePaths.some((path) => {
               const localizedPath = localPath(locale, path);
-              return pathname === localizedPath || pathname.startsWith(`${localizedPath}/`);
+              return (
+                pathname === localizedPath ||
+                pathname.startsWith(`${localizedPath}/`)
+              );
             });
 
             return (
-              <div className={`nav-group ${active ? "active" : ""}`} key={group.href}>
-                <Link href={href}>{tx(group.label, locale)}</Link>
+              <div
+                className={`nav-group ${active ? "active" : ""}`}
+                key={group.href}
+              >
+                <Link href={href} onClick={closePanel}>{tx(group.label, locale)}</Link>
                 <div className="nav-panel">
                   {group.items.map((item) => (
-                    <Link href={localPath(locale, item.href)} key={item.href}>
+                    <Link href={localPath(locale, item.href)} key={item.href} onClick={closePanel}>
                       <span>{tx(item.label, locale)}</span>
                       <i aria-hidden="true">↗</i>
                     </Link>
@@ -208,10 +225,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <button
               className="theme-trigger"
               type="button"
-              onClick={() => {
-                setThemeOpen((open) => !open);
-                setMenuOpen(false);
-              }}
+              onClick={() => togglePanel("theme")}
               aria-expanded={themeOpen}
               aria-controls="theme-panel"
             >
@@ -224,10 +238,17 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               <span>{locale === "zh" ? "主题" : "Theme"}</span>
               <b>{tx(currentTheme.label, locale)}</b>
             </button>
-            <div className="theme-panel" id="theme-panel" aria-hidden={!themeOpen}>
+            <div
+              className="theme-panel"
+              id="theme-panel"
+              aria-hidden={!themeOpen}
+              inert={!themeOpen}
+            >
               <div className="theme-panel-heading">
                 <span>{locale === "zh" ? "界面场景" : "INTERFACE SCENE"}</span>
-                <small>{locale === "zh" ? "保存在当前设备" : "Saved on this device"}</small>
+                <small>
+                  {locale === "zh" ? "保存在当前设备" : "Saved on this device"}
+                </small>
               </div>
               <div className="theme-options">
                 {themeOptions.map((option, index) => (
@@ -238,11 +259,16 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
                     onClick={() => chooseTheme(option.id)}
                     tabIndex={themeOpen ? 0 : -1}
                   >
-                    <span className={`theme-swatch swatch-${option.id}`} aria-hidden="true">
+                    <span
+                      className={`theme-swatch swatch-${option.id}`}
+                      aria-hidden="true"
+                    >
                       <i />
                     </span>
                     <span>
-                      <b>0{index + 1} · {tx(option.label, locale)}</b>
+                      <b>
+                        0{index + 1} · {tx(option.label, locale)}
+                      </b>
                       <small>{tx(option.note, locale)}</small>
                     </span>
                     <i aria-hidden="true">{theme === option.id ? "●" : "○"}</i>
@@ -254,18 +280,33 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           <Link
             className="language-switch"
             href={equivalentLanguagePath(pathname, locale)}
+            onClick={closePanel}
             aria-label={locale === "en" ? "切换至中文" : "Switch to English"}
           >
             {locale === "en" ? "中文" : "EN"}
           </Link>
-          <Link className="header-subscribe" href={localPath(locale, "/updates/subscribe")}>
+          <Link
+            className="header-subscribe"
+            href={localPath(locale, "/updates/subscribe")}
+            onClick={closePanel}
+          >
             {locale === "zh" ? "订阅更新" : "Subscribe"}
           </Link>
           <button
             className="menu-button"
-            onClick={() => setMenuOpen((open) => !open)}
+            type="button"
+            onClick={() => togglePanel("menu")}
             aria-expanded={menuOpen}
-            aria-label={locale === "zh" ? "打开导航" : "Open navigation"}
+            aria-controls="mobile-navigation"
+            aria-label={
+              locale === "zh"
+                ? menuOpen
+                  ? "关闭导航"
+                  : "打开导航"
+                : menuOpen
+                  ? "Close navigation"
+                  : "Open navigation"
+            }
           >
             <span />
             <span />
@@ -273,12 +314,18 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+      <nav
+        className={`mobile-menu ${menuOpen ? "open" : ""}`}
+        id="mobile-navigation"
+        aria-label={locale === "zh" ? "移动导航" : "Mobile navigation"}
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
+      >
         {navGroups.map((group, index) => (
           <Link
             href={localPath(locale, group.href)}
             key={group.href}
-            onClick={() => setMenuOpen(false)}
+            onClick={closePanel}
           >
             <span>0{index + 1}</span>
             {tx(group.label, locale)}
@@ -286,20 +333,26 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         ))}
         <Link
           href={localPath(locale, "/updates/subscribe")}
-          onClick={() => setMenuOpen(false)}
+          onClick={closePanel}
         >
           <span>→</span>
           {locale === "zh" ? "订阅更新" : "Subscribe to updates"}
         </Link>
+      </nav>
+
+      <div id="main-content" tabIndex={-1}>
+        {children}
       </div>
 
-      {children}
-
       <footer className="site-footer">
+        {(pathname === "/" || pathname === "/zh") && (
+          <div className="atlas-footer-word" aria-hidden="true">
+            GRIPSKY<span>↗</span>
+          </div>
+        )}
         <div className="footer-top">
           <div className="footer-brand">
-            <span className="brand-mark" aria-hidden="true">
-            </span>
+            <span className="brand-mark" aria-hidden="true"></span>
             <div>
               <strong>GRIPSKY</strong>
               <p>
@@ -312,21 +365,39 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           <div className="footer-nav">
             <div>
               <span>{locale === "zh" ? "使用" : "Use"}</span>
-              <Link href={localPath(locale, "/worldview")}>{locale === "zh" ? "世界观" : "Worldview"}</Link>
-              <Link href={localPath(locale, "/skills/catalog")}>{locale === "zh" ? "技能目录" : "Skill catalog"}</Link>
-              <Link href={localPath(locale, "/faq")}>{locale === "zh" ? "常见问题" : "FAQ"}</Link>
+              <Link href={localPath(locale, "/worldview")}>
+                {locale === "zh" ? "世界观" : "Worldview"}
+              </Link>
+              <Link href={localPath(locale, "/skills/catalog")}>
+                {locale === "zh" ? "技能目录" : "Skill catalog"}
+              </Link>
+              <Link href={localPath(locale, "/faq")}>
+                {locale === "zh" ? "常见问题" : "FAQ"}
+              </Link>
             </div>
             <div>
               <span>{locale === "zh" ? "参与" : "Participate"}</span>
-              <a href={GITHUB_ORGANIZATION} target="_blank" rel="noreferrer">GitHub</a>
-              <Link href={localPath(locale, "/research/contribute")}>{locale === "zh" ? "参与贡献" : "Contribute"}</Link>
-              <Link href={localPath(locale, "/updates/subscribe")}>{locale === "zh" ? "订阅更新" : "Updates"}</Link>
+              <a href={GITHUB_ORGANIZATION} target="_blank" rel="noreferrer">
+                GitHub
+              </a>
+              <Link href={localPath(locale, "/research/contribute")}>
+                {locale === "zh" ? "参与贡献" : "Contribute"}
+              </Link>
+              <Link href={localPath(locale, "/updates/subscribe")}>
+                {locale === "zh" ? "订阅更新" : "Updates"}
+              </Link>
             </div>
             <div>
               <span>{locale === "zh" ? "委托" : "Commission"}</span>
-              <Link href={localPath(locale, "/services")}>{locale === "zh" ? "服务" : "Services"}</Link>
-              <Link href={localPath(locale, "/contact")}>{locale === "zh" ? "联系" : "Contact"}</Link>
-              <Link href={localPath(locale, "/about")}>{locale === "zh" ? "关于" : "About"}</Link>
+              <Link href={localPath(locale, "/services")}>
+                {locale === "zh" ? "服务" : "Services"}
+              </Link>
+              <Link href={localPath(locale, "/contact")}>
+                {locale === "zh" ? "联系" : "Contact"}
+              </Link>
+              <Link href={localPath(locale, "/about")}>
+                {locale === "zh" ? "关于" : "About"}
+              </Link>
             </div>
           </div>
         </div>
@@ -334,7 +405,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           <span>© 2026 GRIPSKY</span>
           <div>
             <Link href={localPath(locale, "/legal/business")}>
-              {locale === "zh" ? "经营主体" : "Business"}
+              {locale === "zh" ? "经营主体" : "Business identity"}
             </Link>
             <Link href={localPath(locale, "/legal/privacy")}>
               {locale === "zh" ? "隐私" : "Privacy"}

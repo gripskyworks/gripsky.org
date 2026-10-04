@@ -46,7 +46,7 @@ test("server-renders the English system homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GripSky — Open worldview, skill systems and self-hosting(?: · GripSky)?<\/title>/i);
-  assert.match(html, /rel="icon" href="http:\/\/localhost:3000\/gripsky-favicon-light-20260806\.ico"/i);
+  assert.match(html, /rel="icon" href="http:\/\/localhost:3014\/gripsky-favicon-light-20260806\.ico"/i);
   assert.match(html, /https:\/\/gripsky\.org\/gripsky-brand-mark-v1\.png/);
   assert.match(html, /application\/ld\+json/i);
   assert.match(html, /https:\/\/gripsky\.org\/#organization/i);
@@ -55,8 +55,10 @@ test("server-renders the English system homepage", async () => {
   assert.match(html, /contact@gripsky\.org/i);
   assert.match(html, /ContactPoint/i);
   assert.match(html, /WeChat ID/i);
-  assert.match(html, /Worldview becomes skill/);
-  assert.match(html, /Begin wherever the work is/);
+  const heading = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  assert.equal(heading, "Worldview becomes skill.");
+  assert.match(html, /Understanding/);
+  assert.match(html, /From understanding the world to extending your reach\./);
   assert.match(html, /href="\/skills\/catalog"/);
   assert.match(html, /href="\/body\/self-host"/);
   assert.match(html, /href="\/contact"/);
@@ -68,34 +70,114 @@ test("server-renders the Chinese homepage", async () => {
   const response = await render("/zh");
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /世界观落成技能/);
+  assert.match(html, /<html[^>]*lang="zh-CN"/);
+  const heading = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, "");
+  assert.equal(heading, "世界观落成技能。");
   assert.match(html, /data-locale="zh"/);
   assert.match(html, /class="site-shell"[^>]*lang="zh-CN"/);
   assert.match(html, /data-theme="paper"/);
-  assert.match(html, /世界观落成技能。<\/span>/);
   assert.match(html, /仍然归你掌握。<\/em>/);
+  assert.match(html, /从理解世界，到扩展自己的可达范围。/);
   assert.match(html, /亮色/);
   assert.match(html, /暗轨/);
   assert.match(html, /古早网页/);
   assert.match(html, /液态玻璃/);
   assert.match(html, /墨青/);
-  assert.match(html, /从正在发生的事开始/);
+  assert.match(html, /问题还没有答案/);
   assert.match(html, /href="\/zh\/skills\/catalog"/);
   assert.match(html, /href="\/zh\/contact"/);
   assert.match(html, /<title>GripSky — 开放世界观、技能体系与自托管<\/title>/i);
 });
 
+test("the homepage exposes the entire skill index and truthful availability without client JavaScript", async () => {
+  for (const prefix of ["", "/zh"]) {
+    const html = await (await render(prefix || "/")).text();
+    assert.equal((html.match(/class="atlas-skill"/g) ?? []).length, 6);
+    for (const code of ["S-001", "M-001", "E-001", "E-002", "E-003", "F-001"]) assert.ok(html.includes(code));
+    assert.match(html, /aria-pressed="true" aria-controls="home-skill-results"/);
+    assert.match(html, /id="home-skill-results"/);
+  }
+});
+
+test("the geometric scene exposes five real bilingual entry points before hydration", async () => {
+  for (const [prefix, label] of [["", "Public system entry points"], ["/zh", "公开体系入口"]]) {
+    const html = await (await render(prefix || "/")).text();
+    assert.match(html, /class="precision-scene"/);
+    assert.match(html, new RegExp(`aria-label="${label}"`));
+    for (const path of ["/worldview/source", "/worldview", "/about", "/skills", "/body"]) {
+      assert.ok(html.includes(`href="${prefix}${path}"`));
+    }
+    assert.match(html, /class="scene-signal"/);
+    assert.doesNotMatch(html, /class="system-constellation"|class="theme-backdrop"/);
+    assert.match(html, /id="main-content"/);
+    assert.match(html, /href="#main-content"/);
+  }
+});
+
 test("bilingual deep routes publish canonical and reciprocal language links", async () => {
   for (const [pathname, canonical] of [
-    ["/skills/catalog", "http://localhost:3000/skills/catalog"],
-    ["/zh/skills/catalog", "http://localhost:3000/zh/skills/catalog"],
+    ["/skills/catalog", "http://localhost:3014/skills/catalog"],
+    ["/zh/skills/catalog", "http://localhost:3014/zh/skills/catalog"],
   ]) {
     const response = await render(pathname);
     assert.equal(response.status, 200);
     const html = await response.text();
+    assert.match(html, new RegExp(`<html[^>]*lang="${pathname.startsWith("/zh/") ? "zh-CN" : "en"}"`));
     assert.match(html, new RegExp(`rel="canonical" href="${canonical}"`));
-    assert.match(html, /hrefLang="en" href="http:\/\/localhost:3000\/skills\/catalog"/);
-    assert.match(html, /hrefLang="zh-CN" href="http:\/\/localhost:3000\/zh\/skills\/catalog"/);
+    assert.match(html, /hrefLang="en" href="http:\/\/localhost:3014\/skills\/catalog"/);
+    assert.match(html, /hrefLang="zh-CN" href="http:\/\/localhost:3014\/zh\/skills\/catalog"/);
+  }
+});
+
+test("document language is URL-derived and cannot be changed by an incoming language header", async () => {
+  for (const [path, language, incoming] of [["/", "en", "zh-CN"], ["/zh/research", "zh-CN", "en"]]) {
+    const response = await fetch(`${origin}${path}`, { headers: { "x-gripsky-language": incoming, "x-gripsky-pathname": "/forged-unknown-path" } });
+    const html = await response.text();
+    assert.match(html, new RegExp(`<html[^>]*lang="${language}"`));
+    assert.doesNotMatch(html.match(/<title>([^<]+)<\/title>/)?.[1] ?? "", /Page not found|页面未找到/);
+  }
+});
+
+test("public page metadata names the subject while preserving visible editorial headings", async () => {
+  for (const [path, title] of [["/research", "Research and open questions"], ["/zh/research", "研究与开放问题"], ["/skills/catalog", "Skill catalog and availability"], ["/zh/contact", "更新与联系"]]) {
+    const html = await (await render(path)).text();
+    assert.ok(html.includes(`<title>${title} · GripSky</title>`));
+    const data = Array.from(html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g), (match) => JSON.parse(match[1]));
+    const webpage = data.find((node) => node["@type"] === "WebPage" || node["@type"] === "ContactPage");
+    assert.ok(webpage, path);
+    assert.equal(webpage.name, title);
+    assert.equal(webpage.url, `https://gripsky.org${path}`);
+    assert.equal(webpage.inLanguage, path.startsWith("/zh/") ? "zh-CN" : "en");
+    assert.equal(webpage.author["@id"], "https://gripsky.org/#founder");
+    assert.equal(webpage.publisher["@id"], "https://gripsky.org/#organization");
+    assert.equal(webpage.dateModified, undefined, "Do not invent a modification date.");
+  }
+  const html = await (await render("/zh/skills/skill-conceptualization")).text();
+  const data = Array.from(html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g), (match) => JSON.parse(match[1]));
+  const webpage = data.find((node) => node["@type"] === "WebPage");
+  assert.match(webpage.citation[0], /\/blob\/main\//);
+  assert.match(webpage.citation[0], /README\.md$/);
+});
+
+test("skills link to specific public files and distinguish unpublished skills from background material", async () => {
+  for (const prefix of ["", "/zh"]) {
+    for (const [slug, pathFragment] of [
+      ["skill-conceptualization", encodeURIComponent("技能概念化")],
+      ["body-calibration", encodeURIComponent("定体术")],
+    ]) {
+      const html = await (await render(`${prefix}/skills/${slug}`)).text();
+      assert.match(html, /SOURCE \/ GITHUB/);
+      assert.ok(html.includes(`${pathFragment}/README.md`));
+      assert.match(html, /github\.com\/weakdreamer\/worldview\/blob\/main\//);
+    }
+    const background = await (await render(`${prefix}/skills/information-inheritance`)).text();
+    assert.match(background, /BACKGROUND \/ GITHUB/);
+    assert.match(background, /v0\.1\.0/);
+    for (const slug of ["browser-interface", "sync-recovery", "problem-solving"]) {
+      const html = await (await render(`${prefix}/skills/${slug}`)).text();
+      assert.match(html, /PUBLIC FILE \/ PENDING/);
+      assert.doesNotMatch(html, /github\.com\/weakdreamer\/worldview\/blob\//);
+    }
   }
 });
 
@@ -131,6 +213,10 @@ test("exposes crawl and install metadata", async () => {
   const sitemapXml = await sitemap.text();
   assert.match(sitemapXml, /https:\/\/gripsky\.org\/zh\/skills\/catalog/);
   assert.match(sitemapXml, /hreflang="zh-CN"/);
+  assert.match(sitemapXml, /<loc>https:\/\/gripsky\.org\/contact<\/loc>/);
+  assert.doesNotMatch(sitemapXml, /<loc>https:\/\/gripsky\.org\/updates<\/loc>/);
+  assert.equal((sitemapXml.match(/<loc>/g) ?? []).length, 88);
+  assert.doesNotMatch(sitemapXml, /<lastmod>/, "No fixed or build-time modification date.");
 
   const manifest = await render("/manifest.webmanifest");
   assert.equal(manifest.status, 200);
@@ -166,6 +252,23 @@ test("FAQ publishes visible bilingual answers and matching structured data", asy
   assert.match(chineseHtml, /GripSky 是什么？/);
   assert.match(chineseHtml, /FAQPage/);
 
+  for (const html of [englishHtml, chineseHtml]) {
+    const structured = [...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
+      .map((match) => JSON.parse(match[1]))
+      .find((value) => value["@type"] === "FAQPage");
+    assert.ok(structured);
+    const visible = html.match(/<main\b[\s\S]*?<\/main>/)?.[0]
+      .replace(/<script\b[\s\S]*?<\/script>/g, "")
+      .replace(/<[^>]+>/g, " ")
+      .replaceAll("&amp;", "&").replaceAll("&#x27;", "'").replaceAll("&quot;", '"')
+      .replace(/\s+/g, " ");
+    for (const answer of structured.mainEntity) {
+      assert.ok(visible.includes(answer.name), `FAQ question is not visible: ${answer.name}`);
+      assert.ok(visible.includes(answer.acceptedAnswer.text), `FAQ answer is not visible: ${answer.name}`);
+    }
+    assert.equal(structured.mainEntity.length, 11);
+  }
+
   const about = await render("/about");
   assert.equal(about.status, 200);
   assert.match(await about.text(), /Lin Guan on ORCID/);
@@ -178,7 +281,7 @@ test("real deep routes render their own content", async () => {
 
   const selfHost = await render("/zh/body/self-host");
   assert.equal(selfHost.status, 200);
-  assert.match(await selfHost.text(), /自托管是设计要求/);
+  assert.match(await selfHost.text(), /自托管是这里的设计要求/);
 
   const subscribe = await render("/updates/subscribe");
   assert.equal(subscribe.status, 200);
@@ -189,26 +292,106 @@ test("real deep routes render their own content", async () => {
 
   const chineseSubscribe = await render("/zh/updates/subscribe");
   assert.equal(chineseSubscribe.status, 200);
-  assert.match(await chineseSubscribe.text(), /如果邮箱客户端没有显示退订入口/);
+  assert.match(await chineseSubscribe.text(), /邮件应用未显示退订入口时/);
 
   const contact = await render("/zh/contact");
   assert.equal(contact.status, 200);
   const contactHtml = await contact.text();
-  assert.match(contactHtml, /更新在这里，联系也在。/);
-  assert.match(contactHtml, /邮件订阅/);
-  assert.match(contactHtml, /最近发布/);
+  assert.match(contactHtml, /更新与联系。/);
+  assert.match(contactHtml, /订阅更新/);
+  assert.match(contactHtml, /订阅 \/ 更新主题/);
+  assert.match(contactHtml, /业务与协作联系/);
+  assert.match(contactHtml, /更新记录。/);
   assert.match(contactHtml, /href="mailto:contact@gripsky\.org"/);
   assert.match(contactHtml, /微信 ID/);
   assert.match(contactHtml, /gripsky/);
+  assert.match(contactHtml, /"@type":"ContactPage"/);
+  assert.match(contactHtml, /https:\/\/gripsky\.org\/zh\/contact#webpage/);
+  assert.match(contactHtml, /https:\/\/gripsky\.org\/#organization/);
 
   const retiredUpdatesLanding = await render("/updates");
   assert.equal(retiredUpdatesLanding.status, 404);
 });
 
+test("research keeps the open-work frame while clarifying the current line", async () => {
+  const chinese = await render("/zh/research");
+  assert.equal(chinese.status, 200);
+  const chineseHtml = await chinese.text();
+  assert.match(chineseHtml, /问题还没有答案，就先把它公开。/);
+  assert.match(chineseHtml, /信息身躯/);
+  assert.match(chineseHtml, /公共基础设施/);
+  assert.match(chineseHtml, /仍待补足的证据/);
+  assert.match(chineseHtml, /认识、改变和扩展自己/);
+  assert.doesNotMatch(chineseHtml, /一人公司/);
+  assert.doesNotMatch(chineseHtml, /research-thesis/);
+
+  const english = await render("/research");
+  assert.equal(english.status, 200);
+  const englishHtml = await english.text();
+  assert.match(englishHtml, /Open work, while it is still open./);
+  assert.match(englishHtml, /Evidence still needed/);
+  assert.match(englishHtml, /understand, change and extend themselves/);
+  assert.doesNotMatch(englishHtml, /one person company/i);
+
+  const questions = await render("/research/questions");
+  assert.equal(questions.status, 200);
+  assert.match(await questions.text(), /Questions with enough weight to change the system/);
+});
+
+test("content states exploration separately from public source and preserves private boundaries", async () => {
+  for (const prefix of ["", "/zh"]) {
+    const calibration = await (await render(`${prefix}/skills/body-calibration`)).text();
+    const sections = calibration.match(/<section class="content-sections">([\s\S]*?)<\/section>/)?.[1];
+    assert.ok(sections);
+    assert.equal((sections.match(/<article>/g) ?? []).length, 3);
+    assert.match(sections, /systematic body of practice records|体系化实践记录/);
+    assert.match(sections, /not a validated training or health protocol|不是经过验证的训练方案或健康指导/);
+    assert.doesNotMatch(sections, /shaped into stable releases|整理成稳定版本/);
+    assert.match(calibration, /No runnable package|暂无可运行包/);
+
+    const inheritance = await (await render(`${prefix}/skills/information-inheritance`)).text();
+    assert.match(inheritance, /Check at the destination|在目标端验收/);
+    assert.doesNotMatch(inheritance, /H3|verified internally|已完成内部验证/);
+    const conceptualization = await (await render(`${prefix}/skills/skill-conceptualization`)).text();
+    assert.match(conceptualization, /Practice writes back|由实践反写/);
+
+    const architecture = await (await render(`${prefix}/body/architecture`)).text();
+    assert.match(architecture, /not automatically an organ|不自动等于器官/);
+    assert.match(architecture, /One material, several roles|一份材料，多种作用/);
+    for (const html of [calibration, inheritance, conceptualization, architecture]) {
+      // Dev-mode RSC stack traces contain local source paths; inspect authored
+      // metadata and content here, not the framework's loopback debug payload.
+      const authored = html.replace(/<script\b[\s\S]*?<\/script>/g, "");
+      assert.doesNotMatch(authored, /libfile_|drive\.google\.com|\/Users\/linguan|con-eu/);
+    }
+  }
+});
+
+test("current reading maps and research questions do not claim a finished architecture or new release", async () => {
+  for (const prefix of ["", "/zh"]) {
+    const worldview = await (await render(`${prefix}/worldview`)).text();
+    assert.match(worldview, /Four views, in dialogue|四观，相互校准/);
+    const map = await (await render(`${prefix}/worldview/map`)).text();
+    assert.match(map, /no longer describe the whole current system|已不能代表当前整个体系/);
+    const questions = await (await render(`${prefix}/research/questions`)).text();
+    assert.match(questions, /reproducible lexical searches to locate material|词法定位/);
+    assert.match(questions, /Continuity across endpoints|跨端点的意义接续/);
+    const releases = await (await render(`${prefix}/updates/releases`)).text();
+    assert.doesNotMatch(releases, /2026-10-03/);
+    assert.equal((releases.match(/<time>/g) ?? []).length, 3);
+  }
+});
+
 test("unknown routes return the site 404", async () => {
-  const response = await render("/not-a-real-gripsky-route");
-  assert.equal(response.status, 404);
-  assert.match(await response.text(), /There is no public page here yet/);
+  for (const prefix of ["", "/zh"]) {
+    const response = await render(`${prefix}/not-a-real-gripsky-route`);
+    assert.equal(response.status, 404);
+    const html = await response.text();
+    assert.match(html, /There is no public page here yet/);
+    assert.match(html, new RegExp(`<title>${prefix ? "页面未找到" : "Page not found"}(?: · GripSky)?</title>`));
+    assert.match(html, /name="robots" content="noindex, nofollow"/);
+    assert.doesNotMatch(html.match(/<meta name="description" content="([^"]+)"/)?.[1] ?? "", /worldview|世界观/i);
+  }
 });
 
 test("every discoverable internal link resolves", async () => {
@@ -321,9 +504,17 @@ test("local email preview completes the subscription verification flow", async (
 });
 
 test("subscription preferences are noindex and reject missing tokens", async () => {
-  const page = await render("/zh/unsubscribe");
-  assert.equal(page.status, 200);
-  assert.match(await page.text(), /name="robots" content="noindex, nofollow"/i);
+  for (const path of ["/unsubscribe", "/zh/unsubscribe"]) {
+    const page = await render(path);
+    assert.equal(page.status, 200);
+    const html = await page.text();
+    assert.match(html, /name="robots" content="noindex, nofollow"/i);
+    const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1];
+    assert.ok(description);
+    assert.equal(html.match(/<meta property="og:description" content="([^"]+)"/)?.[1], description);
+    assert.equal(html.match(/<meta name="twitter:description" content="([^"]+)"/)?.[1], description);
+    assert.doesNotMatch(description, /worldview|世界观/i);
+  }
 
   const unauthorized = await fetch(`${origin}/api/internal/updates/process`, { method: "POST" });
   assert.equal(unauthorized.status, 404);

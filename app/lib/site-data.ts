@@ -42,7 +42,7 @@ export const navGroups = [
     items: [
       { label: { en: "System map", zh: "体系地图" }, href: "/worldview/map" },
       { label: { en: "Principles", zh: "当前原则" }, href: "/worldview/principles" },
-      { label: { en: "Source", zh: "开放源文件" }, href: "/worldview/source" },
+      { label: { en: "Source", zh: "公开源文件" }, href: "/worldview/source" },
     ],
   },
   {
@@ -105,6 +105,13 @@ export type SkillDefinition = {
   openness: LocalizedText;
   selfHost: LocalizedText;
   source: "public" | "planned" | "definition";
+  documents?: {
+    href: string;
+    label: LocalizedText;
+    note: LocalizedText;
+    relationship: "definition" | "background";
+  }[];
+  sections?: PageSection[];
 };
 
 export const skills: SkillDefinition[] = [
@@ -114,13 +121,47 @@ export const skills: SkillDefinition[] = [
     kind: { en: "Generative grammar", zh: "技能母体" },
     name: { en: "Skill conceptualization", zh: "技能概念化" },
     summary: {
-      en: "A method for turning scattered knowledge and repeated practice into callable, testable and revisable abilities.",
-      zh: "把散乱知识和反复实践整理成可调用、可验证、可修正能力的方法。",
+      en: "Exploring how knowledge and experience become reusable skills. Personal judgment guides their use; practice can reshape them.",
+      zh: "把知识和经验整理成可复用的技能。用不用、怎么用，由使用者自己判断；方法随实践修订。",
     },
     maturity: { en: "Public concept · evolving", zh: "公开概念 · 持续演化" },
     openness: { en: "Public in worldview", zh: "已在 worldview 公开" },
     selfHost: { en: "Documentation first", zh: "文档优先" },
     source: "public",
+    documents: [
+      {
+        href: `${GITHUB_WORLDVIEW}/blob/main/${encodeURIComponent("人生观（强化自我）")}/${encodeURIComponent("技能概念化")}/README.md`,
+        label: { en: "Read the skill definition on GitHub", zh: "在 GitHub 阅读技能概念化" },
+        note: {
+          en: "The current public README on the main branch. Earlier architecture and stage descriptions are retained there as part of the concept’s history; this site states the current scope.",
+          zh: "main 分支的公开 README。文档保留早期架构与阶段表述；当前研究与实践状态以本站条目说明为准。",
+        },
+        relationship: "definition",
+      },
+    ],
+    sections: [
+      {
+        title: { en: "From knowledge to ability", zh: "从知识到能力" },
+        body: {
+          en: "An early sketch began with distilling knowledge: knowledge supports skills, and personality puts those skills to use. Exploration can start by asking what to understand, how to judge, what to do and how to check results.",
+          zh: "这项探索最初的思路是“提纯知识 → 知识支撑技能 → 人格操作技能”。梳理技能时，可以从几个问题入手：需要理解什么、怎样判断、具体做什么、如何检查结果。",
+        },
+      },
+      {
+        title: { en: "More than an installation format", zh: "技能卡、工具与运行记录" },
+        body: {
+          en: "A capability card describes the ability. Platform instructions, scripts and tools give it usable forms; runtime records describe a particular setting. These parts can evolve separately, with links through their sources and the checks used to assess results. Knowledge, judgment, action and checks can become modules where independent reuse is useful.",
+          zh: "技能卡说明能力；平台入口、脚本和工具提供调用方式；运行记录保留某次使用的情况。它们可以分别更新，通过来源与验收记录保持关联。知识、判断、动作和验收，也可以按复用需要拆成模块。",
+        },
+      },
+      {
+        title: { en: "Practice writes back", zh: "由实践反写" },
+        body: {
+          en: "A first card is not proof that an ability is mature. When the knowledge or checks are still unclear, exploration comes first. Repeated use and failure can change the method, its boundaries and the grammar used to make the next skill.",
+          zh: "写出第一张卡，不等于能力已经成熟。知识和验收还不清楚时，先保留探索。反复使用与失败会修正方法、边界，也会反过来改变下一项技能的生成语法。",
+        },
+      },
+    ],
   },
   {
     slug: "information-inheritance",
@@ -128,13 +169,47 @@ export const skills: SkillDefinition[] = [
     kind: { en: "Meta-skill", zh: "元技能" },
     name: { en: "Information inheritance", zh: "信息遗传与器官表达" },
     summary: {
-      en: "Determines where information belongs, what may cross a boundary, and how reusable rules return to the shared system.",
-      zh: "判断信息应归属哪里、哪些内容可以跨越边界，以及可复用规则如何回写体系。",
+      en: "A method for deciding where information belongs, what may cross a boundary and how reusable rules feed back into the system.",
+      zh: "判断信息属于哪里、哪些内容可以跨越边界，以及怎样把可复用规则写回体系。",
     },
-    maturity: { en: "H3 · verified internally", zh: "H3 · 已完成内部验证" },
+    maturity: { en: "Method in internal use", zh: "内部使用中的方法" },
     openness: { en: "Public definition planned", zh: "计划公开定义与通用规则" },
-    selfHost: { en: "Package in preparation", zh: "自托管包准备中" },
+    selfHost: { en: "No public installation package yet", zh: "暂无公开安装包" },
     source: "planned",
+    documents: [
+      {
+        href: `${GITHUB_WORLDVIEW}/blob/main/${encodeURIComponent("玄")}/${encodeURIComponent("00-临观信息遗传与器官表达模型-v0.1.0.md")}`,
+        label: { en: "Read the earlier information-inheritance model", zh: "阅读早期信息遗传与器官表达模型" },
+        note: {
+          en: "Background model v0.1.0, not the current internally used skill or an installation package. The skill’s public definition is still being prepared.",
+          zh: "这是 v0.1.0 背景模型，不是当前内部使用的技能或安装包；技能的通用定义仍待公开。",
+        },
+        relationship: "background",
+      },
+    ],
+    sections: [
+      {
+        title: { en: "Decide what should travel", zh: "先判断什么需要传播" },
+        body: {
+          en: "A source document, a public rewrite, code and a running instance can concern the same object without carrying the same authority. The method identifies their roles and decides which change belongs at which endpoint.",
+          zh: "正文源文件、公开改写、代码和运行实例，可以关联同一对象，却各有裁决范围。这项方法先辨认它们的作用，再判断哪些变化需要传到哪些端点。",
+        },
+      },
+      {
+        title: { en: "Check at the destination", zh: "在目标端验收" },
+        body: {
+          en: "Copying a file is only one operation. A change needs a scope, a version and a read-back at its destination. Some differences are legitimate; others are omissions, failures or decisions still waiting for the owner.",
+          zh: "复制文件只是其中一个动作。一次变化需要说明范围、版本，并在目标端读回验收。有些差异可以保留，有些是遗漏、失败，或仍需主体裁决的问题。",
+        },
+      },
+      {
+        title: { en: "Public form still to be prepared", zh: "通用表达尚待公开" },
+        body: {
+          en: "The method is used internally, but this entry is not a downloadable release or a claim that every endpoint is synchronized. A public version needs transferable rules and checks without private paths, credentials or operating records.",
+          zh: "这项方法已用于内部工作，但此条目不是可下载版本，也不表示全部端点已经同步。公开版本还需要整理可转移的规则与验收方式，并去除私有路径、凭据和现场记录。",
+        },
+      },
+    ],
   },
   {
     slug: "body-calibration",
@@ -142,13 +217,47 @@ export const skills: SkillDefinition[] = [
     kind: { en: "Embodied skill", zh: "生理技能" },
     name: { en: "Body calibration", zh: "定体术" },
     summary: {
-      en: "A staged method for sensing, defining and correcting the state of the natural body and its information extensions.",
-      zh: "分阶段感知、定义并修正自然身体与信息延展状态的方法。",
+      en: "An exploration of how sensing, naming and calibration can make the natural body and its information extensions open to feedback.",
+      zh: "探索怎样通过感知、命名与标定，了解自然身体及其信息延展的状态，让行动有依据、结果可反馈。",
     },
-    maturity: { en: "Public research sample", zh: "公开研究样本" },
+    maturity: { en: "Exploratory · not validated", zh: "探索阶段 · 尚未验证" },
     openness: { en: "Public in worldview", zh: "已在 worldview 公开" },
-    selfHost: { en: "Manual protocol", zh: "手动协议" },
+    selfHost: { en: "No runnable package", zh: "暂无可运行包" },
     source: "public",
+    documents: [
+      {
+        href: `${GITHUB_WORLDVIEW}/blob/main/${encodeURIComponent("人生观（强化自我）")}/${encodeURIComponent("技能概念化")}/${encodeURIComponent("定体术")}/README.md`,
+        label: { en: "Read Body calibration on GitHub", zh: "在 GitHub 阅读定体术" },
+        note: {
+          en: "The public exploratory README retains earlier stage descriptions. It does not establish systematic practice or validated effectiveness; see the current status above.",
+          zh: "公开探索文档保留早期阶段表述，不构成系统实践或有效性证明；当前状态见上方说明。",
+        },
+        relationship: "definition",
+      },
+    ],
+    sections: [
+      {
+        title: { en: "Calibration before control", zh: "先标定，再谈控制" },
+        body: {
+          en: "Body calibration asks how a person can notice and describe a state well enough to act on it and read back the result. It connects the natural body with information extensions through observation, naming and feedback.",
+          zh: "定体术关心怎样察觉和描述自身状态，使下一步的行动有依据、结果能回传。自然身体与信息延展，在这里通过观测、命名和反馈联系起来。",
+        },
+      },
+      {
+        title: { en: "The questions come first", zh: "问题仍在形成" },
+        body: {
+          en: "The required knowledge, useful measures and repeatable strategies are still being explored. There is not yet a systematic body of practice records or evidence of effectiveness. The public documents are research material, not a validated training or health protocol.",
+          zh: "所需知识、适用量尺和可重复策略仍在探索，尚未形成体系化实践记录，也没有据此验证效果。公开文档是研究材料，不是经过验证的训练方案或健康指导。",
+        },
+      },
+      {
+        title: { en: "An example of staged construction", zh: "阶段构造的样本" },
+        body: {
+          en: "This entry keeps the concept, its open questions and its sources available without presenting them as a ready-to-run skill. Later practice may revise the definition as well as the implementation.",
+          zh: "此条目保留概念、开放问题与来源，不把它们包装成已经可以运行的技能。后续实践既可能改变实现，也可能修正定义本身。",
+        },
+      },
+    ],
   },
   {
     slug: "browser-interface",
@@ -156,8 +265,8 @@ export const skills: SkillDefinition[] = [
     kind: { en: "Embodied skill", zh: "生理技能" },
     name: { en: "Browser and interface operation", zh: "浏览器与界面操作" },
     summary: {
-      en: "Reusable browser perception and interface-operation procedures with explicit session and privacy boundaries.",
-      zh: "带有会话边界和隐私边界的浏览器感知与界面操作流程。",
+      en: "Reusable procedures for observing and operating browser interfaces, with explicit session and privacy boundaries.",
+      zh: "感知浏览器状态、操作界面的流程，同时明确会话与隐私边界。",
     },
     maturity: { en: "Operational internally", zh: "内部可运行" },
     openness: { en: "Generic layer planned", zh: "计划公开通用层" },
@@ -170,7 +279,7 @@ export const skills: SkillDefinition[] = [
     kind: { en: "Embodied skill", zh: "生理技能" },
     name: { en: "Sync and recovery", zh: "同步与恢复" },
     summary: {
-      en: "Compares, merges and restores material across nodes without assuming that every copy has equal authority.",
+      en: "Compares, merges and restores material across nodes, distinguishing authoritative sources, mirrors and runtime state.",
       zh: "在不同节点之间比较、合并和恢复材料，同时区分正本、镜像与运行状态。",
     },
     maturity: { en: "Operational internally", zh: "内部可运行" },
@@ -184,8 +293,8 @@ export const skills: SkillDefinition[] = [
     kind: { en: "Field skill", zh: "领域技能" },
     name: { en: "Constrained problem solving", zh: "通用问题解决" },
     summary: {
-      en: "Generates several viable paths under uncertainty, compares their costs and closes on an executable next action.",
-      zh: "在高不确定和受约束的情况下生成多条出路，比较代价并收敛到可执行动作。",
+      en: "Develops possible approaches under uncertainty and constraints, compares their costs and narrows them down to an executable next step.",
+      zh: "在情况不明、条件受限时寻找多条出路，比较代价，再确定可执行的下一步。",
     },
     maturity: { en: "v0.2 · in use", zh: "v0.2 · 使用中" },
     openness: { en: "Public abstraction planned", zh: "计划公开脱敏版本" },
@@ -238,22 +347,29 @@ export const pages: Record<string, PageDefinition> = {
     { en: "01 / WORLDVIEW", zh: "01 / 世界观" },
     { en: "This is where the work begins.", zh: "一切从这里开始。" },
     {
-      en: "GripSky keeps worldview as working source: judgments with references, revision history and consequences. It gives the skill system a reason to preserve some things, change others and refuse the rest.",
-      zh: "在 GripSky，世界观是仍在工作的源文件：判断有来源，变化有记录，也会继续产生后果。技能保留什么、改变什么、拒绝什么，都从这里获得理由。",
+      en: "GripSky treats worldview as a working source: judgments with references, a revision history and consequences for action. It informs what the skill system preserves, changes or rejects.",
+      zh: "在 GripSky，世界观保留为可修订的源文件：判断有来源，变化有记录。技能要保留什么、改变什么、拒绝什么，可以从中寻找理由。",
     },
     [
       {
-        title: { en: "Current chain", zh: "当前推导链" },
+        title: { en: "Four views, in dialogue", zh: "四观，相互校准" },
         body: {
-          en: "Systems theory → worldview → view of development → view of life → values → skills and daily operation.",
-          zh: "系统论 → 世界观 → 发展观 → 人生观 → 价值观 → 技能与日常运行。",
+          en: "Worldview asks how the world exists; development asks what counts as growth; a view of life asks how a person can live and form themselves; values weigh direction and cost. Systems theory offers a language for connecting these questions. Personal choices and practice can revise the connections.",
+          zh: "世界观理解世界怎样存在，发展观辨认什么算发展，人生观关心人如何生活并形成自己，价值观判断方向与代价。系统论提供连接这些问题的语言；主体的选择与实践，也会反过来修正这些关系。",
+        },
+      },
+      {
+        title: { en: "Development is more than accumulation", zh: "发展，不只是积累" },
+        body: {
+          en: "More tools, information or output do not necessarily mean a person has developed. GripSky looks at reach, feedback, the cost of upkeep and the ability to change course. Growth can mean reorganizing what already exists, or letting an old structure go.",
+          zh: "工具、信息和产出变多，不一定意味着人得到了发展。GripSky 更关心可达范围、反馈、维持成本，以及改变方向的能力。发展也可以是重新组织已有积累，或让旧结构退出。",
         },
       },
       {
         title: { en: "Public form", zh: "公开方式" },
         body: {
-          en: "The desensitized worldview repository is the current public source. Every public page should point back to a version, document or open question.",
-          zh: "经过脱敏的 worldview 仓库是当前公开源端。网站上的判断应尽量指回版本、文档或尚未解决的问题。",
+          en: "The worldview repository is the current public source, with private material excluded. Public judgments should link to a version, a document or an open question.",
+          zh: "经过脱敏的 worldview 仓库是当前公开来源。网站上的判断应尽量指向版本、文档或尚未解决的问题。",
         },
       },
     ],
@@ -267,29 +383,36 @@ export const pages: Record<string, PageDefinition> = {
     { en: "WORLDVIEW / MAP", zh: "世界观 / 体系地图" },
     { en: "How a judgment reaches the world.", zh: "一项判断如何抵达现实。" },
     {
-      en: "The map records dependency, not a one-way claim of deduction. Practice may revise the skill, the life strategy and eventually the upstream model.",
-      zh: "这张图记录依赖关系，不宣称一切只能单向推出。实践可以修正技能、人生策略，并继续向上反馈到原有模型。",
+      en: "This is a reading map of the questions behind the work, not a complete dependency graph. The views constrain and explain one another; practice can revise a skill, a life strategy or the model they came from.",
+      zh: "这是理解工作脉络的阅读地图，不是完整的依赖图。不同视图彼此约束、相互解释；实践可以修正技能、人生策略，也可以修正它们所依托的模型。",
     },
     [
       {
         title: { en: "Upstream", zh: "上游" },
         body: {
-          en: "Systems theory provides the language of boundary, structure, function, feedback and environment.",
-          zh: "系统论提供边界、结构、功能、反馈和环境等基础语言。",
+          en: "Systems theory supplies questions about boundary, structure, function, feedback and environment. It helps translate between fields without replacing their evidence or making every analogy valid.",
+          zh: "系统论提供关于边界、结构、功能、反馈和环境的提问方式。它帮助不同领域互相理解，但不替代具体学科的证据，也不让所有类比自动成立。",
         },
       },
       {
         title: { en: "Subject", zh: "主体" },
         body: {
-          en: "Development, life and value judgments define what kind of subject is being built and what constraints it accepts.",
-          zh: "发展观、人生观与价值判断定义要形成什么样的主体，以及这个主体接受哪些约束。",
+          en: "Development, life and values concern how a person can keep forming themselves, what they want to preserve and what costs they will accept. These choices depend on the person and their circumstances, not on deduction alone.",
+          zh: "发展观、人生观与价值判断，关心人怎样持续形成自己、要保留什么，以及愿意承担哪些代价。这些选择离不开主体与现实处境，不能只靠上游命题推出。",
         },
       },
       {
         title: { en: "Execution", zh: "执行" },
         body: {
-          en: "Skills turn judgment into reusable procedures. Runtime state supplies the local facts without becoming part of the public definition.",
-          zh: "技能把判断转为可复用流程；运行态提供现实参数，但不进入公开技能定义。",
+          en: "Skills organize knowledge and judgment into repeatable action. Results and failures return to the method; local operating facts remain distinguishable from the reusable definition.",
+          zh: "技能把知识和判断组织成可重复的行动。结果与失败会推动方法修订；具体使用中的运行事实，与可复用定义分开说明。",
+        },
+      },
+      {
+        title: { en: "A map has a date", zh: "地图也有自己的时间" },
+        body: {
+          en: "Earlier Xuan dependency diagrams preserve how the project was understood at the time. They no longer describe the whole current system. This page is a way into the material, not a live map of every implementation.",
+          zh: "早期玄的依赖图保留了当时的理解，但已不能代表当前整个体系。本页提供进入材料的路径，不充当全部实现的实时架构图。",
         },
       },
     ],
@@ -300,7 +423,7 @@ export const pages: Record<string, PageDefinition> = {
     { en: "Rules that are still earning their place.", zh: "仍在实践中站稳脚跟的原则。" },
     {
       en: "These principles are versioned working judgments. They may change when stronger evidence or repeated practice shows a better model.",
-      zh: "这些原则是带版本的工作判断。更强证据或反复实践出现后，可以修正。",
+      zh: "这些原则是保留版本的工作判断，可以随更强的证据和反复实践修正。",
     },
     [
       {
@@ -314,14 +437,21 @@ export const pages: Record<string, PageDefinition> = {
         title: { en: "Separate fact, model and wish", zh: "区分事实、模型与愿望" },
         body: {
           en: "A useful system keeps evidence, inference and intended direction distinguishable.",
-          zh: "可用的体系应当让证据、推断和希望到达的方向保持可区分。",
+          zh: "可用的体系应当分清证据、推断和希望到达的方向。",
         },
       },
       {
-        title: { en: "Preserve the upper whole", zh: "不以局部损耗上位整体" },
+        title: { en: "Protect the larger whole", zh: "不以局部损耗上位整体" },
         body: {
           en: "Local continuation or expansion is not justified when it destroys the larger system that makes it possible.",
           zh: "局部的存续和扩张，不能以破坏使其成立的上位整体为代价。",
+        },
+      },
+      {
+        title: { en: "Keep the conditions with the claim", zh: "让判断带着条件" },
+        body: {
+          en: "A scientific result, an engineering analogy and a personal choice carry different kinds of support. Moving an idea into another field requires stating what changes and what still needs checking.",
+          zh: "科学结论、工程类比与个人选择，各有不同的依据。一项认识进入新的领域时，要说明哪些条件变了，哪些部分仍需核对。",
         },
       },
     ],
@@ -337,7 +467,7 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "v0.1 public structure", zh: "v0.1 公开结构" },
         body: {
-          en: "The current repository exposes the systems-theory base, the four-view chain, subject-system work and public GripSky history.",
+          en: "Repository materials include systems theory, the four-view chain, work on the subject system and GripSky’s public history.",
           zh: "当前仓库公开系统论基座、四观推导、主体系统以及 GripSky 的公开演化材料。",
         },
       },
@@ -348,24 +478,24 @@ export const pages: Record<string, PageDefinition> = {
     { en: "WORLDVIEW / CHANGELOG", zh: "世界观 / 变更记录" },
     { en: "What changed, and why.", zh: "改了什么，为什么改。" },
     {
-      en: "The changelog will record changes that alter definitions, dependencies or the path from worldview to skill.",
+      en: "The changelog is for changes to definitions, dependencies and the reasoning that connects worldview and skills.",
       zh: "变更记录用于说明定义、依赖或世界观到技能的推导路径发生了什么变化。",
     },
     [
       {
         title: { en: "Current work", zh: "当前工作" },
         body: {
-          en: "The public system is moving from a document archive toward a versioned source that can drive skill releases and update notices.",
+          en: "The public work is moving from a document archive toward versioned sources for skill releases and update notices.",
           zh: "公开体系正在从文档档案转向可以驱动技能版本与更新通知的版本源。",
         },
       },
     ],
   ),
   "/worldview/source": page(
-    { en: "WORLDVIEW / SOURCE", zh: "世界观 / 开放源文件" },
+    { en: "WORLDVIEW / SOURCE", zh: "世界观 / 公开源文件" },
     { en: "The source is open.", zh: "源文件就在这里。" },
     {
-      en: "The public repository contains the desensitized worldview and the history of its development. Private parameters, credentials and operating state are excluded.",
+      en: "The public repository contains a privacy-reviewed version of the worldview and its development history. Private settings, credentials and runtime state are excluded.",
       zh: "公开仓库保存经过脱敏的世界观及其演化历史。私人参数、凭据和运行态不在其中。",
     },
     [
@@ -373,13 +503,13 @@ export const pages: Record<string, PageDefinition> = {
         title: { en: "Repository", zh: "公开仓库" },
         body: {
           en: "github.com/weakdreamer/worldview is the current public source. Its Git history records public changes.",
-          zh: "github.com/weakdreamer/worldview 是当前公开源端，Git 历史记录公开变更。",
+          zh: "github.com/weakdreamer/worldview 是当前公开来源，Git 历史记录公开变更。",
         },
       },
       {
         title: { en: "Boundary", zh: "边界" },
         body: {
-          en: "The public source contains transferable concepts and evidence. Device state, personal secrets and organization-specific work remain at their authoritative endpoints.",
+          en: "The public source contains transferable concepts and evidence. Device state, private personal information and organization-specific material remain at their authoritative endpoints.",
           zh: "公开源只包含可转移的概念和证据。设备状态、个人秘密与特定工作现场内容留在各自权威端点。",
         },
       },
@@ -391,22 +521,29 @@ export const pages: Record<string, PageDefinition> = {
     { en: "02 / SKILLS", zh: "02 / 技能体系" },
     { en: "Judgment, made usable.", zh: "让判断成为能力。" },
     {
-      en: "A skill carries a judgment into repeated action. It names what enters, what happens, where the limits are, how the result is checked and where revision begins.",
-      zh: "技能把判断带进反复发生的行动：什么进入、如何处理、边界在哪里、结果怎样验收、下一次从哪里修正，都应该说得清楚。",
+      en: "A skill carries judgment into repeated action: what it uses, what it does, where its limits lie, how results are checked and where revision starts.",
+      zh: "技能把判断带进反复发生的行动。需要哪些材料、怎样处理、适用边界在哪里、如何检查与修正，都应说清楚。",
     },
     [
       {
         title: { en: "Generative grammar", zh: "技能母体" },
         body: {
-          en: "Skill conceptualization explains why a skill should exist and how a first version can be constructed and tested.",
-          zh: "技能概念化说明技能为何成立，以及第一版如何被构造和验证。",
+          en: "Skill conceptualization explores how knowledge supports abilities a person can use and revise. It keeps a method’s reasons, boundaries and checks distinct from a platform’s instruction format.",
+          zh: "技能概念化从整理知识开始，让它成为主体能够调用和修正的能力。它保留方法背后的理由、边界与验收，不把某个平台的指令格式当作技能本身。",
         },
       },
       {
         title: { en: "Operational branches", zh: "运行分支" },
         body: {
           en: "Meta-skills form and constrain other skills. Embodied skills act on computers, networks and the physical world. Field skills solve recurring classes of problems.",
-          zh: "元技能负责构造和约束其它技能；生理技能作用于计算机、网络和现实世界；领域技能解决反复出现的一类问题。",
+          zh: "元技能负责构造和约束其他技能；生理技能作用于计算机、网络和现实世界；领域技能解决反复出现的一类问题。",
+        },
+      },
+      {
+        title: { en: "Structure follows use", zh: "结构从使用中长出来" },
+        body: {
+          en: "Knowledge, judgment, action, tools and checks play different roles inside a skill. They can be organized as reusable modules when needed. Writing a module does not prove maturity, and calling one does not grant permission to publish, send or delete.",
+          zh: "知识、判断、动作、工具与验收，在技能内部承担不同作用，需要时可以形成可复用模块。创建模块不等于能力成熟；调用模块也不自动获得发布、发信或删除的授权。",
         },
       },
     ],
@@ -416,8 +553,8 @@ export const pages: Record<string, PageDefinition> = {
     { en: "SKILLS / CATALOG", zh: "技能 / 目录" },
     { en: "What exists, what is open and what comes next.", zh: "已经存在什么，开放到哪里，接下来做什么。" },
     {
-      en: "The catalog distinguishes public source, planned public definitions and private runtime state. It does not present internal availability as a public release.",
-      zh: "目录区分已公开源文件、计划公开的通用定义和私有运行态，不把内部可运行状态冒充为公开发布。",
+      en: "Each entry states its practice, public-source and packaging status separately. An exploratory definition or an internally used method is not a downloadable release. Status descriptions are specific to each skill, not scores on a universal maturity scale.",
+      zh: "每个条目分别说明实践、公开源与打包状态。探索中的定义和内部使用的方法，不等于可下载版本；这些描述对应各项技能，不是给整个体系打分的统一等级。",
     },
     [],
   ),
@@ -426,14 +563,14 @@ export const pages: Record<string, PageDefinition> = {
     { en: "Skills that keep other skills coherent.", zh: "让其他技能保持清楚、可用和可修正。" },
     {
       en: "Meta-skills select, combine, constrain, verify and evolve other abilities. They do not replace the embodied skill that performs the actual operation.",
-      zh: "元技能负责选择、组合、约束、校验和进化其它能力，但不替代直接执行现实动作的生理技能。",
+      zh: "元技能负责选择、组合、约束、校验和进化其他能力，但不替代直接执行现实动作的生理技能。",
     },
     [
       {
         title: { en: "Current public direction", zh: "当前公开方向" },
         body: {
-          en: "Information inheritance, skill ownership and version expression are the first candidates for public release.",
-          zh: "信息遗传、技能归属与版本表达是第一批公开候选。",
+          en: "Skill generation, information inheritance, ownership and version expression are being shaped into transferable methods. Generation asks how an ability takes form; inheritance asks how its meaning and boundaries survive a change of endpoint.",
+          zh: "技能生成、信息遗传、归属与版本表达，正在整理为可转移的方法。生成关心能力如何形成，遗传关心它的意义与边界如何在端点变化后接续。",
         },
       },
     ],
@@ -442,7 +579,7 @@ export const pages: Record<string, PageDefinition> = {
     { en: "SKILLS / EMBODIED", zh: "技能 / 生理技能" },
     { en: "Where the system touches reality.", zh: "体系在这里接触现实。" },
     {
-      en: "Embodied skills operate browsers, files, networks, devices and real services. Public releases remove credentials, device paths and current operating parameters.",
+      en: "Embodied skills act on browsers, files, networks, devices and real services. Public releases must exclude credentials, device paths and current runtime settings.",
       zh: "生理技能直接操作浏览器、文件、网络、设备和现实服务。公开版本必须去除凭据、设备路径和当前运行参数。",
     },
     [
@@ -453,13 +590,20 @@ export const pages: Record<string, PageDefinition> = {
           zh: "定义、通用流程和验收规则可以公开；Cookie、私钥、基础设施地址和个人记录保持私有。",
         },
       },
+      {
+        title: { en: "Different stages of practice", zh: "不同的实践阶段" },
+        body: {
+          en: "Browser operation and recovery procedures have internal uses with local conditions. Body calibration remains an exploration without systematic practice records. Sharing a category does not give these entries the same evidence or readiness.",
+          zh: "浏览器操作与恢复流程已有带现场条件的内部用途；定体术仍在探索，尚无体系化实践记录。属于同一分支，不意味着这些条目具有相同的证据与可用程度。",
+        },
+      },
     ],
   ),
   "/skills/work": page(
     { en: "SKILLS / FIELD", zh: "技能 / 领域技能" },
     { en: "Keep the method. Leave the workplace behind.", zh: "留下方法，不携带工作现场。" },
     {
-      en: "Field skills address a class of problems across organizations. Work-specific accounts, people, approvals and internal data are not part of the public skill.",
+      en: "Field skills address recurring problems across organizations. Organization-specific accounts, staff details, approvals and internal data are not part of a public skill.",
       zh: "领域技能解决可以跨组织复用的一类问题。特定组织的账号、人员、审批和内部数据不进入公开技能。",
     },
     [
@@ -476,21 +620,21 @@ export const pages: Record<string, PageDefinition> = {
     { en: "03 / EXTERNAL BODY", zh: "03 / 外置信息身躯" },
     { en: "A place for skills to live.", zh: "让技能在现实里有地方落脚。" },
     {
-      en: "Memory, protocols, skills, interfaces, infrastructure and protection form an external information body. Tools may change; the body keeps its history, its boundaries and its owner.",
-      zh: "记忆、协议、技能、界面、基础设施与保护共同构成外置信息身躯。工具可以更换，它仍然保留自己的历史、边界和主人。",
+      en: "An external information body brings memory, skills, interfaces and infrastructure into a person’s continuing life and action. The aim is not more devices, but a wider reach with history, feedback and control that survive changes of tool or host.",
+      zh: "外置信息身躯把记忆、技能、界面和基础设施接入一个人持续的生活与行动。目的不是拥有更多设备，而是扩大可达范围，并让历史、反馈与控制在工具和宿主变化后仍能接续。",
     },
     [
       {
-        title: { en: "Seven layers", zh: "七层结构" },
+        title: { en: "A working structural view", zh: "一种结构视图" },
         body: {
-          en: "Sovereignty, protocol, memory, organs, surface, power and immunity separate what the subject controls from how each local tool happens to implement it.",
-          zh: "主权层、协议层、记忆层、器官层、表皮层、供能层和免疫层，把主体控制权与局部工具实现区分开。",
+          en: "Sovereignty, protocol, memory, organs, surface, power and immunity are one earlier way to read the body. They remain useful questions, not seven fixed compartments. Function, implementation, control and time can each reveal a different structure.",
+          zh: "主权、协议、记忆、器官、表皮、供能与免疫，是早期理解身躯的一种视图。它们仍是有用的问题，不是七个固定隔间。功能、实现、控制和时间，可以分别呈现不同的结构。",
         },
       },
       {
         title: { en: "Portable by design", zh: "以可迁移为前提" },
         body: {
-          en: "A useful body can move between tools and hosts without losing its meaning, history or authority boundaries.",
+          en: "An information body should be able to move between tools and hosts without losing its meaning, history or authority boundaries.",
           zh: "可用的信息身躯应能在工具和宿主之间迁移，而不丢失意义、历史和权威边界。",
         },
       },
@@ -499,10 +643,10 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/body/architecture": page(
     { en: "EXTERNAL BODY / ARCHITECTURE", zh: "外置身躯 / 总体结构" },
-    { en: "Seven layers. One centre of authority.", zh: "七层结构，共用一个裁决中心。" },
+    { en: "Different views. One subject.", zh: "多个视图，同一个主体。" },
     {
-      en: "The architecture prevents one tool, vendor or automation from silently becoming the owner of the whole system.",
-      zh: "这套结构避免某个工具、厂商或自动化流程在不知不觉中成为整个体系的主人。",
+      en: "Function, skills, control, information carriers and runtime are different ways to read the same system. Their boundaries need not coincide. The architecture is still being explored; no tool, vendor or automation should quietly become its owner.",
+      zh: "功能、技能、控制、信息载体和运行态，是观察同一体系的不同视图，边界不必重合。架构仍在探索；某个工具、厂商或自动化流程，不应悄悄成为它的主人。",
     },
     [
       {
@@ -515,39 +659,53 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "Memory and organs", zh: "记忆与器官" },
         body: {
-          en: "Memory preserves source and history. Skills act as organs that produce repeatable behavior.",
-          zh: "记忆层保存来源和历史；技能作为器官产生可重复行为。",
+          en: "Memory keeps sources and history. An organ names an ongoing function; skills, tools, people and services may contribute to it. A skill is not automatically an organ, nor does an organ have to occupy one directory or process. Trials of assembling organs from skills have not yet produced the intended result.",
+          zh: "记忆保存来源与历史；器官指向一种持续承担的功能，技能、工具、人和服务都可能参与其中。技能不自动等于器官，器官也不必独占一个目录或进程。以技能组合构造器官的尝试，尚未获得预期成果。",
         },
       },
       {
-        title: { en: "Surface, power and immunity", zh: "表皮、供能与免疫" },
+        title: { en: "Interfaces, support and feedback", zh: "接口、支撑与反馈" },
         body: {
-          en: "Interfaces expose the system, infrastructure keeps it running, and boundaries prevent leakage and authority drift.",
-          zh: "界面让体系可被使用，基础设施维持运行，边界防止泄露与主权漂移。",
+          en: "Interfaces let the system act and be understood. Infrastructure supplies its support; boundaries protect identity and private state. Control also needs a return path: an action’s result must be observable before it can guide the next decision.",
+          zh: "接口让体系能够行动，也让人能够理解它；基础设施提供支撑，边界保护身份与私有状态。控制还需要返回的路：行动结果能被看见，才有依据修正下一次判断。",
+        },
+      },
+      {
+        title: { en: "One material, several roles", zh: "一份材料，多种作用" },
+        body: {
+          en: "A document can hold knowledge, provide an interface and preserve operating history without needing three physical copies. Naming its roles, sources and permitted uses is more useful than forcing it into a single classification tree.",
+          zh: "同一份文档可以保存知识、提供接口并承载运行历史，不必因此复制成三份。说明它的作用、来源与允许的用法，比把它强塞进唯一分类树更有用。",
         },
       },
     ],
   ),
   "/body/runtime": page(
     { en: "EXTERNAL BODY / RUNTIME", zh: "外置身躯 / 运行方式" },
-    { en: "The definition travels. The operating state stays local.", zh: "定义可以迁移，运行态留在现场。" },
+    { en: "Definitions travel. State has a place.", zh: "定义可以接续，状态各有归属。" },
     {
-      en: "The public skill describes stable behavior. Each device and deployment supplies its own paths, credentials, models and current measurements.",
-      zh: "公开技能描述稳定行为；每台设备和每个部署实例提供自己的路径、凭据、模型与当前测量。",
+      en: "Skill definitions describe reusable methods; paths, credentials, models and measurements belong to each device or deployment’s runtime state.",
+      zh: "技能定义说明可复用的方法；具体路径、凭据、模型与测量数据，则属于各台设备或部署实例的运行状态。",
     },
     [
       {
-        title: { en: "Registered nodes", zh: "已登记节点" },
+        title: { en: "Read the present setting", zh: "先读当前现场" },
         body: {
-          en: "A runtime first identifies its device and capabilities. It does not borrow another node’s credentials or assumptions.",
-          zh: "运行前先识别设备和能力，不借用其它节点的凭据与假设。",
+          en: "Before a run, identify the device and the capabilities available. Do not reuse another node’s credentials or assumptions.",
+          zh: "运行前先识别设备和能力，不借用其他节点的凭据与假设。",
         },
       },
       {
-        title: { en: "Removable state", zh: "可拆除运行态" },
+        title: { en: "Removable state", zh: "运行态可以迁移或替换" },
         body: {
-          en: "Current state can be removed or replaced without destroying the public definition or the upstream worldview.",
-          zh: "当前运行态可以被移除或替换，而不破坏公开技能定义和上游世界观。",
+          en: "A reusable definition should not depend on one host’s private settings. State may be migrated or replaced within its own authorization and recovery boundaries; the new setting still needs its own verification.",
+          zh: "可复用定义不应依赖某台宿主的私有参数。状态可以在各自授权与恢复边界内迁移或替换，但到了新的现场，仍然需要重新验收。",
+        },
+      },
+      {
+        title: { en: "Continuity is not identical copies", zh: "接续，不等于副本相同" },
+        body: {
+          en: "Source, code, registry and running service can carry different parts of one object. LIFS addresses some of the storage, consistency and propagation questions first explored in Xuan by tracking identity, location and relationships. It is a current engineering approach, not the completion of the whole Xuan framework.",
+          zh: "正文、代码、登记与运行服务，可以各自承载同一对象的不同部分。LIFS 通过身份、位置与关系，承接了玄曾探索的部分存储、一致性和传播问题。它是当前阶段的一种工程解法，不是完整玄框架已经实现。",
         },
       },
     ],
@@ -557,7 +715,7 @@ export const pages: Record<string, PageDefinition> = {
     { en: "Keep the system close enough to own it.", zh: "把体系放在自己仍能掌握的地方。" },
     {
       en: "Self-hosting is a design requirement, not an enterprise add-on. Public packages will include the definition, dependencies, local-state boundary, installation path and removal impact.",
-      zh: "自托管是设计要求，不是企业附加功能。公开包将说明定义、依赖、运行态边界、安装路径和移除影响。",
+      zh: "自托管是这里的设计要求。准备公开的技能包需说明定义、依赖、运行态边界、安装路径和移除影响。",
     },
     [
       {
@@ -582,22 +740,29 @@ export const pages: Record<string, PageDefinition> = {
     { en: "EXTERNAL BODY / EXAMPLES", zh: "外置身躯 / 示例" },
     { en: "One skill can inhabit more than one form.", zh: "同一项技能，可以生活在不同形态里。" },
     {
-      en: "A skill may run as documents and scripts on one node, a managed service on another, and a human–AI operating procedure on a third.",
-      zh: "同一技能可以在一个节点上表现为文档与脚本，在另一个节点上成为托管服务，也可以表现为一套人机协作流程。",
+      en: "Documents, scripts, services and human–AI procedures offer different carriers for an ability. The examples here distinguish a working part from the larger architecture it helps explore.",
+      zh: "文档、脚本、服务和人机协作流程，都可以承载能力。这里把已能工作的局部，与它帮助探索的更大架构分开看。",
     },
     [
       {
-        title: { en: "Local-first", zh: "本地优先" },
+        title: { en: "This organization site", zh: "这个组织站" },
         body: {
-          en: "Definitions, memory and sensitive state remain on devices controlled by the subject.",
-          zh: "定义、记忆和敏感运行态保存在主体控制的设备中。",
+          en: "Pages give the project a public expression. Subscription and contact forms provide ways to follow changes and discuss collaboration. The site is a concrete implementation to study and maintain, not proof that every skill or organ is complete.",
+          zh: "页面提供公开表达，订阅与联系流程用于跟进更新、开展协作。网站是可以研究和维护的具体实现，不是所有技能或器官已经完成的证明。",
         },
       },
       {
-        title: { en: "Managed", zh: "托管运行" },
+        title: { en: "LIFS · identity and location", zh: "LIFS · 身份与定位" },
         body: {
-          en: "GripSky operates selected public skills while the user retains export and migration paths.",
-          zh: "GripSky 运行选定的公共技能，同时保留用户导出和迁移路径。",
+          en: "Linguan InfoFS separates a logical object from the places that carry it. This helps locate the relevant source or implementation across endpoints. Understanding a document’s contribution and recovering useful ideas from older versions remain a further line of work.",
+          zh: "Linguan InfoFS 区分逻辑对象与承载它的位置，帮助跨端点定位相关来源或实现。理解文档的贡献、从旧版本中找回仍有用的思想，则是继续展开的方向。",
+        },
+      },
+      {
+        title: { en: "A maintained delivery form", zh: "维护型交付" },
+        body: {
+          en: "An ability may later be offered as a maintained service. That requires its own scope, evidence and agreement; a public definition alone does not mean a hosted instance is already available.",
+          zh: "能力也可以进一步以持续维护的服务交付，但需要另行确认范围、证据与约定。公开定义本身，不表示已经存在可供使用的托管实例。",
         },
       },
     ],
@@ -606,40 +771,57 @@ export const pages: Record<string, PageDefinition> = {
     { en: "04 / RESEARCH", zh: "04 / 研究与共建" },
     { en: "Open work, while it is still open.", zh: "问题还没有答案，就先把它公开。" },
     {
-      en: "Unresolved questions belong in view. GripSky records the evidence still needed, proposals under discussion and work that others can pick up on GitHub.",
-      zh: "尚未解决的问题也应该被看见。这里记录仍然缺少的证据、正在讨论的提案，以及可以从 GitHub 接手的工作。",
+      en: "GripSky studies how people understand, change and extend themselves. Current work explores information bodies, personal authority and public infrastructure. Missing evidence, proposals and work open to contribution on GitHub remain part of the research.",
+      zh: "研究从人怎样认识、改变和扩展自己展开。信息身躯、主体主权和公共基础设施，是当前探索的方向；尚缺的证据、待讨论的提案与可在 GitHub 参与的工作，也都留在这里。",
     },
     [
       {
         title: { en: "Current line", zh: "当前主线" },
         body: {
-          en: "How can an individual use AI, durable documents and open tools to build a system that remains understandable, portable and under personal authority?",
-          zh: "个体如何借助 AI、长期文档与开放工具，建立一个可理解、可迁移且仍由自己掌握的系统？",
+          en: "How can an individual use AI, durable documents and open tools to build an information body that remains understandable, portable and under personal authority? A one-person system concerns a person’s continuing life, learning and action, not only business output. Naming and calibration are ways to make its structures observable; feedback makes later correction possible.",
+          zh: "个体如何借助 AI、长期文档与开放工具，建立一个可理解、可迁移且仍由自己掌握的信息身躯？一人系统关心的是人持续的生活、学习与行动，不只经营产出。命名与标定让结构可以被观察，反馈使后续修正成为可能。",
+        },
+      },
+      {
+        title: { en: "More information, finite support", zh: "信息丰富，支撑有限" },
+        body: {
+          en: "Information can grow rapidly, while a person’s time, energy and resources remain limited. GripSky explores extending an existing body’s reach, reusing resources and building public infrastructure that others need not reconstruct. Whether this lowers the total cost of development still needs testing in practice.",
+          zh: "信息可以迅速增多，一个人能投入的时间、精力与资源却有限。GripSky 探索扩大已有身躯的可达范围，复用已有资源，并把共同部分建成他人不必反复重建的公共基础设施。这能否降低发展的总成本，仍需实践检验。",
+        },
+      },
+      {
+        title: { en: "Evidence still needed", zh: "仍待补足的证据" },
+        body: {
+          en: "GripSky needs examples that show whether an information body truly extends reach and reuse, rather than shifting maintenance, energy or control costs elsewhere. Public definitions, self-hosting paths and compatible interfaces also need testing: can they reduce repeated construction while keeping final control with the person?",
+          zh: "GripSky 需要持续积累这样的例子：信息身躯是否真的扩大可达范围、提高复用程度，而非把维护、能耗或主权成本藏到别处。公开定义、自托管路径与兼容接口也需验证：能否减少重复建造，同时保留主体最终控制权。",
         },
       },
       {
         title: { en: "Contribution", zh: "贡献方式" },
         body: {
-          en: "Corrections, source review, implementation experiments and documentation are all valid contributions.",
-          zh: "概念修正、来源核验、实现实验和文档整理都可以成为贡献。",
+          en: "Corrections, source review, implementation experiments, failure reports and documentation are all valid contributions.",
+          zh: "概念修正、来源核验、实现实验、失败记录和文档整理都可以成为贡献。",
         },
       },
     ],
-    [{ label: { en: "How to contribute", zh: "如何参与贡献" }, href: "/research/contribute" }],
+    [
+      { label: { en: "Open research questions", zh: "查看研究问题" }, href: "/research/questions" },
+      { label: { en: "How to contribute", zh: "如何参与贡献" }, href: "/research/contribute" },
+    ],
   ),
   "/research/questions": page(
     { en: "RESEARCH / QUESTIONS", zh: "研究 / 当前问题" },
     { en: "Questions with enough weight to change the system.", zh: "这些问题，仍然足以改变整个体系。" },
     {
-      en: "The project does not hide uncertainty behind a product surface. These questions remain open and affect the next public releases.",
-      zh: "项目不把不确定性藏在产品界面后面。以下问题仍然开放，并会影响下一批公开版本。",
+      en: "These questions guide the work without prescribing a single implementation. Definitions, prototypes and observed results remain separate; an old plan can be reconsidered when the person or the setting changes.",
+      zh: "这些问题引导工作，不预先锁定一种实现。定义、原型与实际结果应分开说明；主体和环境变化后，旧计划也可以重新判断。",
     },
     [
       {
         title: { en: "Skill portability", zh: "技能可迁移性" },
         body: {
           en: "What is the smallest vendor-neutral form that preserves a skill’s meaning, checks and revision history?",
-          zh: "什么是最小的厂商中立表达，可以保留技能的意义、验收和修正历史？",
+          zh: "怎样用尽可能小、不依赖特定厂商的表达，保留技能的意义、验收方法和修正历史？",
         },
       },
       {
@@ -656,21 +838,35 @@ export const pages: Record<string, PageDefinition> = {
           zh: "私人实践怎样把通用经验回写公共体系，同时不泄露局部事实？",
         },
       },
+      {
+        title: { en: "Recovering useful knowledge", zh: "找回仍有用的知识" },
+        body: {
+          en: "When names and document structures change, how can a useful judgment still be found with its source and conditions? LIFS provides reproducible lexical searches to locate material; an agent interprets and evaluates what is found. Semantic and vector retrieval are options to study, not prerequisites for this division of work.",
+          zh: "名称和文档结构变化之后，怎样让仍有用的判断带着来源与条件被重新找到？LIFS 提供可复现的词法定位，Agent 负责理解与判断。语义与向量检索可以继续研究，不是这种分工成立的前提。",
+        },
+      },
+      {
+        title: { en: "Continuity across endpoints", zh: "跨端点的意义接续" },
+        body: {
+          en: "How can a definition, its history and a current activity remain understandable when devices, services and collaborators change? What must travel, what may differ, and how can the destination show that the right change arrived?",
+          zh: "设备、服务和协作者更换后，定义、历史与正在进行的活动怎样仍可理解？哪些内容需要传播，哪些差异可以保留，目标端又如何证明正确的变化已经抵达？",
+        },
+      },
     ],
   ),
   "/research/roadmap": page(
     { en: "RESEARCH / ROADMAP", zh: "研究 / 公开路线图" },
     { en: "The order in which the open system can become real.", zh: "开放体系按什么顺序成为现实。" },
     {
-      en: "The roadmap follows dependency order: public definitions first, then self-hostable packages, then managed services built from the same open base.",
-      zh: "路线图按依赖推进：先公开定义，再发布可自托管技能包，最后在同一开放基础上提供托管服务。",
+      en: "Public definitions, portable packages and maintained services are related directions, not a fixed calendar. They may develop at different speeds. Each next step depends on a real use, the evidence available and the cost of maintaining it.",
+      zh: "公开定义、可迁移技能包和维护型服务，是相互关联的方向，不是固定日程。它们可以以不同速度推进；下一步取决于真实用途、已有证据与维持成本。",
     },
     [
       {
         title: { en: "01 · Public catalog", zh: "01 · 公开目录" },
         body: {
-          en: "Give every skill a stable name, boundary, maturity state and source relationship.",
-          zh: "为每项技能确定稳定名称、边界、成熟度和来源关系。",
+          en: "Give each entry a name, boundary, source relationship and evidence of its present stage. Keep exploratory definitions, internally used methods and public releases distinguishable.",
+          zh: "为条目说明名称、边界、来源关系与当前阶段的证据。探索定义、内部使用的方法和公开版本，保持可区分。",
         },
       },
       {
@@ -693,8 +889,8 @@ export const pages: Record<string, PageDefinition> = {
     { en: "RESEARCH / PROPOSALS", zh: "研究 / 提案" },
     { en: "Changes, before the system depends on them.", zh: "在整个体系开始依赖之前，先把变化说清楚。" },
     {
-      en: "Proposals will describe the problem, evidence, affected layers, compatibility cost and the decision still required.",
-      zh: "提案将说明问题、证据、受影响层、兼容成本以及仍需作出的裁决。",
+      en: "A proposal needs to state the problem, evidence, affected parts, compatibility costs and decisions still required.",
+      zh: "提案将说明问题、证据、受影响的部分、兼容成本，以及仍需作出的裁决。",
     },
     [
       {
@@ -708,9 +904,9 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/research/contribute": page(
     { en: "RESEARCH / CONTRIBUTE", zh: "研究 / 参与贡献" },
-    { en: "Bring evidence. Leave the work clearer.", zh: "带着证据来，让工作离开时更清楚。" },
+    { en: "Bring evidence. Leave the work clearer.", zh: "带来证据，把问题说得更清楚。" },
     {
-      en: "The current public collaboration surface is the worldview repository. Contributions should preserve source, public boundaries and the difference between a model and a fact.",
+      en: "The worldview repository is the current place for public collaboration. Contributions should retain sources, respect public/private boundaries and distinguish models from facts.",
       zh: "当前公共协作入口是 worldview 仓库。贡献应保留来源、公开边界，并区分模型与事实。",
     },
     [
@@ -734,9 +930,9 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/updates/releases": page(
     { en: "UPDATES / RELEASES", zh: "更新 / 版本发布" },
-    { en: "Dates the system can point back to.", zh: "让体系能够回望的日期。" },
+    { en: "Dates the system can point back to.", zh: "可供回查的版本记录。" },
     {
-      en: "This feed combines public worldview, skill and interface releases. Each release identifies its scope and date.",
+      en: "This page collects public worldview, skill and interface releases. Each entry identifies its scope and date.",
       zh: "这里汇总世界观、技能和公共界面的发布状态，每个版本标明范围和日期。",
     },
     [],
@@ -752,7 +948,7 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "Current interface change", zh: "当前界面变化" },
         body: {
-          en: "The organization site now treats open worldview and skills as the main product. Services have moved to the outer delivery layer.",
+          en: "The organization site now centers on open worldview and skills as its core public work. Services have moved to the outer delivery layer.",
           zh: "组织站已经把开放世界观与技能体系作为主体，服务移到最外层交付位置。",
         },
       },
@@ -762,8 +958,8 @@ export const pages: Record<string, PageDefinition> = {
     { en: "UPDATES / SUBSCRIBE", zh: "更新 / 订阅" },
     { en: "Let the right releases reach you.", zh: "只让需要的版本抵达。" },
     {
-      en: "Enter an email, choose topics and verify the address. The subscription is free. It does not create a paid service plan.",
-      zh: "填写邮箱、选择主题并验证地址即可完成免费订阅。这不会创建付费服务方案。",
+      en: "Enter your email address, choose topics and verify the address. Subscription is free and does not create a paid service plan.",
+      zh: "填写邮箱、选择主题并验证地址，即可免费订阅。订阅不会开通付费服务。",
     },
     [
       {
@@ -826,7 +1022,7 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/services/managed-hosting": page(
     { en: "SERVICES / MANAGED OPERATION", zh: "服务 / 托管运行" },
-    { en: "GripSky keeps the system awake and recoverable.", zh: "由 GripSky 让体系持续运行，也随时能够恢复。" },
+    { en: "Operation and recovery, maintained by GripSky.", zh: "由 GripSky 维护运行与恢复路径。" },
     {
       en: "Managed operation covers updates, backups, monitoring and incident handling. Users retain documented export and migration paths.",
       zh: "托管运行包括升级、备份、监测和故障处理，同时保留清楚的导出与迁移路径。",
@@ -835,7 +1031,7 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "Not a lock-in layer", zh: "不以锁定为前提" },
         body: {
-          en: "The managed version is a maintained delivery form of the public base, not a replacement for self-hosting.",
+          en: "Managed operation is a maintained delivery form of the public base, not a replacement for self-hosting.",
           zh: "托管版是公共基础的维护型交付方式，不取代自托管版本。",
         },
       },
@@ -843,9 +1039,9 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/services/custom-skills": page(
     { en: "SERVICES / CUSTOM SKILLS", zh: "服务 / 定制技能" },
-    { en: "Turn recurring work into an ability that can return.", zh: "把反复发生的工作，变成可以再次调用的能力。" },
+    { en: "Turn recurring work into a reusable skill.", zh: "把反复发生的工作，变成可以再次调用的能力。" },
     {
-      en: "The work begins with inputs, outputs, evidence, tools, failure conditions and the client’s final authority. It ends with a skill that can be called again.",
+      en: "The work begins with inputs, outputs, evidence, tools, failure conditions and the client’s final authority. The deliverable is a skill that can be used again.",
       zh: "从输入、输出、证据、工具、失败条件和委托方裁决权开始，最终交付可以再次调用的技能。",
     },
     [
@@ -860,10 +1056,10 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/services/system-design": page(
     { en: "SERVICES / SYSTEM DESIGN", zh: "服务 / 体系构造" },
-    { en: "A system grown from the client’s own judgments.", zh: "从委托方自己的判断里，长出属于他的体系。" },
+    { en: "A system grown from the client’s own judgments.", zh: "从委托方自己的判断出发，构造属于自己的体系。" },
     {
-      en: "GripSky does not copy Lin Guan’s personal worldview into another person. It helps identify the client’s goals, constraints and repeated work, then builds a skill system that belongs to them.",
-      zh: "GripSky 不把临观的个人世界观复制给别人，而是识别委托方自己的目标、约束和反复工作，再构造属于他的技能体系。",
+      en: "GripSky starts from the client’s goals, constraints and recurring work, not a copy of Lin Guan’s personal worldview. The skill system is designed to belong to the client.",
+      zh: "GripSky 不把临观的个人世界观复制给别人，而是识别委托方自己的目标、约束和反复工作，再构造属于委托方的技能体系。",
     },
     [
       {
@@ -894,10 +1090,10 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/services/dedicated": page(
     { en: "SERVICES / DEDICATED STEWARDSHIP", zh: "服务 / 专属共建" },
-    { en: "Long work, with judgment kept in the loop.", zh: "由临观持续参与判断的长期共建。" },
+    { en: "Long-term collaboration, with Lin Guan involved in decisions.", zh: "由临观持续参与判断的长期共建。" },
     {
-      en: "Dedicated work draws on the existing natural and external skill system when relevant, but every engagement still has explicit scope, privacy boundaries and capacity limits.",
-      zh: "专属共建可以按需调用临观已有的自然技能与外置技能体系，但每次合作仍需明确范围、隐私边界和承载上限。",
+      en: "Dedicated work draws on Lin Guan’s own skills and external skill system where relevant. Each engagement needs a clear scope, privacy boundaries and capacity limits.",
+      zh: "专属共建可按需要使用临观已有的自然技能与外置技能体系；每次合作都需确认范围、隐私边界与可承接的工作量。",
     },
     [
       {
@@ -921,28 +1117,28 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "What is GripSky?", zh: "GripSky 是什么？" },
         body: {
-          en: "GripSky is the public body of a personal system maintained by Lin Guan. It publishes an evolving worldview, the skills derived from it, research questions, release history and self-hosting paths.",
-          zh: "GripSky 是由临观维护的一套个人系统的公共身躯。它公开仍在演化的世界观、由此生长的技能、研究问题、版本记录与自托管路径。",
+          en: "GripSky was founded and is maintained by Lin Guan as a public expression of his personal system. It shares an evolving worldview, a skill catalog, research questions and release history. Reusable skills and self-hosting are still being developed; each entry states its current scope.",
+          zh: "GripSky 由临观发起并维护，是其个人系统的公共表达。它公开持续修订的世界观、技能目录、研究问题与版本记录。可复用技能与自托管还在逐步展开，各条目说明当前范围。",
         },
       },
       {
         title: { en: "Who maintains GripSky?", zh: "GripSky 由谁维护？" },
         body: {
-          en: "Lin Guan (临观) founded and maintains GripSky. The organization carries the public project; the maintainer remains a separate person with an ORCID record and personal work history.",
+          en: "Lin Guan (临观) founded and maintains GripSky. GripSky carries the public project; his ORCID record and personal work history identify him separately as its maintainer.",
           zh: "GripSky 由临观（Lin Guan）发起并维护。组织承载公共项目；维护者仍是独立的自然人，并以 ORCID 与个人工作记录保持身份连续性。",
         },
       },
       {
         title: { en: "What problem does it address?", zh: "它解决什么问题？" },
         body: {
-          en: "It explores how one person can turn judgment into reusable skills, connect those skills to information systems and AI, and keep control when machines, vendors or operators change.",
-          zh: "它探索一个人如何把判断转化为可复用技能，把技能接入信息系统与 AI，并在机器、供应商或维护者变化时仍保有控制权。",
+          en: "It explores how people understand, change and extend themselves, and how judgment can become reusable skills connected to information systems and AI—without giving up control as machines, vendors or operators change.",
+          zh: "它探索人怎样认识、改变和扩展自己，以及如何把判断转化为可复用技能，将技能接入信息系统与 AI，并在机器、供应商或维护者变化时仍保有控制权。",
         },
       },
       {
         title: { en: "Why is it maintained in public?", zh: "为什么要公开维护？" },
         body: {
-          en: "A powerful personal system should remain inspectable, portable and open to correction. Public definitions and history make self-hosting, independent verification and shared improvement possible.",
+          en: "A personal system should remain inspectable, portable and open to correction. Public definitions and history support self-hosting, independent verification and shared improvement.",
           zh: "强大的个人系统应当可检查、可迁移，也允许被修正。公开定义与历史，使自托管、独立核验和共同改进成为可能。",
         },
       },
@@ -956,29 +1152,36 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "How do worldview, skills and the external body relate?", zh: "世界观、技能与外置身躯是什么关系？" },
         body: {
-          en: "Worldview supplies revisable judgments. Skills turn those judgments and repeated practice into callable abilities. The external body gives those abilities memory, interfaces, computation and a place to operate in the world.",
-          zh: "世界观提供可修订的判断；技能把判断与反复实践整理成可调用能力；外置身躯则为能力提供记忆、界面、计算和进入现实的运行位置。",
+          en: "Worldview supplies revisable judgments. Skills organize knowledge and practice into callable abilities. The external body gives them memory, interfaces, computation and a place to act. Feedback can revise all three; this is not a one-way deduction or a finished organ architecture.",
+          zh: "世界观提供可修订的判断；技能把知识与实践组织成可调用能力；外置身躯提供记忆、界面、计算与行动的位置。反馈可以修正三者，这不是单向推导，也不是已经定型的器官架构。",
+        },
+      },
+      {
+        title: { en: "Can I already install every skill?", zh: "现在可以安装所有技能吗？" },
+        body: {
+          en: "No. Some entries have public source documents, some describe internally used methods, and others are still exploratory. A public concept is not necessarily a runnable package. Consult each entry’s practice, openness and self-hosting status before using it.",
+          zh: "还不可以。有些条目已有公开源文档，有些描述内部使用的方法，还有些仍是探索。概念公开不等于存在可运行包；使用前请查看各条目的实践、开放与自托管状态。",
         },
       },
       {
         title: { en: "Is GripSky open source?", zh: "GripSky 开源吗？" },
         body: {
-          en: "The desensitized worldview is public, and reusable skill definitions and implementations are intended to be released openly where privacy and security allow. Private runtime state, credentials and personal records do not travel with a public release.",
-          zh: "经过脱敏的世界观已经公开；在隐私与安全允许的范围内，可复用的技能定义和实现会逐步开放。私有运行态、凭据与个人记录不会随公开版本发布。",
+          en: "A privacy-reviewed version of the worldview is public. Reusable skill definitions and implementations are intended for open release where privacy and security allow. Private runtime state, credentials and personal records do not travel with a public release.",
+          zh: "经过脱敏的世界观已经公开；在隐私与安全允许的范围内，可复用的技能定义和实现计划逐步开放。私有运行态、凭据与个人记录不会随公开版本发布。",
         },
       },
       {
         title: { en: "What is the ideal way to run it?", zh: "理想的运行方式是什么？" },
         body: {
-          en: "Keep public definitions readable, host sensitive state under the owner’s control, document dependencies and preserve export, upgrade and removal paths. Managed service should operate the same portable form, not create a lock-in-only edition.",
-          zh: "公开定义保持可读，敏感状态由所有者控制，依赖得到记录，并保留导出、升级与移除路径。托管服务运行的也应是同一套可迁移形态，而不是只能被锁定使用的特供版本。",
+          en: "Keep public definitions readable, host sensitive state under the owner’s control, document dependencies and preserve export, upgrade and removal paths. Managed operation should use the same portable form, not a version tied to one provider.",
+          zh: "公开定义保持可读，敏感状态由所有者控制，依赖得到记录，并保留导出、升级与移除路径。托管服务运行的也应是同一套可迁移形态，而不是只能依赖托管方的版本。",
         },
       },
       {
         title: { en: "How can I follow changes?", zh: "如何获知更新？" },
         body: {
           en: "Subscribe by email for selected topics, follow the RSS release feed, or watch the relevant GitHub repositories. Worldview, skills, compatibility and research can move at different speeds.",
-          zh: "可以按主题订阅邮件、关注 RSS 版本流，或在 GitHub 观察相关仓库。世界观、技能、兼容性与研究可以按各自节奏更新。",
+          zh: "可以按主题订阅邮件、关注 RSS 版本记录，或在 GitHub 关注相关仓库。世界观、技能、兼容性与研究可以按各自节奏更新。",
         },
       },
       {
@@ -998,8 +1201,8 @@ export const pages: Record<string, PageDefinition> = {
     { en: "ABOUT", zh: "关于" },
     { en: "GripSky publishes the system Lin Guan is building.", zh: "GripSky 公开临观正在建立的体系。" },
     {
-      en: "Worldview, skill releases, research and services meet here as one public body. Lin Guan’s personal site keeps the individual record and the projects that came before it.",
-      zh: "世界观、技能发布、研究和服务在这里组成同一具公共身躯。临观个人站继续保留个人记录和更早的项目。",
+      en: "Worldview, skills, research and services meet here as a public expression of Lin Guan’s work. His personal site keeps his individual record and earlier projects.",
+      zh: "世界观、技能发布、研究和服务在这里汇集，形成个人系统的公共表达。临观个人站保留个人记录和更早的项目。",
     },
     [
       {
@@ -1010,17 +1213,17 @@ export const pages: Record<string, PageDefinition> = {
         },
       },
       {
-        title: { en: "Public anchor", zh: "公共锚点" },
+        title: { en: "Public anchor", zh: "组织站与个人站" },
         body: {
-          en: "gripsky.org is the organization entrance. linguan.online remains the founder’s personal site.",
+          en: "gripsky.org is GripSky’s public site. linguan.online remains Lin Guan’s personal site.",
           zh: "gripsky.org 是组织入口，linguan.online 继续作为发起人个人站。",
         },
       },
       {
         title: { en: "Maintainer identity", zh: "维护者身份" },
         body: {
-          en: "Lin Guan and GripSky remain distinct public entities. The maintainer’s ORCID record links the organization site, personal GitHub account and GripSky organization as persistent identity references.",
-          zh: "临观与 GripSky 保持为两个不同的公共实体。维护者的 ORCID 记录把组织官网、个人 GitHub 与 GripSky 组织作为持续身份引用连接起来。",
+          en: "Lin Guan and GripSky have distinct public identities. Lin Guan’s ORCID record links this site, his personal GitHub account and the GripSky organization as persistent identity references.",
+          zh: "临观与 GripSky 是不同的公共实体。维护者的 ORCID 记录关联组织官网、个人 GitHub 与 GripSky 组织，提供持续的身份引用。",
         },
       },
     ],
@@ -1028,7 +1231,7 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/contact": page(
     { en: "06 / UPDATES & CONTACT", zh: "06 / 更新与联系" },
-    { en: "Updates live here. So does contact.", zh: "更新在这里，联系也在。" },
+    { en: "Updates and contact.", zh: "更新与联系。" },
     {
       en: "Read release history, subscribe to selected topics, contribute in public or contact GripSky directly about research and commissioned work.",
       zh: "查看版本记录、订阅所需主题、参与公开协作，或就研究与委托工作直接联系 GripSky。",
@@ -1051,7 +1254,7 @@ export const pages: Record<string, PageDefinition> = {
       {
         title: { en: "Direct contact", zh: "直接联系" },
         body: {
-          en: "For service and collaboration enquiries, write to contact@gripsky.org. WeChat ID: gripsky. The contact page remains the current public directory as more channels are added.",
+          en: "For service and collaboration enquiries, email contact@gripsky.org. WeChat ID: gripsky. Additional public contact channels will be listed here.",
           zh: "服务委托与协作咨询可发送至 contact@gripsky.org；微信 ID：gripsky。后续新增的公开联系渠道会持续在本页汇总。",
         },
       },
@@ -1102,7 +1305,7 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/legal/terms": page(
     { en: "LEGAL / TERMS", zh: "法律 / 条款" },
-    { en: "Open source and paid responsibility follow different agreements.", zh: "开放源与付费责任，遵循各自的约定。" },
+    { en: "Public source and paid work follow separate agreements.", zh: "公开源与付费工作，各有约定。" },
     {
       en: "Public source is governed by the licence attached to each repository or package. Paid work is governed by a separate confirmed scope and delivery agreement.",
       zh: "公开源按各仓库或技能包附带的许可证使用；付费工作按另行确认的范围与交付约定执行。",

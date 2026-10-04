@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { HomeView } from "./components/HomeView";
+import { homeDescription } from "./lib/public-metadata";
 
 export const metadata: Metadata = {
   title: { absolute: "GripSky — Open worldview, skill systems and self-hosting" },
-  description:
-    "GripSky publishes Lin Guan’s evolving worldview and the skills growing from it, with open source, self-hosting paths and long-term system stewardship.",
+  description: homeDescription.en,
   keywords: [
     "GripSky",
     "Lin Guan",
@@ -26,8 +26,7 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "GripSky",
     title: "GripSky — Open worldview, skill systems and self-hosting",
-    description:
-      "An evolving worldview, public skills and self-hosting paths for systems that remain under their owner’s control.",
+    description: homeDescription.en,
     images: [
       {
         url: "/og-system.png",
@@ -36,6 +35,12 @@ export const metadata: Metadata = {
         alt: "GripSky — Worldview into skills",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GripSky — Open worldview and skill systems",
+    description: homeDescription.en,
+    images: ["/og-system.png"],
   },
 };
 

@@ -1,325 +1,392 @@
 import Link from "next/link";
+import { OrbitalScene } from "./OrbitalScene";
+import { SkillIndex } from "./SkillIndex";
+import { SolarScene } from "./SolarScene";
+import { PublicPageSchema } from "./PublicPageSchema";
+import { homeDescription } from "../lib/public-metadata";
 import {
-  Locale,
   GITHUB_WORLDVIEW,
+  Locale,
   localPath,
   releases,
   skills,
   tx,
 } from "../lib/site-data";
 
-const homeCopy = {
-  en: {
-    kicker: "OPEN WORLDVIEW · OPEN SKILLS · SELF-HOSTABLE",
-    titleA: "Worldview becomes skill.",
-    titleB: "Skill becomes a body",
-    titleC: "that stays yours.",
-    intro:
-      "GripSky publishes the worldview Lin Guan is still revising, and the skills growing out of it. Source, releases and self-hosting paths live here; research and implementation continue in the open.",
-    primary: "Browse the skill system",
-    secondary: "Read the worldview",
-    systemLabel: "CURRENT PUBLIC CHAIN",
-    nodes: ["Systems theory", "Worldview", "Subject", "Skills", "External body"],
-    relationTitle: "Begin wherever the work is.",
-    relationIntro:
-      "Read it, run it, or help shape it. When the work needs an operator, GripSky can take responsibility for the build and its care.",
-    relations: [
-      {
-        number: "01",
-        title: "Read and run",
-        text: "Start with the source and release history, then host any public skill you want to keep close.",
-        link: "Start with the catalog",
-        href: "/skills/catalog",
-      },
-      {
-        number: "02",
-        title: "Work in public",
-        text: "Bring evidence, test a skill, question a definition or contribute an implementation on GitHub.",
-        link: "Join the research",
-        href: "/research/contribute",
-      },
-      {
-        number: "03",
-        title: "Hand over the operation",
-        text: "GripSky can deploy, adapt and maintain the system when running it yourself is no longer the useful part.",
-        link: "See service scope",
-        href: "/services",
-      },
-    ],
-    skillsKicker: "PUBLIC CATALOG / FIRST SET",
-    skillsTitle: "A catalog of skills—and their limits.",
-    skillsIntro:
-      "Every entry says what can be used today, what remains private, and how far its self-hosted form has come.",
-    allSkills: "Open the full catalog",
-    bodyKicker: "SELF-HOSTING",
-    bodyTitle: "Self-hosting comes first.",
-    bodyText:
-      "A working skill should survive a change of machine, vendor or operator. Its definition stays public, its dependencies stay legible, and its local state can be exported or removed. Hosting is simply one way to operate that same form.",
-    bodyLink: "Read the self-hosting direction",
-    releasesKicker: "RELEASE STREAM",
-    releasesTitle: "Every change leaves a version.",
-    releasesIntro:
-      "Worldview, skills and interfaces move at different speeds. Their releases meet here, with dates and scope attached.",
-    allReleases: "View all releases",
-    subscribeTitle: "Choose what reaches your inbox.",
-    subscribeText:
-      "Follow worldview, skills, compatibility or research. Email verification keeps the list clean; the release feed is free.",
-    subscribe: "Choose update topics",
-    serviceTitle: "Some systems need an operator.",
-    serviceText:
-      "GripSky builds and runs self-hosted systems, develops skills around real work, and looks after an external information body over time.",
-    serviceLink: "Read the service boundary",
-  },
-  zh: {
-    kicker: "开放世界观 · 开放技能 · 允许自托管",
-    titleA: "世界观落成技能。",
-    titleB: "技能接入现实，",
-    titleC: "仍然归你掌握。",
-    intro:
-      "GripSky 公开临观仍在修订的世界观，以及从中长出的技能。源文件、版本记录和自托管路径都留在这里；研究与实现也从这里继续。",
-    primary: "浏览技能体系",
-    secondary: "阅读世界观",
-    systemLabel: "当前公开推导链",
-    nodes: ["系统论", "世界观", "主体", "技能", "外置身躯"],
-    relationTitle: "从正在发生的事开始。",
-    relationIntro:
-      "可以读，可以自己运行，也可以一起把它做下去。需要有人接手实施与维护时，再把运行交给 GripSky。",
-    relations: [
-      {
-        number: "01",
-        title: "阅读与运行",
-        text: "从公开源和版本记录开始，再把想长期保留的技能部署在自己手里。",
-        link: "从技能目录开始",
-        href: "/skills/catalog",
-      },
-      {
-        number: "02",
-        title: "一起把它做出来",
-        text: "带着证据核验来源、测试技能、质疑定义，或在 GitHub 贡献实现。",
-        link: "参与研究",
-        href: "/research/contribute",
-      },
-      {
-        number: "03",
-        title: "交付运行",
-        text: "当亲自维护已经不是最值得投入的部分，GripSky 可以接手部署、定制和长期运行。",
-        link: "查看服务范围",
-        href: "/services",
-      },
-    ],
-    skillsKicker: "公开目录 / 第一批",
-    skillsTitle: "技能目录，也写清能力边界。",
-    skillsIntro:
-      "每个条目都写明现在能用到什么、哪些部分仍属私有，以及自托管版本走到了哪里。",
-    allSkills: "打开完整目录",
-    bodyKicker: "自托管",
-    bodyTitle: "先能自托管，再谈托管。",
-    bodyText:
-      "真正可用的技能，应当经得起更换机器、厂商和维护者。定义保持公开，依赖能够读懂，局部状态可以导出，也可以彻底移除。托管只是这套形态的一种运行方式。",
-    bodyLink: "查看自托管方向",
-    releasesKicker: "版本流",
-    releasesTitle: "每次变化，都留下版本。",
-    releasesIntro:
-      "世界观、技能和界面各有自己的节奏；这里把发布范围和日期留在同一条记录里。",
-    allReleases: "查看全部版本",
-    subscribeTitle: "只让想看的更新抵达。",
-    subscribeText:
-      "世界观、技能、兼容性和研究可以分别选择。邮箱验证用来保持名单干净，版本通知免费。",
-    subscribe: "选择更新主题",
-    serviceTitle: "有些体系，需要有人长期照看。",
-    serviceText:
-      "GripSky 部署并运行自托管体系，围绕真实工作构造技能，也长期维护一具外置信息身躯。",
-    serviceLink: "查看服务边界",
-  },
-};
-
+/** Editorial composition; content and destinations remain shared with the public catalog. */
 export function HomeView({ locale }: { locale: Locale }) {
-  const copy = homeCopy[locale];
+  const zh = locale === "zh";
+  const href = (path: string) => localPath(locale, path);
+  const nodes = zh
+    ? ["系统论", "世界观", "主体", "技能", "外置身躯"]
+    : ["Systems theory", "Worldview", "Subject", "Skills", "External body"];
 
   return (
-    <main className="home-main" data-page-family="home">
-      <section className="home-hero">
-        <div className="ambient ambient-one" />
-        <div className="hero-copy">
-          <p className="eyebrow">{copy.kicker}</p>
-          {locale === "zh" ? (
-            <h1 className="zh-home-title">
-              <span>{copy.titleA}</span>
-              <span>{copy.titleB}</span>
-              <em>{copy.titleC}</em>
-            </h1>
+    <main className="atlas-home" data-page-family="home">
+      <PublicPageSchema locale={locale} path="/" name="GripSky" description={homeDescription[locale]} />
+      <section className="atlas-hero" aria-labelledby="atlas-title">
+        <div className="atlas-hero-copy">
+          <p className="atlas-kicker">
+            <span className="atlas-cross" aria-hidden="true" />
+            {zh
+              ? "开放世界观 / 开放技能 / 自托管"
+              : "OPEN WORLDVIEW / OPEN SKILLS / SELF-HOSTING"}
+          </p>
+          <h1 id="atlas-title">
+            <span>{zh ? "世界观" : "Worldview"}</span>
+            <span>{zh ? "落成技能。" : "becomes"}</span>
+            {!zh && <em>skill.</em>}
+          </h1>
+          <p className="atlas-deck">
+            {zh ? (
+              <>
+                技能接入现实，
+                <br />
+                <em>仍然归你掌握。</em>
+              </>
+            ) : (
+              <>
+                Skill becomes a body <br />
+                <em>that stays yours.</em>
+              </>
+            )}
+          </p>
+          <p className="atlas-intro">
+            {zh
+              ? "GripSky 从世界观出发，研究人怎样认识、改变和扩展自己。临观把这些问题带进技能与信息身躯的探索，在个人实践中修订理解。"
+              : "GripSky draws on Lin Guan’s worldview to study how people understand and reshape themselves, and expand their capabilities. He explores these questions through skills and information bodies, revising his understanding through personal practice."}
+          </p>
+          <Link className="atlas-button" href={href("/skills/catalog")}>
+            {zh ? "浏览技能体系" : "Explore the skills"}
+            <span aria-hidden="true">↗</span>
+          </Link>
+          <div className="atlas-hero-note">
+            <span>01—05</span>
+            <p>
+              {zh
+                ? "从理解世界，到扩展自己的可达范围。"
+                : "From understanding the world to extending your reach."}
+            </p>
+          </div>
+        </div>
+        <OrbitalScene
+          locale={locale}
+          nodes={nodes}
+          label={zh ? "开放系统图谱" : "AN ATLAS OF THE SYSTEM"}
+        />
+      </section>
+
+      <section
+        className="atlas-premise"
+        aria-label={zh ? "开放的方式" : "Ways to take part"}
+      >
+        <p>
+          {zh ? (
+            <>
+              让一份理解，
+              <br />
+              长出更多可能。
+            </>
           ) : (
-            <h1>
-              <span>{copy.titleA}</span>
-              <span>{copy.titleB}</span>
-              <em>{copy.titleC}</em>
-            </h1>
+            <>
+              One understanding.
+              <br />
+              More ways to act.
+            </>
           )}
-          <p className="hero-intro">{copy.intro}</p>
-          <div className="hero-actions">
-            <Link className="primary-button" href={localPath(locale, "/skills/catalog")}>
-              {copy.primary}
-              <span aria-hidden="true">↘</span>
-            </Link>
-            <Link className="text-link" href={localPath(locale, "/worldview")}>
-              {copy.secondary}
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="system-constellation" aria-label={copy.systemLabel}>
-          <div className="constellation-grid" aria-hidden="true" />
-          <div className="constellation-core">
-            <span>G</span>
-          </div>
-          <div className="constellation-path" aria-hidden="true" />
-          {copy.nodes.map((node, index) => (
-            <div className={`constellation-node node-${index + 1}`} key={node}>
-              <i />
-              <span>0{index + 1}</span>
-              <b>{node}</b>
+        </p>
+        {[
+          {
+            n: "01",
+            title: zh ? "读到源头" : "Read the source",
+            text: zh
+              ? "判断有来处，变化有记录。"
+              : "Sourced ideas. Traceable changes.",
+            to: "/worldview/source",
+          },
+          {
+            n: "02",
+            title: zh ? "留在自己手里" : "Keep it yours",
+            text: zh
+              ? "公开定义，自托管路径。"
+              : "Public definitions. Self-hosting paths.",
+            to: "/body/self-host",
+          },
+          {
+            n: "03",
+            title: zh ? "一起继续" : "Build in the open",
+            text: zh
+              ? "带来问题、证据与实现。"
+              : "Bring questions, evidence and code.",
+            to: "/research/contribute",
+          },
+        ].map((item) => (
+          <Link href={href(item.to)} key={item.n}>
+            <span>{item.n}</span>
+            <div>
+              <h2>{item.title}</h2>
+              <p>{item.text}</p>
             </div>
-          ))}
-          <p>{copy.systemLabel}</p>
+            <i aria-hidden="true">↗</i>
+          </Link>
+        ))}
+      </section>
+
+      <section
+        className="atlas-section atlas-skills"
+        aria-labelledby="skill-index-heading"
+      >
+        <div className="atlas-section-heading">
+          <p className="atlas-kicker">01 / {zh ? "技能索引" : "SKILL INDEX"}</p>
+          <h2 id="skill-index-heading">
+            {zh ? (
+              <>
+                理解，
+                <br />
+                <em>成为能力。</em>
+              </>
+            ) : (
+              <>
+                Understanding,
+                <br />
+                <em>made useful.</em>
+              </>
+            )}
+          </h2>
+          <p>
+            {zh
+              ? "临观尝试把知识整理、浏览器操作、同步与恢复等个人实践写成技能。能否在新的情境中复用，还要看实际使用的结果。"
+              : "Lin Guan is trying to turn personal practices—organizing knowledge, browser operation, sync and recovery—into skills. What carries over, and what needs revision, must be tested through use."}
+          </p>
+          <Link className="atlas-text-link" href={href("/skills/catalog")}>
+            {zh ? "完整目录与开放状态" : "Full catalog & availability"}
+            <span aria-hidden="true">↗</span>
+          </Link>
+          <div className="atlas-index-seal" aria-hidden="true">
+            <span>G</span>
+            <i />
+            <b>01 / SKILLS</b>
+          </div>
+        </div>
+        <SkillIndex
+          locale={locale}
+          entries={skills.map((skill) => ({
+            code: skill.number,
+            name: tx(skill.name, locale),
+            summary: tx(skill.summary, locale),
+            kind: tx(skill.kind, locale),
+            status: tx(skill.openness, locale),
+            href: href(`/skills/${skill.slug}`),
+            family: skill.number.startsWith("E")
+              ? "embodied"
+              : skill.number.startsWith("F")
+                ? "field"
+                : "meta",
+          }))}
+        />
+      </section>
+
+      <section className="atlas-ownership" aria-labelledby="ownership-heading">
+        <div className="atlas-ownership-copy">
+          <p className="atlas-kicker">
+            02 / {zh ? "外置信息身躯" : "THE EXTERNAL BODY"}
+          </p>
+          <h2 id="ownership-heading">
+            {zh ? (
+              <>
+                扩展你的身躯。
+                <br />
+                <em>保有你的主权。</em>
+              </>
+            ) : (
+              <>
+                Extend your reach.
+                <br />
+                <em>Keep your agency.</em>
+              </>
+            )}
+          </h2>
+          <p>
+            {zh
+              ? "真正可用的技能，应当经得起更换机器、厂商和维护者。定义保持公开，依赖能够读懂，局部状态可以导出，也可以彻底移除。"
+              : "A useful skill should survive changes of machine, vendor or operator—with a public definition, readable dependencies and local state that can be exported or removed."}
+          </p>
+          <Link
+            className="atlas-button atlas-button-outline"
+            href={href("/body/self-host")}
+          >
+            {zh ? "先能自托管，再谈托管" : "Self-hosting comes first"}
+            <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+        <SolarScene />
+        <div className="atlas-ownership-foot">
+          <span>
+            {zh
+              ? "身躯的范围可以变，控制权不必交出去。"
+              : "The boundary can expand without giving up control."}
+          </span>
+          <span>GRIPSKY / SELF-HOSTING</span>
         </div>
       </section>
 
-      <section className="home-section relation-section">
-        <div className="section-title-row">
-          <div>
-            <p className="eyebrow">01 / {locale === "zh" ? "入口" : "ACCESS"}</p>
-            <h2>{copy.relationTitle}</h2>
+      <section
+        className="atlas-section atlas-research"
+        aria-labelledby="research-heading"
+      >
+        <div className="atlas-research-copy">
+          <p className="atlas-kicker">
+            03 / {zh ? "开放研究" : "OPEN RESEARCH"}
+          </p>
+          <h2 id="research-heading">
+            {zh ? (
+              <>
+                问题还没有答案，
+                <br />
+                <em>就先把它公开。</em>
+              </>
+            ) : (
+              <>
+                Open work.
+                <br />
+                <em>While it is still open.</em>
+              </>
+            )}
+          </h2>
+          <p>
+            {zh
+              ? "信息增多，人能投入的时间、精力与资源却有限。GripSky 探索复用已有资源、减少重复建造；维护、能耗与控制权的代价，仍需实践检验。"
+              : "Information grows; a person’s time, energy and resources are limited. GripSky explores reusing existing resources and reducing duplicate work. Maintenance, energy use and control trade-offs still need testing in practice."}
+          </p>
+          <Link className="atlas-text-link" href={href("/research")}>
+            {zh ? "进入研究现场" : "Explore the research"}
+            <span aria-hidden="true">↗</span>
+          </Link>
+          <div className="atlas-research-drawing" aria-hidden="true">
+            <svg viewBox="0 0 600 200" fill="none">
+              <path d="M-40 170Q240-130 640 170M-40 200Q260-80 640 200M20 160H580" />
+              <circle cx="325" cy="68" r="48" />
+              <circle cx="325" cy="68" r="5" />
+              <path d="M325 0V180" />
+            </svg>
           </div>
-          <p>{copy.relationIntro}</p>
         </div>
-        <div className="relation-grid">
-          {copy.relations.map((relation) => (
-            <article key={relation.number}>
-              <span>{relation.number}</span>
-              <h3>{relation.title}</h3>
-              <p>{relation.text}</p>
-              <Link href={localPath(locale, relation.href)}>
-                {relation.link}
-                <i aria-hidden="true">↗</i>
-              </Link>
-            </article>
-          ))}
+        <div className="atlas-portals">
+          <Link className="atlas-portal" href={href("/research/contribute")}>
+            <span className="atlas-portal-number">
+              01 / {zh ? "参与" : "CONTRIBUTE"}
+            </span>
+            <span className="atlas-portal-arrow" aria-hidden="true">
+              ↗
+            </span>
+            <h3>{zh ? "一起把它做出来。" : "Work in public."}</h3>
+            <p>
+              {zh
+                ? "带着证据核验来源、测试技能、质疑定义，或在 GitHub 贡献实现。"
+                : "Bring evidence, test a skill, question a definition or contribute an implementation on GitHub."}
+            </p>
+            <span className="atlas-portal-label">
+              {zh ? "公开问题与贡献入口" : "Questions & contribution paths"}
+            </span>
+          </Link>
+          <Link className="atlas-portal" href={href("/services")}>
+            <span className="atlas-portal-number">
+              02 / {zh ? "委托" : "COMMISSION"}
+            </span>
+            <span className="atlas-portal-arrow" aria-hidden="true">
+              ↗
+            </span>
+            <h3>
+              {zh
+                ? "委托部署与维护。"
+                : "A system, with someone to care for it."}
+            </h3>
+            <p>
+              {zh
+                ? "部署、定制和长期维护。收费从承担工作与责任开始，公开的知识仍然公开。"
+                : "Deployment, custom skills and continuing maintenance. Fees pay for work and responsibility; public knowledge stays public."}
+            </p>
+            <span className="atlas-portal-label">
+              {zh ? "服务范围与责任边界" : "Service scope & responsibilities"}
+            </span>
+          </Link>
         </div>
       </section>
 
-      <section className="home-section skill-preview">
-        <div className="section-title-row">
-          <div>
-            <p className="eyebrow">{copy.skillsKicker}</p>
-            <h2>{copy.skillsTitle}</h2>
-          </div>
-          <p>{copy.skillsIntro}</p>
+      <section
+        className="atlas-section atlas-journal"
+        aria-labelledby="journal-heading"
+      >
+        <div className="atlas-journal-heading">
+          <p className="atlas-kicker">
+            04 / {zh ? "版本记录" : "RELEASE JOURNAL"}
+          </p>
+          <h2 id="journal-heading">
+            {zh ? "变化，留下来。" : "Changes, kept on record."}
+          </h2>
+          <Link className="atlas-text-link" href={href("/updates/releases")}>
+            {zh ? "全部版本" : "All releases"}
+            <span aria-hidden="true">↗</span>
+          </Link>
         </div>
-        <div className="skill-list">
-          {skills.slice(0, 4).map((skill) => (
-            <Link
-              className="skill-row"
-              href={localPath(locale, `/skills/${skill.slug}`)}
-              key={skill.slug}
-            >
-              <span className="skill-code">{skill.number}</span>
+        <div className="atlas-releases">
+          {releases.map((release) => (
+            <Link href={href("/updates/releases")} key={release.version}>
+              <time dateTime={release.date}>{release.date}</time>
               <div>
-                <small>{tx(skill.kind, locale)}</small>
-                <h3>{tx(skill.name, locale)}</h3>
+                <small>{tx(release.type, locale)}</small>
+                <h3>{tx(release.title, locale)}</h3>
               </div>
-              <p>{tx(skill.summary, locale)}</p>
-              <div className="skill-state">
-                <i />
-                {tx(skill.openness, locale)}
-              </div>
-              <span className="row-arrow" aria-hidden="true">↗</span>
+              <span>{release.version}</span>
+              <i aria-hidden="true">↗</i>
             </Link>
           ))}
         </div>
-        <Link className="section-link" href={localPath(locale, "/skills/catalog")}>
-          {copy.allSkills}
-          <span aria-hidden="true">→</span>
-        </Link>
       </section>
 
-      <section className="home-section selfhost-section">
-        <div className="selfhost-visual" aria-hidden="true">
-          <div className="host-ring ring-a" />
-          <div className="host-ring ring-b" />
-          <div className="host-core">LOCAL</div>
-          <span className="host-node host-a">SOURCE</span>
-          <span className="host-node host-b">SKILLS</span>
-          <span className="host-node host-c">STATE</span>
-          <span className="host-node host-d">EXPORT</span>
+      <section className="atlas-connect">
+        <div>
+          <p className="atlas-kicker">{zh ? "保持联系" : "STAY IN THE LOOP"}</p>
+          <h2>
+            {zh ? (
+              <>
+                下一次生长，
+                <br />
+                与你相见。
+              </>
+            ) : (
+              <>
+                Meet the next
+                <br />
+                iteration.
+              </>
+            )}
+          </h2>
         </div>
-        <div className="selfhost-copy">
-          <p className="eyebrow">{copy.bodyKicker}</p>
-          <h2>{copy.bodyTitle}</h2>
-          <p>{copy.bodyText}</p>
-          <Link className="primary-button" href={localPath(locale, "/body/self-host")}>
-            {copy.bodyLink}
+        <div>
+          <p>
+            {zh
+              ? "选择你关心的世界观、技能、兼容性或研究更新。订阅免费，可随时退订。"
+              : "Worldview, skills, compatibility and research. Choose the updates that matter to you. Free to subscribe, free to leave."}
+          </p>
+          <Link className="atlas-button" href={href("/updates/subscribe")}>
+            {zh ? "选择订阅主题" : "Choose your updates"}
+            <span aria-hidden="true">↗</span>
+          </Link>
+          <Link className="atlas-text-link" href={href("/contact")}>
+            {zh ? "有事想聊？直接联系" : "Something in mind? Get in touch"}
             <span aria-hidden="true">→</span>
           </Link>
         </div>
       </section>
-
-      <section className="home-section release-section">
-        <div className="section-title-row">
-          <div>
-            <p className="eyebrow">{copy.releasesKicker}</p>
-            <h2>{copy.releasesTitle}</h2>
-          </div>
-          <p>{copy.releasesIntro}</p>
-        </div>
-        <div className="release-list">
-          {releases.map((release) => (
-            <article key={release.version}>
-              <span>{release.date}</span>
-              <small>{tx(release.type, locale)}</small>
-              <h3>{tx(release.title, locale)}</h3>
-              <b>{release.version}</b>
-            </article>
-          ))}
-        </div>
-        <Link className="section-link" href={localPath(locale, "/updates/releases")}>
-          {copy.allReleases}
-          <span aria-hidden="true">→</span>
-        </Link>
-      </section>
-
-      <section className="home-section split-cta">
-        <div className="subscribe-panel">
-          <span>{locale === "zh" ? "更新 / 免费" : "UPDATES / FREE"}</span>
-          <h2>{copy.subscribeTitle}</h2>
-          <p>{copy.subscribeText}</p>
-          <Link href={localPath(locale, "/updates/subscribe")}>
-            {copy.subscribe}
-            <i aria-hidden="true">↗</i>
-          </Link>
-        </div>
-        <div className="service-panel">
-          <span>{locale === "zh" ? "服务 / 托管" : "SERVICES / MANAGED"}</span>
-          <h2>{copy.serviceTitle}</h2>
-          <p>{copy.serviceText}</p>
-          <Link href={localPath(locale, "/services")}>
-            {copy.serviceLink}
-            <i aria-hidden="true">↗</i>
-          </Link>
-        </div>
-      </section>
-
-      <section className="source-band">
-        <p>
-          {locale === "zh"
-            ? "公开源端：github.com/weakdreamer/worldview"
-            : "Public source: github.com/weakdreamer/worldview"}
-        </p>
+      <div className="atlas-source">
+        <span>
+          {zh ? "公开源 / 持续修订中" : "PUBLIC SOURCE / ALWAYS IN REVISION"}
+        </span>
         <a href={GITHUB_WORLDVIEW} target="_blank" rel="noreferrer">
-          {locale === "zh" ? "打开 GitHub 仓库" : "Open the GitHub repository"}
-          <span aria-hidden="true">↗</span>
+          github.com/weakdreamer/worldview <span aria-hidden="true">↗</span>
         </a>
-      </section>
+      </div>
     </main>
   );
 }

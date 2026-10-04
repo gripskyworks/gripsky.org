@@ -1,13 +1,14 @@
 "use client";
 
-import { FormEvent, KeyboardEvent, PointerEvent, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useRef, useState } from "react";
 import { Locale } from "../lib/site-data";
+import { formErrorMessage } from "../lib/form-feedback";
 
 const topics = [
   { id: "worldview", en: "Worldview releases", zh: "世界观版本" },
-  { id: "skills", en: "Skill packages", zh: "技能包发布" },
+  { id: "skills", en: "Skill releases", zh: "技能发布" },
   { id: "compatibility", en: "Compatibility changes", zh: "兼容性变化" },
-  { id: "research", en: "Research and contribution calls", zh: "研究与协作邀请" },
+  { id: "research", en: "Research and collaboration invitations", zh: "研究与协作邀请" },
   { id: "services", en: "Managed-service notices", zh: "托管服务通知" },
 ] as const;
 
@@ -32,18 +33,14 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
   };
 
   const handleTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    const nextIndex = event.key === "ArrowRight" ? (index + 1) % 2 : (index - 1 + 2) % 2;
+    const nextIndex = event.key === "Home" ? 0
+      : event.key === "End" ? 1
+      : event.key === "ArrowRight" ? (index + 1) % 2 : (index - 1 + 2) % 2;
     const nextMode: SubscriptionMode = nextIndex === 0 ? "subscribe" : "unsubscribe";
     chooseMode(nextMode);
     tabRefs.current[nextIndex]?.focus();
-  };
-
-  const trackPointer = (event: PointerEvent<HTMLElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.style.setProperty("--pointer-x", `${event.clientX - bounds.left}px`);
-    event.currentTarget.style.setProperty("--pointer-y", `${event.clientY - bounds.top}px`);
   };
 
   const toggleTopic = (topic: string) => {
@@ -82,10 +79,10 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
           ? `${locale === "zh" ? "本地预览验证码" : "Local preview code"}: ${data.previewCode}`
           : locale === "zh"
             ? "验证码已经发送到该邮箱。"
-            : "A verification code has been sent.",
+            : "A verification code has been sent to this email address.",
       );
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Request failed");
+      setMessage(formErrorMessage(error, locale, "request-code"));
     } finally {
       setLoading(false);
     }
@@ -108,17 +105,17 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
         mode === "unsubscribe"
           ? data.wasSubscribed
             ? locale === "zh"
-              ? "该邮箱已经解除全部 GripSky 更新订阅。"
+              ? "已解除该邮箱的全部 GripSky 更新订阅。"
               : "This address has been unsubscribed from all GripSky updates."
             : locale === "zh"
-              ? "该邮箱当前没有有效订阅，没有创建或更改任何记录。"
+              ? "该邮箱没有有效订阅，未创建或更改订阅记录。"
               : "This address had no active subscription. No record was created or changed."
           : locale === "zh"
-            ? "订阅已经确认。后续只发送所选主题的版本通知。"
-            : "Subscription confirmed. Only the selected release topics will be sent.",
+            ? "订阅已确认。版本通知将按所选主题发送。"
+            : "Subscription confirmed. Release notices will be sent for your selected topics.",
       );
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Verification failed");
+      setMessage(formErrorMessage(error, locale, "verify-code"));
     } finally {
       setLoading(false);
     }
@@ -129,13 +126,12 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
     ? locale === "zh" ? "输入验证码" : "Enter the verification code"
     : isUnsubscribe
       ? locale === "zh" ? "验证邮箱后解除订阅" : "Verify the address to unsubscribe"
-      : locale === "zh" ? "选择需要抵达的更新" : "Choose what should reach you";
+      : locale === "zh" ? "选择想看的更新" : "Choose what should reach you";
 
   return (
     <section
       className="subscription-center interactive-surface"
       data-mode={mode}
-      onPointerMove={trackPointer}
     >
       <div className="subscription-tabs interactive-tabs" role="tablist" aria-label={locale === "zh" ? "订阅操作" : "Subscription actions"}>
         <span className="subscription-tab-indicator" aria-hidden="true" />
@@ -188,7 +184,7 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
                     ? "验证码只用于确认您控制该邮箱。"
                     : "The code only confirms that you control this address."
                   : locale === "zh"
-                    ? "免费订阅，不会创建付费服务方案。"
+                    ? "订阅免费，不会开通付费服务。"
                     : "Free subscription. This does not create a paid service plan."}</p>
               </div>
             </div>
@@ -228,7 +224,7 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
                   <div className="unsubscribe-explanation">
                     <span aria-hidden="true">↙</span>
                     <p>{locale === "zh"
-                      ? "验证后会停止该邮箱的全部更新。重新订阅仍需再次验证。"
+                      ? "验证后将停止该邮箱的全部更新。重新订阅时，需要再次验证。"
                       : "Verification stops every update for this address. Subscribing again requires a new verification."}</p>
                   </div>
                 )}
@@ -262,7 +258,7 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
                   : step === "request"
                     ? locale === "zh" ? "发送验证码" : "Send verification code"
                     : isUnsubscribe
-                      ? locale === "zh" ? "确认解除订阅" : "Confirm unsubscribe"
+                      ? locale === "zh" ? "确认解除订阅" : "Confirm and unsubscribe"
                       : locale === "zh" ? "确认订阅" : "Confirm subscription"}
                 <span aria-hidden="true">→</span>
               </button>
@@ -279,7 +275,7 @@ export function SubscriptionCenter({ locale }: { locale: Locale }) {
 
       <p className="subscription-fallback-note">
         {locale === "zh"
-          ? "如果邮箱客户端没有显示退订入口，可以随时在这里验证邮箱并解除订阅。"
+          ? "邮件应用未显示退订入口时，可随时在这里验证邮箱并退订。"
           : "If your mail app does not show an unsubscribe control, verify your address here to stop updates at any time."}
       </p>
     </section>

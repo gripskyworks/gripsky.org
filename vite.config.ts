@@ -14,6 +14,8 @@ const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  // This independent candidate is local-only. Never send real mail from it.
+  vars: { LOCAL_EMAIL_PREVIEW: "true" },
   d1_databases: d1
     ? [
         {

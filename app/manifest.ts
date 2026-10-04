@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "GripSky — Open worldview and skill systems",
     short_name: "GripSky",
     description:
-      "Open worldview, public skill systems, self-hosting and managed stewardship.",
+      "Lin Guan’s evolving worldview, skill explorations and research on information bodies and self-hosting.",
     start_url: "/",
     display: "standalone",
     background_color: "#f3efe4",
