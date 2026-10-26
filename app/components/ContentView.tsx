@@ -380,7 +380,12 @@ export function ContentView({
       {content.related && content.related.length > 0 && (
         <section className="related-links">
           <span>{locale === "zh" ? "继续阅读" : "Continue"}</span>
-          {content.related.map((item) => (
+          {content.related.map((item) => item.href.startsWith("https://") ? (
+            <a href={item.href} key={item.href}>
+              {tx(item.label, locale)}
+              <i aria-hidden="true">↗</i>
+            </a>
+          ) : (
             <Link href={localPath(locale, item.href)} key={item.href}>
               {tx(item.label, locale)}
               <i aria-hidden="true">→</i>

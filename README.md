@@ -54,3 +54,8 @@ This repository contains website code, public content and reusable design assets
 - Public collaboration / 公开协作：[GitHub Issues](https://github.com/gripskyworks/gripsky.org/issues)
 
 中文公开页面从 [gripsky.org/zh](https://gripsky.org/zh) 进入。世界观与技能按当前实践阶段逐步公开；需要部署、定制或维护时，请先说明目标、材料与隐私约束。
+
+
+## Codetaker creative practice
+
+The existing research section now links [Codetaker](https://codetaker.gripsky.org/), a short browser narrative game in development by Lin Guan (临观). The bilingual project entry at `/research/codetaker` describes its current stage, artwork attribution and relationship to GripSky. No public playable release is available.

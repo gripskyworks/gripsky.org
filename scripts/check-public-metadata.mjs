@@ -11,7 +11,7 @@ const paths = Array.from(sitemap.matchAll(/<loc>(.*?)<\/loc>/g), (match) => {
   assert.equal(url.origin, "https://gripsky.org");
   return url.pathname;
 });
-assert.equal(paths.length, 88);
+assert.equal(paths.length, 90);
 assert.equal(new Set(paths).size, paths.length);
 
 const failures = [];

@@ -20,6 +20,7 @@ export const publicPageNames: Record<string, LocalizedText> = {
   "/body/self-host": { en: "Self-hosting and current scope", zh: "自托管与当前范围" },
   "/body/examples": { en: "External-body examples", zh: "外置身躯实例" },
   "/research": { en: "Research and open questions", zh: "研究与开放问题" },
+  "/research/codetaker": { en: "Codetaker · Vibe 把妹王 game project", zh: "Codetaker · Vibe 把妹王游戏项目" },
   "/research/questions": { en: "Research questions", zh: "研究问题" },
   "/research/roadmap": { en: "Research roadmap", zh: "研究路线图" },
   "/research/proposals": { en: "Research proposals", zh: "研究提案" },

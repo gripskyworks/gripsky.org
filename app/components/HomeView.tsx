@@ -262,6 +262,10 @@ export function HomeView({ locale }: { locale: Locale }) {
             {zh ? "进入研究现场" : "Explore the research"}
             <span aria-hidden="true">↗</span>
           </Link>
+          <Link className="atlas-text-link" href={href("/research/codetaker")}>
+            {zh ? "Codetaker · 游戏创作进行中" : "Codetaker · A game in development"}
+            <span aria-hidden="true">↗</span>
+          </Link>
           <div className="atlas-research-drawing" aria-hidden="true">
             <svg viewBox="0 0 600 200" fill="none">
               <path d="M-40 170Q240-130 640 170M-40 200Q260-80 640 200M20 160H580" />

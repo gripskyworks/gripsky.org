@@ -14,12 +14,12 @@ async function sourceModule(path) {
 const { pages, skills, releases, navGroups } = await sourceModule("app/lib/site-data.ts");
 const { publicPageNames, homeDescription } = await sourceModule("app/lib/public-metadata.ts");
 
-test("the full public copy inventory keeps 44 bilingual routes and their real navigation targets", () => {
-  assert.equal(Object.keys(pages).length, 37);
+test("the full public copy inventory keeps 45 bilingual routes and their real navigation targets", () => {
+  assert.equal(Object.keys(pages).length, 38);
   assert.equal(skills.length, 6);
   assert.deepEqual(Object.keys(publicPageNames).sort(), Object.keys(pages).sort());
   const paths = new Set(["/", ...Object.keys(pages), ...skills.map((skill) => `/skills/${skill.slug}`)]);
-  assert.equal(paths.size, 44);
+  assert.equal(paths.size, 45);
   const checkTexts = (value) => {
     if (!value || typeof value !== "object") return;
     if ("en" in value || "zh" in value) {

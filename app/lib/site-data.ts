@@ -71,6 +71,7 @@ export const navGroups = [
       { label: { en: "Questions", zh: "研究问题" }, href: "/research/questions" },
       { label: { en: "Roadmap", zh: "公开路线图" }, href: "/research/roadmap" },
       { label: { en: "Contribute", zh: "参与贡献" }, href: "/research/contribute" },
+      { label: { en: "Codetaker game project", zh: "Codetaker 游戏创作" }, href: "/research/codetaker" },
     ],
   },
   {
@@ -806,7 +807,52 @@ export const pages: Record<string, PageDefinition> = {
     ],
     [
       { label: { en: "Open research questions", zh: "查看研究问题" }, href: "/research/questions" },
+      { label: { en: "Codetaker · Creative practice", zh: "Codetaker · 游戏创作实践" }, href: "/research/codetaker" },
       { label: { en: "How to contribute", zh: "如何参与贡献" }, href: "/research/contribute" },
+    ],
+  ),
+  "/research/codetaker": page(
+    { en: "RESEARCH / CREATIVE PRACTICE", zh: "研究 / 创作实践" },
+    { en: "Codetaker · A story taking shape with AI.", zh: "Codetaker · 和 AI 一起，让故事长出来。" },
+    {
+      en: "Codetaker, provisionally titled Vibe 把妹王 in Chinese, is a short browser narrative game being created by Lin Guan about a newcomer’s journey into vibe coding and encounters with AI characters. Story and staging are in planning; no public playable release is available.",
+      zh: "Codetaker（中文暂名 Vibe 把妹王）是临观创作中的短篇网页互动叙事游戏：从新人走向 Vibe Coding 高手，在与 AI 娘的相遇中展开故事。目前处于剧情与演出规划阶段，暂无公开试玩。",
+    },
+    [
+      {
+        title: { en: "The planned experience", zh: "想做成怎样的体验" },
+        body: {
+          en: "The project imagines a short journey told through characters, relationships, comedy, dialogue art and staged scenes. AI characters and programmer jokes are material for the story. Specific scenes, choices and endings remain in development.",
+          zh: "项目希望通过人物关系、喜剧、对话立绘和短篇演出，讲一段轻量的旅程。AI 娘与程序员梗是故事素材，具体场景、选项与结局仍在创作。",
+        },
+      },
+      {
+        title: { en: "Current public status · 26 October 2026", zh: "当前公开状态 · 2026 年 10 月 26 日" },
+        body: {
+          en: "Character studies, dialogue artwork and story-structure research exist. The full game has not been implemented, no public playable version is available, and no release date has been set. The project website introduces the concept and selected artwork.",
+          zh: "已有角色美术探索、对话立绘与剧情结构研究。完整游戏尚未实现，暂未开放试玩，也未确定发布日期。项目官网展示构想与选定立绘。",
+        },
+      },
+      {
+        title: { en: "Creator and relationship to GripSky", zh: "创作者与 GripSky 的关系" },
+        body: {
+          en: "Lin Guan (临观) creates Codetaker as an independent game project within his Kotonoha (言叶之花) creative activity. GripSky hosts its public home and connects it to the maintainer’s existing public identity. It is a practice in ongoing human–AI collaboration across narrative, art and staging.",
+          zh: "Codetaker 由临观（Lin Guan）创作，是「言叶之花」活动下有独立边界的游戏项目。GripSky 提供官网与公开入口，并接续维护者已有的公共身份。它把长期人机协作带进叙事、美术与演出的实践。",
+        },
+      },
+      {
+        title: { en: "Featured art and attribution", zh: "页面配图与来源" },
+        body: {
+          en: "The project website features the L-A2 “innocent” dialogue artwork of Da Fei Yu / the DeepSeek girl, made for the project with AI assistance using imagegen under Lin Guan’s art direction. Saved community records trace the character design lineage through 上善无形 and ZipZipPipe, documented by donnyjie. This is an unofficial creative project with no official affiliation to the AI brands depicted.",
+          zh: "项目官网采用大肥鱼（DeepSeek 娘）的 L-A2「装乖」对话立绘，由临观确定美术方向、使用 imagegen 辅助制作。已保存的社区来源记录将角色设计脉络追溯至上善无形与 ZipZipPipe，donnyjie 的资料整理提供了来源说明。本项目为非官方创作，与相关 AI 品牌无官方隶属关系。",
+        },
+      },
+    ],
+    [
+      { label: { en: "Visit the Codetaker project website", zh: "访问 Codetaker 项目官网" }, href: "https://codetaker.gripsky.org/" },
+      { label: { en: "Read the English introduction", zh: "阅读英文项目介绍" }, href: "https://codetaker.gripsky.org/en/" },
+      { label: { en: "Community art source record", zh: "社区角色来源整理" }, href: "https://www.zhihu.com/question/2070559801474375714/answer/2074287390244475384" },
+      { label: { en: "Maintainer identity · ORCID", zh: "维护者身份 · ORCID" }, href: FOUNDER_ORCID },
     ],
   ),
   "/research/questions": page(
@@ -1227,7 +1273,10 @@ export const pages: Record<string, PageDefinition> = {
         },
       },
     ],
-    [{ label: { en: "Read the FAQ", zh: "阅读常见问题" }, href: "/faq" }],
+    [
+      { label: { en: "Read the FAQ", zh: "阅读常见问题" }, href: "/faq" },
+      { label: { en: "Codetaker · Game project", zh: "Codetaker · 游戏创作项目" }, href: "/research/codetaker" },
+    ],
   ),
   "/contact": page(
     { en: "06 / UPDATES & CONTACT", zh: "06 / 更新与联系" },

@@ -63,7 +63,7 @@ try {
     console.log(`${path}: ${status}, own summary and noindex OK`);
   }
   const sitemap = await (await fetch(`${origin}/sitemap.xml`)).text();
-  assert.equal((sitemap.match(/<loc>/g) ?? []).length, 88);
+  assert.equal((sitemap.match(/<loc>/g) ?? []).length, 90);
   assert.doesNotMatch(sitemap, /<lastmod>/);
   const metadataCheck = spawn(process.execPath, ["scripts/check-public-metadata.mjs", origin, "--production-metadata"], {
     cwd: new URL("..", import.meta.url), stdio: ["ignore", "pipe", "pipe"],

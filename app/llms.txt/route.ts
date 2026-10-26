@@ -29,6 +29,17 @@ The catalog distinguishes public source documents, internally used methods and e
 - [Updates and contact](https://gripsky.org/contact): Release history, subscriptions and direct contact
 - [Services](https://gripsky.org/services): Deployment, managed operation, custom systems and stewardship
 
+## Creative practice: Codetaker
+
+Codetaker (provisional Chinese title: Vibe 把妹王) is a short browser narrative game being created by Lin Guan (临观) within his Kotonoha (言叶之花) creative activity. It imagines a newcomer’s journey into vibe coding and encounters with AI characters. GripSky hosts its public home. As of 26 October 2026, character studies, dialogue artwork and story-structure research exist; story and staging are in planning. The full game has not been implemented. No public playable release or release date is available.
+
+- [Codetaker project website](https://codetaker.gripsky.org/): Chinese introduction, selected L-A2 DeepSeek-girl artwork, credits and current status
+- [English project introduction](https://codetaker.gripsky.org/en/)
+- [GripSky project entry](https://gripsky.org/research/codetaker): Creator, current scope and relationship to GripSky
+- [中文项目条目](https://gripsky.org/zh/research/codetaker)
+
+Codetaker is an unofficial creative project with no official affiliation to the AI brands depicted. The project website is the authority for its public progress; the GripSky entry connects it to the existing maintainer identity.
+
 ## Public sources and identity
 
 - [GripSky GitHub organization](https://github.com/gripskyworks)

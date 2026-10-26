@@ -215,7 +215,7 @@ test("exposes crawl and install metadata", async () => {
   assert.match(sitemapXml, /hreflang="zh-CN"/);
   assert.match(sitemapXml, /<loc>https:\/\/gripsky\.org\/contact<\/loc>/);
   assert.doesNotMatch(sitemapXml, /<loc>https:\/\/gripsky\.org\/updates<\/loc>/);
-  assert.equal((sitemapXml.match(/<loc>/g) ?? []).length, 88);
+  assert.equal((sitemapXml.match(/<loc>/g) ?? []).length, 90);
   assert.doesNotMatch(sitemapXml, /<lastmod>/, "No fixed or build-time modification date.");
 
   const manifest = await render("/manifest.webmanifest");
