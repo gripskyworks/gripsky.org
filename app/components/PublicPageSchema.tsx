@@ -28,7 +28,7 @@ export function PublicPageSchema({ locale, path, name, description, documents }:
         alternateName: "Vibe 把妹王",
         url: "https://codetaker.gripsky.org/",
         creator: { "@id": "https://gripsky.org/#founder" },
-        creativeWorkStatus: "In development — story and staging planning; no public playable release",
+        creativeWorkStatus: "In development",
       },
     } : {}),
     ...(documents?.length ? { citation: documents.map((document) => document.href) } : {}),

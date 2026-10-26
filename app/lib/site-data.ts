@@ -813,38 +813,31 @@ export const pages: Record<string, PageDefinition> = {
   ),
   "/research/codetaker": page(
     { en: "RESEARCH / CREATIVE PRACTICE", zh: "研究 / 创作实践" },
-    { en: "Codetaker · A story taking shape with AI.", zh: "Codetaker · 和 AI 一起，让故事长出来。" },
+    { en: "Codetaker · An AI-girl fan game by LinGuan.", zh: "Codetaker · LinGuan 的 AI 娘同人小游戏。" },
     {
-      en: "Codetaker, provisionally titled Vibe 把妹王 in Chinese, is a short browser narrative game being created by Lin Guan about a newcomer’s journey into vibe coding and encounters with AI characters. Story and staging are in planning; no public playable release is available.",
-      zh: "Codetaker（中文暂名 Vibe 把妹王）是临观创作中的短篇网页互动叙事游戏：从新人走向 Vibe Coding 高手，在与 AI 娘的相遇中展开故事。目前处于剧情与演出规划阶段，暂无公开试玩。",
+      en: "Codetaker, provisionally titled Vibe 把妹王 in Chinese, is a Helltaker-style AI-girl fan game in development by LinGuan. Meet Da Fei Yu, GPT, Claude and other AI girls on a journey into vibe coding.",
+      zh: "Codetaker（中文暂名《Vibe 把妹王》）是 LinGuan 制作中的 Helltaker 风格 AI 娘同人小游戏。与大肥鱼、GPT、Claude 等 AI 娘相遇，在 Vibe Coding 的旅程里展开故事。",
     },
     [
       {
-        title: { en: "The planned experience", zh: "想做成怎样的体验" },
+        title: { en: "The story", zh: "这段故事" },
         body: {
-          en: "The project imagines a short journey told through characters, relationships, comedy, dialogue art and staged scenes. AI characters and programmer jokes are material for the story. Specific scenes, choices and endings remain in development.",
-          zh: "项目希望通过人物关系、喜剧、对话立绘和短篇演出，讲一段轻量的旅程。AI 娘与程序员梗是故事素材，具体场景、选项与结局仍在创作。",
-        },
-      },
-      {
-        title: { en: "Current public status · 26 October 2026", zh: "当前公开状态 · 2026 年 10 月 26 日" },
-        body: {
-          en: "Character studies, dialogue artwork and story-structure research exist. The full game has not been implemented, no public playable version is available, and no release date has been set. The project website introduces the concept and selected artwork.",
-          zh: "已有角色美术探索、对话立绘与剧情结构研究。完整游戏尚未实现，暂未开放试玩，也未确定发布日期。项目官网展示构想与选定立绘。",
+          en: "Relationships, programmer jokes, comedy and unexpected turns connect this short browser narrative. The project brings characters, dialogue artwork and staged scenes together around a newcomer’s journey into vibe coding.",
+          zh: "人物关系、程序员梗、喜剧与一点意外，串起这段短篇网页互动叙事。项目把角色、对话立绘与短篇演出放在一起，围绕新人走向 Vibe Coding 高手的旅程展开。",
         },
       },
       {
         title: { en: "Creator and relationship to GripSky", zh: "创作者与 GripSky 的关系" },
         body: {
-          en: "Lin Guan (临观) creates Codetaker as an independent game project within his Kotonoha (言叶之花) creative activity. GripSky hosts its public home and connects it to the maintainer’s existing public identity. It is a practice in ongoing human–AI collaboration across narrative, art and staging.",
-          zh: "Codetaker 由临观（Lin Guan）创作，是「言叶之花」活动下有独立边界的游戏项目。GripSky 提供官网与公开入口，并接续维护者已有的公共身份。它把长期人机协作带进叙事、美术与演出的实践。",
+          en: "LinGuan (临观 / Lin Guan) creates Codetaker as an independent game project within his Kotonoha (言叶之花) creative activity. GripSky hosts its public home and connects it to the maintainer’s existing public identity. It brings ongoing human–AI collaboration into narrative, art and staging.",
+          zh: "Codetaker 由 LinGuan（临观）创作，是「言叶之花」活动下有独立边界的游戏项目。GripSky 提供官网与公开入口，并接续维护者已有的公共身份。它把长期人机协作带进叙事、美术与演出的实践。",
         },
       },
       {
         title: { en: "Featured art and attribution", zh: "页面配图与来源" },
         body: {
-          en: "The project website features the L-A2 “innocent” dialogue artwork of Da Fei Yu / the DeepSeek girl, made for the project with AI assistance using imagegen under Lin Guan’s art direction. Saved community records trace the character design lineage through 上善无形 and ZipZipPipe, documented by donnyjie. This is an unofficial creative project with no official affiliation to the AI brands depicted.",
-          zh: "项目官网采用大肥鱼（DeepSeek 娘）的 L-A2「装乖」对话立绘，由临观确定美术方向、使用 imagegen 辅助制作。已保存的社区来源记录将角色设计脉络追溯至上善无形与 ZipZipPipe，donnyjie 的资料整理提供了来源说明。本项目为非官方创作，与相关 AI 品牌无官方隶属关系。",
+          en: "The project website features the L-A2 “innocent” dialogue artwork of Da Fei Yu / the DeepSeek girl, made for the project with AI assistance using imagegen under LinGuan’s art direction. Saved community records trace the character design lineage through 上善无形 and ZipZipPipe, documented by donnyjie. This is an unofficial fan project with no official affiliation to the AI brands depicted or Helltaker.",
+          zh: "项目官网采用大肥鱼（DeepSeek 娘）的 L-A2「装乖」对话立绘，由 LinGuan 确定美术方向、使用 imagegen 辅助制作。已保存的社区来源记录将角色设计脉络追溯至上善无形与 ZipZipPipe，donnyjie 的资料整理提供了来源说明。本项目为非官方同人创作，与相关 AI 品牌及 Helltaker 无官方隶属关系。",
         },
       },
     ],

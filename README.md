@@ -58,4 +58,4 @@ This repository contains website code, public content and reusable design assets
 
 ## Codetaker creative practice
 
-The existing research section now links [Codetaker](https://codetaker.gripsky.org/), a short browser narrative game in development by Lin Guan (临观). The bilingual project entry at `/research/codetaker` describes its current stage, artwork attribution and relationship to GripSky. No public playable release is available.
+[Codetaker](https://codetaker.gripsky.org/), provisionally titled Vibe 把妹王 in Chinese, is a Helltaker-style AI-girl fan game in development by LinGuan. Meet Da Fei Yu, GPT, Claude and other AI girls on a journey into vibe coding. The bilingual entry at `/research/codetaker` connects the project to GripSky and its maintainer.

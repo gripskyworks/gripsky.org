@@ -31,9 +31,9 @@ The catalog distinguishes public source documents, internally used methods and e
 
 ## Creative practice: Codetaker
 
-Codetaker (provisional Chinese title: Vibe 把妹王) is a short browser narrative game being created by Lin Guan (临观) within his Kotonoha (言叶之花) creative activity. It imagines a newcomer’s journey into vibe coding and encounters with AI characters. GripSky hosts its public home. As of 26 October 2026, character studies, dialogue artwork and story-structure research exist; story and staging are in planning. The full game has not been implemented. No public playable release or release date is available.
+Codetaker, provisionally titled Vibe 把妹王 in Chinese, is a Helltaker-style AI-girl fan game in development by LinGuan. Meet Da Fei Yu, GPT, Claude and other AI girls on a journey into vibe coding. It is an independent game project within LinGuan’s Kotonoha (言叶之花) creative activity. GripSky hosts its public home.
 
-- [Codetaker project website](https://codetaker.gripsky.org/): Chinese introduction, selected L-A2 DeepSeek-girl artwork, credits and current status
+- [Codetaker project website](https://codetaker.gripsky.org/): Chinese introduction, selected L-A2 DeepSeek-girl artwork and credits
 - [English project introduction](https://codetaker.gripsky.org/en/)
 - [GripSky project entry](https://gripsky.org/research/codetaker): Creator, current scope and relationship to GripSky
 - [中文项目条目](https://gripsky.org/zh/research/codetaker)
